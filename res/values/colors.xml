@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xml>
+<resources>
+    <color name="event_color_01">#59dbe0</color><!-- azul --> 
+    <color name="event_color_02">#f57f68</color><!-- vermelho claro-->
+    <color name="event_color_03">#87d288</color><!-- verde-->
+    <color name="event_color_04">#f8b552</color><!-- amarelo -->
+    <color name="event_color_05">#FF0000</color> <!-- vermelho -->   
+</resources>

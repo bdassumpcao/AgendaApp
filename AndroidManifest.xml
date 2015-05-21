@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xml>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.solucaoSistemas.AgendaApp"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="10"
+        android:targetSdkVersion="21" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.solucaoSistemas.AgendaApp.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity 
+		    android:name="com.solucaoSistemas.AgendaApp.MyListActivity"
+			android:label="@string/app_name">
+		</activity>
+		<activity 
+		    android:name="com.solucaoSistemas.AgendaApp.Calendar"
+			android:label="@string/app_name">
+		</activity>
+		<activity 
+		    android:name="com.solucaoSistemas.AgendaApp.Principal"
+			android:label="@string/app_name">
+		</activity>
+		<activity 
+		    android:name="com.solucaoSistemas.AgendaApp.InsereEvento"
+			android:label="@string/action_novoEvento">
+		</activity>
+		<activity 
+		    android:name="com.solucaoSistemas.AgendaApp.EditaEvento"
+			android:label="@string/editar">
+		</activity>
+		<activity 
+		    android:name="com.solucaoSistemas.AgendaApp.Configuracoes"
+			android:label="@string/action_configuracoes">
+         
+		</activity>
+		<service android:name="ServiceApp" android:label="ServiceApp"
+		    android:exported="false">
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT"/>
+				<action android:name="SERVICO_AGENDA"/>
+			</intent-filter>
+		</service>
+		<receiver android:label="BroadcastApp" android:name="BroadcastApp"
+			android:exported="false">
+			<intent-filter>
+				<action android:name="SERVICO_AGENDA"/>
+			</intent-filter>
+		</receiver>
+    </application>
+
+</manifest>

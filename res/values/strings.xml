@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xml>
+<resources>
+    <string name="app_name">Agenda</string>
+    <string name="editar">Editar</string>
+    <string name="action_novoEvento">Novo Evento</string>
+    <string name="action_calendario">Calendário</string>
+    <string name="action_atualizar">Atualizar</string>
+    <string name="action_configuracoes">Configurações</string>
+    <string name="action_hoje">Hoje</string>
+    <string name="action_search_day">Buscar data</string>
+    <string name="action_baixar">Baixar</string>
+    <string name="action_salvar">Salvar</string>
+    <string name="action_cancelar">Cancelar</string>
+    <string name="action_Deletar">Deletar</string>
+    <string name="Suser">Selecione o usuário</string>
+    <string name="BAvancar">Avançar</string>
+    <string name="btVolta">Voltar</string>
+    <string name="btSalvar">Salvar</string>
+    <string name="sincronizar">Sincronização de dados</string>
+    <string name="baixados">Mostrar eventos baixados</string>
+    <string name="cdEvento">Cod.:</string>
+    <string name="Obs">Observações</string>
+    <string name="Local">Local</string>
+    <string name="Desc">Descrição</string>
+    <string name="Data">Data</string>
+    <string name="HoraInicio">Hora Inicial</string>
+    <string name="HoraFim">Hora Final</string>
+    <string name="action_today">Dia atual</string>
+    <string name="action_day_view">Visualizar por dia</string>
+    <string name="action_three_day_view">Visualizar 3 dias</string>
+    <string name="action_week_view">Visualizar por semana</string>
+    
+
+</resources>

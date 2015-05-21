@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xml>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/action_Salvar"
+          android:title="@string/action_salvar"
+          android:icon="@android:drawable/ic_menu_save"
+          android:showAsAction="always" 
+          android:visible="true" 
+          android:enabled="true"></item> 
+    <item android:id="@+id/action_baixar" 
+          android:title="@string/action_baixar"
+          android:icon="@android:drawable/stat_sys_download"
+          android:showAsAction="ifRoom" 
+          android:visible="true" 
+          android:enabled="true"></item>   
+    <item android:id="@+id/action_Deletar" 
+          android:title="@string/action_Deletar"
+          android:icon="@android:drawable/ic_menu_delete"
+          android:showAsAction="ifRoom" 
+          android:visible="true" 
+          android:enabled="true"></item>  
+</menu>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xml>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MyActivity" >
+    <item android:id="@+id/action_novoEvento"         
+          android:title="@string/action_novoEvento"
+          android:icon="@android:drawable/ic_input_add"
+          android:showAsAction="always" />   
+    <item android:id="@+id/action_atualizar"         
+          android:title="@string/action_atualizar"
+          android:icon="@android:drawable/ic_popup_sync"
+          android:showAsAction="always" />         
+    <item android:id="@+id/action_today"
+          android:title="@string/action_today"
+          android:icon="@android:drawable/ic_menu_today"
+          app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_search_day"
+          android:title="@string/action_search_day"
+          android:icon="@android:drawable/ic_menu_search"
+          app:showAsAction="ifRoom"/>
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/action_day_view"
+              android:title="@string/action_day_view"
+              android:icon="@android:drawable/ic_menu_day"
+              app:showAsAction="ifRoom"/>
+        <item android:id="@+id/action_three_day_view"
+              android:title="@string/action_three_day_view"
+              app:showAsAction="ifRoom"/>
+        <item android:id="@+id/action_week_view"
+              android:title="@string/action_week_view"
+              android:icon="@android:drawable/ic_menu_week"
+              app:showAsAction="ifRoom"/>
+    </group>
+    <item android:id="@+id/action_configuracoes"
+          android:title="@string/action_configuracoes"
+          android:icon="@android:drawable/ic_menu_manage"
+          android:showAsAction="withText" />
+</menu>
