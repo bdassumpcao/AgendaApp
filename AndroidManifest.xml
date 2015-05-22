@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
@@ -61,7 +62,12 @@
 		<receiver android:label="BroadcastApp" android:name="BroadcastApp"
 			android:exported="false">
 			<intent-filter>
-				<action android:name="SERVICO_AGENDA"/>
+				<action android:name="SINCRONIZACAO_AGENDA"/>
+			</intent-filter>
+		</receiver>
+		<receiver android:name="BroadcastReboot">
+			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED"/>
 			</intent-filter>
 		</receiver>
     </application>

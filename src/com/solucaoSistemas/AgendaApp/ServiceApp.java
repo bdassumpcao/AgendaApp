@@ -4,7 +4,6 @@ package com.solucaoSistemas.AgendaApp;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream.PutField;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -13,12 +12,20 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class ServiceApp extends Service {
@@ -47,7 +54,7 @@ public class ServiceApp extends Service {
 		
 		if(!pendencia){
 			pendencia = true;
-//			while(statusServico){
+
 				try{
 					conectAgenda = new ConectaLocal(this, "AGENDA");
 					conectUser = new ConectaLocal(this, "USUARIO");
@@ -56,13 +63,10 @@ public class ServiceApp extends Service {
 				}catch(Exception e){
 					Log.i("teste", "erro no monitor\n"+e);
 				}
-//			}
+
 		}
 		
-//		Conexao conn = new Conexao();
-//		Log.i("teste", "is local");
-//		conn.isLocal("192.168.1.200");
-//		Log.i("teste", "is local");
+		onDestroy();
 		
 		return(START_STICKY);
 	}
@@ -559,6 +563,33 @@ public class ServiceApp extends Service {
 			Log.i("teste", "");
 			return urlAcesso;		}
 	}
+	
+	
+	public void gerarNotificacao(Context context, Intent intent, CharSequence ticker, CharSequence titulo, CharSequence descricao){
+		NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		PendingIntent p = PendingIntent.getActivity(context, 0, intent, 0);
+		
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+		builder.setTicker(ticker);
+		builder.setContentTitle(titulo);
+		builder.setContentText(descricao);
+		builder.setSmallIcon(R.drawable.ic_launcher);
+		builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
+		builder.setContentIntent(p);
+		
+		Notification n = builder.build();
+		n.vibrate = new long[]{150, 300, 150, 600};
+		n.flags = Notification.FLAG_AUTO_CANCEL;
+		nm.notify(R.drawable.ic_launcher, n);
+		
+		try{
+			Uri som = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+			Ringtone toque = RingtoneManager.getRingtone(context, som);
+			toque.play();
+		}
+		catch(Exception e){}
+	}
+	
 	
 	public static class MyString {
 		public static String[] tStringArrayAgenda(Object string){

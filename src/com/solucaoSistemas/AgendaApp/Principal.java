@@ -1,9 +1,14 @@
 package com.solucaoSistemas.AgendaApp;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.RectF;
@@ -15,13 +20,6 @@ import android.view.MenuItem;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.solucaoSistemas.AgendaApp.WeekView;
-import com.solucaoSistemas.AgendaApp.WeekViewEvent;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 
 /**
@@ -55,7 +53,21 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
         
         //inicia serviço de sincronização
         if(MainActivity.tString(conectConfig.select("SINCRONIZAR")).equals("1")){
-        	startService();
+        	boolean alarmeAtivo = (PendingIntent.getBroadcast(this, 0, new Intent("SINCRONIZACAO_AGENDA"), PendingIntent.FLAG_NO_CREATE) == null);
+			
+			if(alarmeAtivo){
+				Log.i("teste", "Novo alarme");
+				
+				Intent intent = new Intent("SINCRONIZACAO_AGENDA");
+				PendingIntent p = PendingIntent.getBroadcast(this, 0, intent, 0);
+				
+				Calendar c = Calendar.getInstance();
+				c.setTimeInMillis(System.currentTimeMillis());
+				c.add(Calendar.SECOND, 3);
+				
+				AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
+				alarme.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), 120000, p);
+			}
 	    }        
         
  
