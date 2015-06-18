@@ -264,13 +264,13 @@ public class ServiceApp extends Service {
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
-			
+		String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
 
-		if(exec.respServer.equals("$")){
-			Log.i("teste", "respServer == "+exec.respServer);
+		if(aux.equals("")){
+			Log.i("teste", "respServer == "+aux);
 		}
 		else{
-			String[] campos = MyString.tStringArray(exec.respServer);
+			String[] campos = MyString.tStringArray(aux);
 			for(int i=0 ;i<campos.length ;i++){		
 					conectAgenda.setOrder("");
 					conectAgenda.setClausula(" WHERE CDEVENTOEXT="+campos[i]);
@@ -299,12 +299,14 @@ public class ServiceApp extends Service {
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
+		String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
 		
-		if(exec.respServer.equals("$")){
-			Log.i("teste", "respServer == "+exec.respServer);
+		
+		if(aux.equals("")){
+			Log.i("teste", "respServer == "+aux);
 		}
 		else{
-			String[] campos = MyString.montaInsertAgenda(exec.respServer);
+			String[] campos = MyString.montaInsertAgenda(aux);
 			int j = 0;
 			for(String i : campos){
 				conectAgenda.insert(i);
@@ -328,15 +330,19 @@ public class ServiceApp extends Service {
 		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
 		
 		exec.start();
-		
+		Log.i("teste", "depois do exec.start");
 		do{
 //			Log.i("teste","sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
+		Log.i("teste", "antes do if");
+		String s = exec.respServer.substring(0, exec.respServer.indexOf("$"));
+		Log.i("teste", "respServer:'"+s+"'");
 		
-		if(exec.respServer.equals("$")){
-			Log.i("teste", "respServer == "+exec.respServer);
+		
+		if(s.equals("")){
+			Log.i("teste", "respServer == "+s);
 			
 			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTO ", cdU));
 			Log.i("teste", "ultimoCdCelular"+ultimoCdCelular);			
@@ -376,13 +382,10 @@ public class ServiceApp extends Service {
 					
 				}
 			}
-			
-			
-			
-			
+
 		}
-		else{
-			int codigoServidor = Integer.parseInt(exec.respServer.replace("$", ""));
+		else if(!s.equals("")){
+			int codigoServidor = Integer.parseInt(s);
 			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTO ", cdU));
 			if(ultimoCdCelular != -1)
 			if(ultimoCdCelular>codigoServidor){
@@ -443,11 +446,13 @@ public class ServiceApp extends Service {
 		}
 		while(exec.respServer.equals(""));
 		
-		if(exec.respServer.equals("$")){
-			Log.i("teste", "respServer == "+exec.respServer);
+		String aux = exec.respServer.substring(0, exec.respServer.indexOf("$"));
+		
+		if(aux.equals("")){
+			Log.i("teste", "respServer == vazio"+aux);
 		}
 		else{
-			cdExt = exec.respServer;
+			cdExt = aux;
 		}
 		return cdExt;
 		
@@ -471,11 +476,13 @@ public class ServiceApp extends Service {
 		}
 		while(exec.respServer.equals(""));
 		
-		if(exec.respServer.equals("$")){
-			Log.i("teste", "respServer == "+exec.respServer);
+		String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
+		
+		if(exec.respServer.equals("")){
+			Log.i("teste", "respServer == "+aux);
 		}
 		else{
-			String[] campos = MyString.montaUpdateAgenda(exec.respServer);
+			String[] campos = MyString.montaUpdateAgenda(aux);
 			int j=0;
 			for(String i : campos){				
 				conectAgenda.setOrder("");
@@ -927,7 +934,9 @@ public class ServiceApp extends Service {
 		@Override
 		public void run(){
 			try {
-				respServer = client.execute(httpGet, handler);
+				respServer = client.execute(httpGet, handler);				
+				Log.i("teste", "run: '"+respServer+"'");
+				
 			} catch (ClientProtocolException e) {
 				// TODO Auto-generated catch block
 				Log.i("teste", "Erro"+e);
