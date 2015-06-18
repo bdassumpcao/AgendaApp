@@ -394,7 +394,7 @@ public class ServiceApp extends Service {
 		exec.start();
 		
 		do{
-			Log.i("teste","sleep");
+//			Log.i("teste","sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
@@ -422,7 +422,7 @@ public class ServiceApp extends Service {
 		exec.start();
 		
 		do{
-			Log.i("teste","sleep");
+//			Log.i("teste","sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
@@ -478,7 +478,7 @@ public class ServiceApp extends Service {
 		exec.start();
 		
 		do{
-			Log.i("teste","sleep");
+//			Log.i("teste","sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
@@ -546,7 +546,7 @@ public class ServiceApp extends Service {
 
 				if(isWifi()){
 					if(isLocal(url)){
-						urlAcesso = "192.168.1.200";
+						urlAcesso = "192.168.1.200:5420";
 					}
 					else{
 						urlAcesso = "solucaosistemas.dyndns-ip.com:5420";
