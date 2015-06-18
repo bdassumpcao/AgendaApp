@@ -179,7 +179,7 @@ public class ServiceApp extends Service {
 			exec.start();
 			
 			do{
-				Log.i("teste","sleep");
+//				Log.i("teste","sleep");
 				Thread.sleep(1000);
 			}
 			while(exec.respServer.equals(""));
@@ -229,7 +229,7 @@ public class ServiceApp extends Service {
 			exec.start();
 			
 			do{
-				Log.i("teste","sleep");
+//				Log.i("teste","sleep");
 				Thread.sleep(1000);
 			}
 			while(exec.respServer.equals(""));
@@ -260,7 +260,7 @@ public class ServiceApp extends Service {
 		exec.start();
 			
 		do{
-			Log.i("teste","sleep");
+//			Log.i("teste","sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
@@ -295,7 +295,7 @@ public class ServiceApp extends Service {
 		exec.start();
 		
 		do{
-			Log.i("teste","sleep");
+//			Log.i("teste","sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
@@ -330,17 +330,61 @@ public class ServiceApp extends Service {
 		exec.start();
 		
 		do{
-			Log.i("teste","sleep");
+//			Log.i("teste","sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
 		
 		if(exec.respServer.equals("$")){
 			Log.i("teste", "respServer == "+exec.respServer);
+			
+			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTO ", cdU));
+			Log.i("teste", "ultimoCdCelular"+ultimoCdCelular);			
+			
+			if(ultimoCdCelular!=-1){
+				String  cdEvento, desc, lc, obs, dt, hI, hF, st;
+				conectAgenda.setOrder("");
+				conectAgenda.setClausula("");
+				String[] cdE = MyString.tStringArray(conectAgenda.select(" CDEVENTO "));
+				for(int i=0; i<cdE.length; i++){
+					Log.i("teste", cdE[i]);
+					conectAgenda.setClausula(" WHERE CDEVENTO="+cdE[i]);
+					
+					cdEvento = MainActivity.tString(conectAgenda.select("CDEVENTO"));
+					desc = MainActivity.tString(conectAgenda.select("DESCRICAO"));
+					lc = MainActivity.tString(conectAgenda.select("LOCAL"));
+					obs = MainActivity.tString(conectAgenda.select("OBSERVACAO"));
+					dt = MainActivity.tString(conectAgenda.select("DATA"));
+					dt = dt.replace( "\\" , ""); 
+					hI = MainActivity.tString(conectAgenda.select("HORAINICIO"));
+					String aux = hI.substring(0, 2) +":";
+					aux += hI.substring(2, 4);
+					hI = aux;
+					hF = MainActivity.tString(conectAgenda.select("HORAFIM"));
+					aux = hF.substring(0, 2) +":";
+					aux += hF.substring(2, 4);
+					hF = aux;
+					st = MainActivity.tString(conectAgenda.select("STATUS"));	
+					
+					String campos = "cdU="+cdU+"&cdExt="+cdEvento+"&descricao="+desc+"&obs="+obs+"&status="+st+
+							"&data="+dt+"&horaI="+hI+"&horaF="+hF+"&local="+lc;
+					Log.i("teste", campos);
+					
+					String cdExt = insereServidor(url, campos);
+					Log.i("teste", cdEvento+" inserido no servidor");
+					conectAgenda.update(" CDEVENTOEXT="+cdExt);
+					
+				}
+			}
+			
+			
+			
+			
 		}
 		else{
-			int codigoServidor = Integer.parseInt(exec.respServer);
+			int codigoServidor = Integer.parseInt(exec.respServer.replace("$", ""));
 			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTO ", cdU));
+			if(ultimoCdCelular != -1)
 			if(ultimoCdCelular>codigoServidor){
 				String  cdEvento, desc, lc, obs, dt, hI, hF, st;
 				conectAgenda.setOrder("");
@@ -450,7 +494,10 @@ public class ServiceApp extends Service {
 //		conectAgenda.setClausula(" WHERE CDEVENTO=79 ");
 		conectAgenda.setOrder(" ORDER BY "+campo);		
 		String[] aux = MyString.tStringArray(conectAgenda.select(campo));
-		return MainActivity.tiraEspaço(aux[aux.length-1]);
+		if(aux.length>0)
+			return MainActivity.tiraEspaço(aux[aux.length-1]);
+		else
+			return "-1";
 	}
 
 	public String userAtivo(){
