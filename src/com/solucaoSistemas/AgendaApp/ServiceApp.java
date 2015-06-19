@@ -4,6 +4,7 @@ package com.solucaoSistemas.AgendaApp;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -155,8 +156,11 @@ public class ServiceApp extends Service {
 			
 			cdEvento = MainActivity.tString(conectAgenda.select("CDEVENTO"));
 			desc = MainActivity.tString(conectAgenda.select("DESCRICAO"));
+			desc = URLEncoder.encode(desc);
 			lc = MainActivity.tString(conectAgenda.select("LOCAL"));
+			lc = URLEncoder.encode(lc);
 			obs = MainActivity.tString(conectAgenda.select("OBSERVACAO"));
+			obs = URLEncoder.encode(obs);
 			dt = MainActivity.tString(conectAgenda.select("DATA"));
 			dt = dt.replace( "\\" , ""); 
 			hI = MainActivity.tString(conectAgenda.select("HORAINICIO"));
@@ -172,6 +176,7 @@ public class ServiceApp extends Service {
 			String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=u&cdU="+cdU+"&cdE="+cdE[j]+"&desc="+desc+"&obs="+obs+"&st="+st+"&dt="+dt+"&hI="+hI+"&hF="+hF+"&lc="+lc;
 			ResponseHandler<String> handler = new BasicResponseHandler();
 			HttpClient client = new DefaultHttpClient();
+			Log.i("teste","HttpClient client = new DefaultHttpClient();");
 			HttpGet httpGet = new HttpGet("http://"+url+dados);	
 			Log.i("teste","http://"+url+dados);
 			ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);			
@@ -319,6 +324,7 @@ public class ServiceApp extends Service {
 		
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void selectCelular(String url) throws InterruptedException{	
 		String cdU = userAtivo();
 		
@@ -358,8 +364,11 @@ public class ServiceApp extends Service {
 					
 					cdEvento = MainActivity.tString(conectAgenda.select("CDEVENTO"));
 					desc = MainActivity.tString(conectAgenda.select("DESCRICAO"));
+					desc = URLEncoder.encode(desc);
 					lc = MainActivity.tString(conectAgenda.select("LOCAL"));
+					lc = URLEncoder.encode(lc);
 					obs = MainActivity.tString(conectAgenda.select("OBSERVACAO"));
+					obs = URLEncoder.encode(obs);
 					dt = MainActivity.tString(conectAgenda.select("DATA"));
 					dt = dt.replace( "\\" , ""); 
 					hI = MainActivity.tString(conectAgenda.select("HORAINICIO"));
@@ -399,8 +408,11 @@ public class ServiceApp extends Service {
 					
 					cdEvento = MainActivity.tString(conectAgenda.select("CDEVENTO"));
 					desc = MainActivity.tString(conectAgenda.select("DESCRICAO"));
+					desc = URLEncoder.encode(desc);
 					lc = MainActivity.tString(conectAgenda.select("LOCAL"));
+					lc = URLEncoder.encode(lc);
 					obs = MainActivity.tString(conectAgenda.select("OBSERVACAO"));
+					obs = URLEncoder.encode(obs);
 					dt = MainActivity.tString(conectAgenda.select("DATA"));
 					dt = dt.replace( "\\" , ""); 
 					hI = MainActivity.tString(conectAgenda.select("HORAINICIO"));
@@ -646,6 +658,19 @@ public class ServiceApp extends Service {
 	
 	
 	public static class MyString {
+		public static String retiraQuebraLinha(String string){
+			if(!string.equals("")){
+//				Log.i("teste", "retiraQuebraLinha("+string+")");
+//				String parte1 = string.substring(0, string.indexOf('\\'));
+//				Log.i("teste", parte1);
+//				string = parte1+"%5C"+string.substring(string.indexOf('\\')+1, string.length()-1);
+//				Log.i("teste", string);
+				string.replace("\\n|\\r|\n|\r", "%5Cn");
+				Log.i("teste", "string: "+string);
+			}
+			return string;
+		}
+		
 		public static String[] tStringArrayAgenda(Object string){
 			   
 			   String resul = string.toString();
