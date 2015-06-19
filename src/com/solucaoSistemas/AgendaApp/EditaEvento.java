@@ -220,7 +220,7 @@ public class EditaEvento extends Activity{
 		   intent.putExtras(b);
 		   EditaEvento.this.startActivity(intent);
 		   EditaEvento.this.finish();
-		   showToast(MainActivity.tString(conectLogAgenda.select(" OPERACAO "))); 
+//		   showToast(MainActivity.tString(conectLogAgenda.select(" OPERACAO "))); 
 	   }
 	   else
 		   showToast("Não foi possivel excluir evento!");
