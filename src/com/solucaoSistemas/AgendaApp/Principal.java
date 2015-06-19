@@ -9,6 +9,7 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.RectF;
@@ -39,7 +40,7 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
     private TextView tvUsuario, tvUdescricao;
     private AlertDialog alerta;
     private int horaExpediente = 7;
-    
+    private ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +135,10 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
 	    		return true;	   
 	    	case R.id.action_atualizar:
 	            if(MainActivity.tString(conectConfig.select("SINCRONIZAR")).equals("0")){	
+	            	progress = new ProgressDialog(this);
+	            	progress.setMessage("Sincronizando Dados da Agenda");
+	            	progress.show();
+	            	aguardaSync();
 	            	startService();
 	                mWeekView.goToToday(); 
 	                mWeekView.goToHour(horaExpediente);
@@ -300,7 +305,23 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
         return events;
     }
 
-
+    private void aguardaSync(){
+    	Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				do {
+					try {
+						Thread.sleep(1000);
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+				} while (ServiceApp.ativo);
+				progress.dismiss();
+			}
+		});
+    	t.start();
+    }
 
     private String getEventTitle(Calendar time, String title) {
         return String.format(title+"  %02d:%02d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE));

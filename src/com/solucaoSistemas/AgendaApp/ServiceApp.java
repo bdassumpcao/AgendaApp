@@ -37,6 +37,7 @@ public class ServiceApp extends Service {
 	ConectaLocal conectUser;
 	ConectaLocal conectLogAgenda;
 	static String[] cod;
+	static boolean ativo = false;
 	@Override
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
@@ -54,7 +55,7 @@ public class ServiceApp extends Service {
 		Log.i("teste", "onStartCommand()");
 		
 		if(!pendencia){
-			pendencia = true;
+			pendencia = ativo = true;
 
 				try{
 					conectAgenda = new ConectaLocal(this, "AGENDA");
@@ -74,9 +75,13 @@ public class ServiceApp extends Service {
 	
 	@Override
 	public void onDestroy(){
-		pendencia = false;
+		pendencia = ativo = false;
 		super.onDestroy();
 		Log.i("teste","onDestroy()");
+	}
+	
+	public boolean getPendencia(){
+		return this.pendencia;
 	}
 	
 	/**verifica no servidor se tem algo a mais
