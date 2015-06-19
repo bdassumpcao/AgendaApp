@@ -319,15 +319,19 @@ public class ServiceApp extends Service {
 			Log.i("teste", "respServer == "+aux);
 		}
 		else{
-			geraNotificacaoNovoEvento();
-			String[] campos = MyString.montaInsertAgenda(aux);
-			int j = 0;
-			for(String i : campos){
-				conectAgenda.insert(i);
-				conectAgenda.setClausula(" WHERE CDEVENTOEXT="+cod[j]);
-				Log.i("teste", MyString.tString(conectAgenda.select(" CDEVENTO "))+" inserido no celular");
-				updateCodServidor(MyString.tString(conectAgenda.select(" CDEVENTO ")), cod[j]);
-				j++;
+			try {
+				String[] campos = MyString.montaInsertAgenda(aux);
+				int j = 0;
+				for(String i : campos){
+					conectAgenda.insert(i);
+					conectAgenda.setClausula(" WHERE CDEVENTOEXT="+cod[j]);
+					Log.i("teste", MyString.tString(conectAgenda.select(" CDEVENTO "))+" inserido no celular");
+					updateCodServidor(MyString.tString(conectAgenda.select(" CDEVENTO ")), cod[j]);
+					j++;
+				}
+				geraNotificacaoNovoEvento();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		
@@ -499,19 +503,27 @@ public class ServiceApp extends Service {
 		
 		String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
 		
-		if(exec.respServer.equals("")){
+		if(aux.equals("")){
 			Log.i("teste", "respServer == "+aux);
 		}
 		else{
 			String[] campos = MyString.montaUpdateAgenda(aux);
+			
 			int j=0;
-			for(String i : campos){				
+			boolean notificacao = false;
+			for(String i : campos){		
+				Log.i("teste", "campos:"+i);
+				if(i.contains("STATUS='1'") & !notificacao){
+					notificacao = true;
+					geraNotificacaoEventosBaixados();
+				}
 				conectAgenda.setOrder("");
 				conectAgenda.setClausula(" WHERE CDEVENTO="+cod[j]);
 				conectAgenda.update(i);
 				Log.i("teste", cod[j]+" atualizado no celular");
 				j++;
 			}
+			
 		}
 		
 	}
