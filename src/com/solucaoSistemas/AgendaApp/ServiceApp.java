@@ -138,6 +138,14 @@ public class ServiceApp extends Service {
 		Log.i("teste", "");
 	}
 	
+	public void geraNotificacaoNovoEvento(){
+		gerarNotificacao(getApplicationContext(), new Intent(getBaseContext(),Principal.class), "Novos eventos adicionados", "Eventos", "Voce tem novos eventos em sua agenda");
+	}
+	
+	public void geraNotificacaoEventosBaixados(){
+		gerarNotificacao(getApplicationContext(), new Intent(getBaseContext(),Principal.class), "Novos eventos baixados", "Eventos", "Eventos foram baixados em sua agenda");
+	}
+	
 	public void updateServidor(String url) throws InterruptedException{	
 		String cdU = userAtivo();
 		String[] cdE;				
@@ -311,6 +319,7 @@ public class ServiceApp extends Service {
 			Log.i("teste", "respServer == "+aux);
 		}
 		else{
+			geraNotificacaoNovoEvento();
 			String[] campos = MyString.montaInsertAgenda(aux);
 			int j = 0;
 			for(String i : campos){
