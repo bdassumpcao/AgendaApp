@@ -302,8 +302,15 @@ public class ServiceApp extends Service {
 	public void selectServidor(String url) throws InterruptedException{	
 		String cdU = userAtivo();
 		String cdExt = pegaUltimo(" CDEVENTOEXT ", cdU);
+		String dados = "";
+		if(cdExt.equals("-1")){
+			dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sall&cdU="+cdU;
+		}
 		
-		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=su&cdU="+cdU+"&cdE="+cdExt;
+		if(!cdExt.equals("-1")){
+			dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=su&cdU="+cdU+"&cdE="+cdExt;
+			
+		}
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://"+url+dados);
