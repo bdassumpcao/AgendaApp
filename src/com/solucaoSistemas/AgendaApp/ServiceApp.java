@@ -38,6 +38,7 @@ public class ServiceApp extends Service {
 	ConectaLocal conectLogAgenda;
 	static String[] cod;
 	static boolean ativo = false;
+	private static  String LOG = "teste";
 	@Override
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
@@ -47,12 +48,12 @@ public class ServiceApp extends Service {
 	@Override
 	public void onCreate(){
 		super.onCreate();
-		Log.i("teste", "onCreate()");
+		Log.i(LOG, "onCreate()");
 	}
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
-		Log.i("teste", "onStartCommand()");
+		Log.i(LOG, "onStartCommand()");
 		
 		if(!pendencia){
 			pendencia = ativo = true;
@@ -63,7 +64,7 @@ public class ServiceApp extends Service {
 					conectLogAgenda = new ConectaLocal(getApplicationContext(), "LOGAGENDA");
 					monitor();
 				}catch(Exception e){
-					Log.i("teste", "erro no monitor\n"+e);
+					Log.i(LOG, "erro no monitor\n"+e);
 				}
 
 		}
@@ -77,7 +78,7 @@ public class ServiceApp extends Service {
 	public void onDestroy(){
 		pendencia = ativo = false;
 		super.onDestroy();
-		Log.i("teste","onDestroy()");
+		Log.i(LOG,"onDestroy()");
 	}
 	
 	public boolean getPendencia(){
@@ -91,56 +92,51 @@ public class ServiceApp extends Service {
 	 * @throws InterruptedException 
 	 * */
 	public void  monitor() throws InterruptedException{
-		Log.i("teste", "entrou monitor()");
+		Log.i(LOG, "entrou monitor()");
 		Conexao conexao = new Conexao();
 		String url = "";
 		
 		if(conexao.isConected()){
 			url = conexao.pegaLink();
-			Log.i("teste", "link:\n"+url);
+			Log.i(LOG, "link:\n"+url);
 			
 			//----------------------------------
 			
-			Log.i("teste","entrou deleteServidor()");
+			Log.i(LOG,"entrou deleteServidor()");
 			deleteServidor(url);
-			Log.i("teste","saiu deleteServidor()");
-			Log.i("teste", "");
+			Log.i(LOG,"saiu deleteServidor()");
+			Log.i(LOG, "");
 			
-			Log.i("teste","entrou deleteCelular()");
+			Log.i(LOG,"entrou deleteCelular()");
 			deleteCelular(url);
-			Log.i("teste","saiu deleteCelular()");
-			Log.i("teste", "");
+			Log.i(LOG,"saiu deleteCelular()");
+			Log.i(LOG, "");
 			
-			Log.i("teste","entrou selectCelular()");
+			Log.i(LOG,"entrou selectCelular()");
 			selectCelular(url);
-			Log.i("teste","saiu selectCelular()");
-			Log.i("teste", "");
+			Log.i(LOG,"saiu selectCelular()");
+			Log.i(LOG, "");
 			
-			Log.i("teste","entrou selectServidor()");
+			Log.i(LOG,"entrou selectServidor()");
 			selectServidor(url);
-			Log.i("teste","saiu selectServidor()");
-			Log.i("teste", "");
+			Log.i(LOG,"saiu selectServidor()");
+			Log.i(LOG, "");
 			
-			Log.i("teste","entrou updateServidor()");
+			Log.i(LOG,"entrou updateServidor()");
 			updateServidor(url);
-			Log.i("teste","saiu updateServidor()");
-			Log.i("teste", "");
+			Log.i(LOG,"saiu updateServidor()");
+			Log.i(LOG, "");
 			
-			Log.i("teste","entrou updateCelular()");
+			Log.i(LOG,"entrou updateCelular()");
 			updateCelular(url);		
-			Log.i("teste","saiu updateCelular()");
-			Log.i("teste", "");
+			Log.i(LOG,"saiu updateCelular()");
+			Log.i(LOG, "");
 
 
-			//-----------------------------------
-//			String cdExt = pegaUltimo(" CDEXT ");
-//			insertServidor(cdExt, url);
-			//-----------------------------------
 		}
 		else
-			Log.i("teste", "Não Conectado");
-		Log.i("teste", "saiu monitor()");
-		Log.i("teste", "");
+			Log.i(LOG, "Não Conectado");
+		Log.i(LOG, "saiu monitor()");
 	}
 	
 	public void geraNotificacaoNovoEvento(){
@@ -163,7 +159,7 @@ public class ServiceApp extends Service {
 		if(cdE.length!=0){
 		for(int j=0; j<cdE.length; j++){
 			if(!cdE[j].equals("null")){
-			Log.i("teste", "cdE[j]"+cdE[j]);		
+			Log.i(LOG, "cdE[j]"+cdE[j]);		
 			conectAgenda.setOrder("");
 			conectAgenda.setClausula(" WHERE CDEVENTOEXT="+cdE[j]);	
 			
@@ -189,27 +185,27 @@ public class ServiceApp extends Service {
 			String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=u&cdU="+cdU+"&cdE="+cdE[j]+"&desc="+desc+"&obs="+obs+"&st="+st+"&dt="+dt+"&hI="+hI+"&hF="+hF+"&lc="+lc;
 			ResponseHandler<String> handler = new BasicResponseHandler();
 			HttpClient client = new DefaultHttpClient();
-			Log.i("teste","HttpClient client = new DefaultHttpClient();");
+			Log.i(LOG,"HttpClient client = new DefaultHttpClient();");
 			HttpGet httpGet = new HttpGet("http://"+url+dados);	
-			Log.i("teste","http://"+url+dados);
+			Log.i(LOG,"http://"+url+dados);
 			ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);			
 			
 			exec.start();
 			
 			do{
-//				Log.i("teste","sleep");
+//				Log.i(LOG,"sleep");
 				Thread.sleep(1000);
 			}
 			while(exec.respServer.equals(""));
 			
 			if(!exec.respServer.equals("$")){
-				Log.i("teste", "respServer == "+exec.respServer);
+				Log.i(LOG, "respServer == "+exec.respServer);
 			}
 			else{
 				conectLogAgenda.setOrder("");
 				conectLogAgenda.setClausula(" WHERE CDEVENTOEXT="+cdE[j]);
 				conectLogAgenda.delete();
-				Log.i("teste", cdE[j]+" alterado no servidor");
+				Log.i(LOG, cdE[j]+" alterado no servidor");
 			}
 			}
 		}
@@ -228,7 +224,7 @@ public class ServiceApp extends Service {
 		
 		if(cdE.length!=0){
 		for(int j=0; j<cdE.length; j++){
-			Log.i("teste", "cdE[j]"+cdE[j]);
+			Log.i(LOG, "cdE[j]"+cdE[j]);
 			if(!cdE[j].equals("null")){
 				if(j == cdE.length-1)
 					cdExt += MainActivity.tiraEspaço(cdE[j]);
@@ -241,25 +237,25 @@ public class ServiceApp extends Service {
 			ResponseHandler<String> handler = new BasicResponseHandler();
 			HttpClient client = new DefaultHttpClient();
 			HttpGet httpGet = new HttpGet("http://"+url+dados);
-			Log.i("teste","http://"+url+dados);
+			Log.i(LOG,"http://"+url+dados);
 			ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
 			
 			exec.start();
 			
 			do{
-//				Log.i("teste","sleep");
+//				Log.i(LOG,"sleep");
 				Thread.sleep(1000);
 			}
 			while(exec.respServer.equals(""));
 			
 			if(!exec.respServer.equals("$")){
-				Log.i("teste", "respServer == "+exec.respServer);
+				Log.i(LOG, "respServer == "+exec.respServer);
 			}
 			else{
 				conectLogAgenda.setOrder("");
 				conectLogAgenda.setClausula(" WHERE OPERACAO='D' ");
 				conectLogAgenda.delete();
-				Log.i("teste", cdExt+" excluido no servidor!");
+				Log.i(LOG, cdExt+" excluido no servidor!");
 			}
 		}
 		
@@ -278,14 +274,14 @@ public class ServiceApp extends Service {
 		exec.start();
 			
 		do{
-//			Log.i("teste","sleep");
+//			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
 		String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
 
 		if(aux.equals("")){
-			Log.i("teste", "respServer == "+aux);
+			Log.i(LOG, "respServer == "+aux);
 		}
 		else{
 			String[] campos = MyString.tStringArray(aux);
@@ -293,7 +289,7 @@ public class ServiceApp extends Service {
 					conectAgenda.setOrder("");
 					conectAgenda.setClausula(" WHERE CDEVENTOEXT="+campos[i]);
 					conectAgenda.delete();
-					Log.i("teste", campos[i]+" excluido no celular");
+					Log.i(LOG, campos[i]+" excluido no celular");
 			}			
 		}
 	}	
@@ -314,13 +310,13 @@ public class ServiceApp extends Service {
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://"+url+dados);
-		Log.i("teste","http://"+url+dados);
+		Log.i(LOG,"http://"+url+dados);
 		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
 		
 		exec.start();
 		
 		do{
-//			Log.i("teste","sleep");
+//			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
@@ -328,7 +324,7 @@ public class ServiceApp extends Service {
 		
 		
 		if(aux.equals("")){
-			Log.i("teste", "respServer == "+aux);
+			Log.i(LOG, "respServer == "+aux);
 		}
 		else{
 			try {
@@ -337,7 +333,7 @@ public class ServiceApp extends Service {
 				for(String i : campos){
 					conectAgenda.insert(i);
 					conectAgenda.setClausula(" WHERE CDEVENTOEXT="+cod[j]);
-					Log.i("teste", MyString.tString(conectAgenda.select(" CDEVENTO "))+" inserido no celular");
+					Log.i(LOG, MyString.tString(conectAgenda.select(" CDEVENTO "))+" inserido no celular");
 					updateCodServidor(MyString.tString(conectAgenda.select(" CDEVENTO ")), cod[j]);
 					j++;
 				}
@@ -357,26 +353,26 @@ public class ServiceApp extends Service {
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://"+url+dados);
-		Log.i("teste","http://"+url+dados);
+		Log.i(LOG,"http://"+url+dados);
 		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
 		
 		exec.start();
-		Log.i("teste", "depois do exec.start");
+		Log.i(LOG, "depois do exec.start");
 		do{
-//			Log.i("teste","sleep");
+//			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
-		Log.i("teste", "antes do if");
+		Log.i(LOG, "antes do if");
 		String s = exec.respServer.substring(0, exec.respServer.indexOf("$"));
-		Log.i("teste", "respServer:'"+s+"'");
+		Log.i(LOG, "respServer:'"+s+"'");
 		
 		
 		if(s.equals("")){
-			Log.i("teste", "respServer == "+s);
+			Log.i(LOG, "respServer == "+s);
 			
 			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTO ", cdU));
-			Log.i("teste", "ultimoCdCelular"+ultimoCdCelular);			
+			Log.i(LOG, "ultimoCdCelular"+ultimoCdCelular);			
 			
 			if(ultimoCdCelular!=-1){
 				String  cdEvento, desc, lc, obs, dt, hI, hF, st;
@@ -384,7 +380,7 @@ public class ServiceApp extends Service {
 				conectAgenda.setClausula("");
 				String[] cdE = MyString.tStringArray(conectAgenda.select(" CDEVENTO "));
 				for(int i=0; i<cdE.length; i++){
-					Log.i("teste", cdE[i]);
+					Log.i(LOG, cdE[i]);
 					conectAgenda.setClausula(" WHERE CDEVENTO="+cdE[i]);
 					
 					cdEvento = MainActivity.tString(conectAgenda.select("CDEVENTO"));
@@ -408,10 +404,10 @@ public class ServiceApp extends Service {
 					
 					String campos = "cdU="+cdU+"&cdExt="+cdEvento+"&descricao="+desc+"&obs="+obs+"&status="+st+
 							"&data="+dt+"&horaI="+hI+"&horaF="+hF+"&local="+lc;
-					Log.i("teste", campos);
+					Log.i(LOG, campos);
 					
 					String cdExt = insereServidor(url, campos);
-					Log.i("teste", cdEvento+" inserido no servidor");
+					Log.i(LOG, cdEvento+" inserido no servidor");
 					conectAgenda.update(" CDEVENTOEXT="+cdExt);
 					
 				}
@@ -428,7 +424,7 @@ public class ServiceApp extends Service {
 				conectAgenda.setClausula(" WHERE CDEVENTO>"+codigoServidor);
 				String[] cdE = MyString.tStringArray(conectAgenda.select(" CDEVENTO "));
 				for(int i=0; i<cdE.length; i++){
-					Log.i("teste", cdE[i]);
+					Log.i(LOG, cdE[i]);
 					conectAgenda.setClausula(" WHERE CDEVENTO="+cdE[i]);
 					
 					cdEvento = MainActivity.tString(conectAgenda.select("CDEVENTO"));
@@ -452,10 +448,10 @@ public class ServiceApp extends Service {
 					
 					String campos = "cdU="+cdU+"&cdExt="+cdEvento+"&descricao="+desc+"&obs="+obs+"&status="+st+
 							"&data="+dt+"&horaI="+hI+"&horaF="+hF+"&local="+lc;
-					Log.i("teste", campos);
+					Log.i(LOG, campos);
 					
 					String cdExt = insereServidor(url, campos);
-					Log.i("teste", cdEvento+" inserido no servidor");
+					Log.i(LOG, cdEvento+" inserido no servidor");
 					conectAgenda.update(" CDEVENTOEXT="+cdExt);
 					
 				}
@@ -466,19 +462,19 @@ public class ServiceApp extends Service {
 	}
 	
 	public String insereServidor(String url, String campos) throws InterruptedException{	
-		Log.i("teste", "entrou insereServidor()");
+		Log.i(LOG, "entrou insereServidor()");
 		String cdExt = "";
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=i&"+campos;
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://"+url+dados);
-		Log.i("teste","http://"+url+dados);
+		Log.i(LOG,"http://"+url+dados);
 		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
 		
 		exec.start();
 		
 		do{
-//			Log.i("teste","sleep");
+//			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
@@ -486,7 +482,7 @@ public class ServiceApp extends Service {
 		String aux = exec.respServer.substring(0, exec.respServer.indexOf("$"));
 		
 		if(aux.equals("")){
-			Log.i("teste", "respServer == vazio"+aux);
+			Log.i(LOG, "respServer == vazio"+aux);
 		}
 		else{
 			cdExt = aux;
@@ -502,13 +498,13 @@ public class ServiceApp extends Service {
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://"+url+dados);
-		Log.i("teste","http://"+url+dados);
+		Log.i(LOG,"http://"+url+dados);
 		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
 		
 		exec.start();
 		
 		do{
-//			Log.i("teste","sleep");
+//			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
@@ -516,7 +512,7 @@ public class ServiceApp extends Service {
 		String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
 		
 		if(aux.equals("")){
-			Log.i("teste", "respServer == "+aux);
+			Log.i(LOG, "respServer == "+aux);
 		}
 		else{
 			String[] campos = MyString.montaUpdateAgenda(aux);
@@ -524,7 +520,7 @@ public class ServiceApp extends Service {
 			int j=0;
 			boolean notificacao = false;
 			for(String i : campos){		
-				Log.i("teste", "campos:"+i);
+				Log.i(LOG, "campos:"+i);
 				if(i.contains("STATUS='1'") & !notificacao){
 					notificacao = true;
 					geraNotificacaoEventosBaixados();
@@ -532,7 +528,7 @@ public class ServiceApp extends Service {
 				conectAgenda.setOrder("");
 				conectAgenda.setClausula(" WHERE CDEVENTO="+cod[j]);
 				conectAgenda.update(i);
-				Log.i("teste", cod[j]+" atualizado no celular");
+				Log.i(LOG, cod[j]+" atualizado no celular");
 				j++;
 			}
 			
@@ -541,7 +537,7 @@ public class ServiceApp extends Service {
 	}
 	
 	public String pegaUltimo(String campo, String cdU){
-		Log.i("teste", "pegaUltimo()");
+		Log.i(LOG, "pegaUltimo()");
 		conectAgenda.setClausula(" WHERE CDUSUARIO="+cdU);
 //		conectAgenda.setClausula(" WHERE CDEVENTO=79 ");
 		conectAgenda.setOrder(" ORDER BY "+campo);		
@@ -553,7 +549,7 @@ public class ServiceApp extends Service {
 	}
 
 	public String userAtivo(){
-		Log.i("teste", "userAtivo()");
+		Log.i(LOG, "userAtivo()");
 		conectUser.setClausula(" WHERE STATUS=1 ");
 		conectUser.setOrder(" ORDER BY CDUSUARIO ");
 		return MyString.tString(conectUser.select(" CDUSUARIO "));
@@ -564,20 +560,20 @@ public class ServiceApp extends Service {
 	}
 	
 	public void updateCodServidor(String cdExt, String cdE) throws InterruptedException{
-		Log.i("teste", "updateCodServidor()");
+		Log.i(LOG, "updateCodServidor()");
 		Conexao conexao = new Conexao();
 		String url = conexao.pegaLink();
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=uc&cdE="+cdExt+"&cdExt="+cdE;
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://"+url+dados);
-		Log.i("teste","http://"+url+dados);
+		Log.i(LOG,"http://"+url+dados);
 		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
 		
 		exec.start();
 		
 		do{
-//			Log.i("teste","sleep");
+//			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
@@ -587,7 +583,7 @@ public class ServiceApp extends Service {
 	class Conexao{
 		
 		public boolean isConected(){
-			Log.i("teste", "isConected()");
+			Log.i(LOG, "isConected()");
 			ConnectivityManager c = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 			if(c != null
 					&&((c.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) ||
@@ -629,19 +625,19 @@ public class ServiceApp extends Service {
 				
 			}
 			catch(Exception e){
-				Log.i("teste","error"+e);
+				Log.i(LOG,"error"+e);
 				onDestroy();
 			}
 			return true;			
 		}
 		
 		public String pegaLink(){
-			Log.i("teste", "entrou pegalink()");
+			Log.i(LOG, "entrou pegalink()");
 			String url = "192.168.1.200";
 			String urlAcesso = "";
 			
 			if(isConected()){
-				Log.i("teste", "conectado");
+				Log.i(LOG, "conectado");
 
 				if(isWifi()){
 					if(isLocal(url)){
@@ -656,10 +652,10 @@ public class ServiceApp extends Service {
 				}
 			}
 			else{
-				Log.i("teste", "nao conectado");
+				Log.i(LOG, "nao conectado");
 			}
-			Log.i("teste", "saiu pegalink()");
-			Log.i("teste", "");
+			Log.i(LOG, "saiu pegalink()");
+			Log.i(LOG, "");
 			return urlAcesso;		}
 	}
 	
@@ -693,13 +689,13 @@ public class ServiceApp extends Service {
 	public static class MyString {
 		public static String retiraQuebraLinha(String string){
 			if(!string.equals("")){
-//				Log.i("teste", "retiraQuebraLinha("+string+")");
+//				Log.i(LOG, "retiraQuebraLinha("+string+")");
 //				String parte1 = string.substring(0, string.indexOf('\\'));
-//				Log.i("teste", parte1);
+//				Log.i(LOG, parte1);
 //				string = parte1+"%5C"+string.substring(string.indexOf('\\')+1, string.length()-1);
-//				Log.i("teste", string);
+//				Log.i(LOG, string);
 				string.replace("\\n|\\r|\n|\r", "%5Cn");
-				Log.i("teste", "string: "+string);
+				Log.i(LOG, "string: "+string);
 			}
 			return string;
 		}
@@ -993,14 +989,14 @@ public class ServiceApp extends Service {
 		public void run(){
 			try {
 				respServer = client.execute(httpGet, handler);				
-				Log.i("teste", "run: '"+respServer+"'");
+				Log.i(LOG, "run: '"+respServer+"'");
 				
 			} catch (ClientProtocolException e) {
 				// TODO Auto-generated catch block
-				Log.i("teste", "Erro"+e);
+				Log.i(LOG, "Erro"+e);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				Log.i("teste", "Erro"+e);
+				Log.i(LOG, "Erro"+e);
 			}
 		}
 
