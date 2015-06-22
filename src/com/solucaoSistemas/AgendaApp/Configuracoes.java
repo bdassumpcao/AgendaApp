@@ -23,6 +23,8 @@ public class Configuracoes extends Activity {
 		    super.onCreate(icicle);
 		    setContentView(R.layout.configuracoes);
 		    
+			getActionBar().setDisplayShowHomeEnabled(false);
+//			getActionBar().hide();
 		    
 		    conectConfig = new ConectaLocal(getApplicationContext(), "CONFIGURACOES");		
 		    

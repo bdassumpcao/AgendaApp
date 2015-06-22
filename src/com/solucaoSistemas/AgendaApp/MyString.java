@@ -208,7 +208,7 @@ public  class MyString {
 		int j = 0;
 		cod = new String[x];
 		String[] re = new String[x];
-		String[] r = new String[2];
+		String[] r = new String[3];
 		
 		
 		for(int i = 0; i < aux.length; i++){
@@ -334,7 +334,7 @@ public  class MyString {
 	
 	private static String ordenaUser(String[] array, int j){
 		String retorno = "";
-		retorno += array[0].replace("'", "")+","+array[1]+",0"+",'DESCRICAO'";
+		retorno += array[0].replace("'", "")+","+array[1]+","+array[2]+",0";
 		return retorno;
 	}
 	

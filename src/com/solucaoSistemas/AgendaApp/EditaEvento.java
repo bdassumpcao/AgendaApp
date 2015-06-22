@@ -31,8 +31,14 @@ public class EditaEvento extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+		getActionBar().setDisplayShowHomeEnabled(false);
+//		getActionBar().hide();
+        
         //para o teclado não aparecer automaticamente
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);         
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);    
+        
+        
         Bundle b = getIntent().getExtras();
         String[] dados = b.getStringArray("key");
         cdevento = dados[0];

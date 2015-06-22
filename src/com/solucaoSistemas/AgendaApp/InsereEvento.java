@@ -32,6 +32,9 @@ public class InsereEvento extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+		getActionBar().setDisplayShowHomeEnabled(false);
+//		getActionBar().hide();
+        
         //para o teclado não aparecer automaticamente
 //        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN); 
         

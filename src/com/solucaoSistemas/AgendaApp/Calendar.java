@@ -30,6 +30,9 @@ public class Calendar extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+		getActionBar().setDisplayShowHomeEnabled(false);
+//		getActionBar().hide();
         Principal();
    }
     

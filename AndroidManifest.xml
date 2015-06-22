@@ -49,7 +49,17 @@
 		</activity>
 		<activity 
 		    android:name="com.solucaoSistemas.AgendaApp.Configuracoes"
-			android:label="@string/action_configuracoes">
+			android:label="@string/action_configuracoesM">
+         
+		</activity>
+		<activity 
+		    android:name="com.solucaoSistemas.AgendaApp.Tarefas"
+			android:label="@string/action_tarefas">
+         
+		</activity>
+		<activity 
+		    android:name="com.solucaoSistemas.AgendaApp.InsereTarefa"
+			android:label="@string/action_novaTarefa">
          
 		</activity>
 		<service android:name="ServiceApp" android:label="ServiceApp"

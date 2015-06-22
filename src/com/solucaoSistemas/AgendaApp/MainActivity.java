@@ -32,6 +32,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+		getActionBar().setDisplayShowHomeEnabled(false);
+//		getActionBar().hide();
+        
 		conectUser = new ConectaLocal(getApplicationContext(), "USUARIO");     
         
         try {

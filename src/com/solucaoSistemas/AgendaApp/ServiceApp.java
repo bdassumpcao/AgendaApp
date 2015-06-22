@@ -68,7 +68,6 @@ public class ServiceApp extends Service {
 				}catch(Exception e){
 					Log.i(LOG, "erro no monitor\n"+e);
 				}
-
 		}
 		
 		onDestroy();

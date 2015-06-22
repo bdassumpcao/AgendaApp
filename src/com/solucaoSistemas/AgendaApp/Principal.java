@@ -49,6 +49,9 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         
+		getActionBar().setDisplayShowHomeEnabled(false);
+//		getActionBar().hide();
+        
 //    	progress = new ProgressDialog(this);
 //    	progress.setMessage("Sincronizando Dados da Agenda");
         
@@ -80,7 +83,7 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
         conectUser.setClausula(" WHERE STATUS=1");	
     	cdusuario = MyString.tString(conectUser.select("CDUSUARIO"));  
     	usuario = MyString.tString(conectUser.select("NMUSUARIO"));
-    	uDescricao = MyString.tString(conectUser.select("DESCRICAO")); 
+    	uDescricao = MyString.tString(conectUser.select("DSCARGO")); 
     	tvUsuario = (TextView)findViewById(R.id.tvUsuario);
     	tvUsuario.setText(usuario);
     	tvUdescricao = (TextView)findViewById(R.id.tvUdescricao);
@@ -134,6 +137,11 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
         int id = item.getItemId();
 
         switch (id){
+    		case R.id.action_tarefas:
+	    		Intent intent3 = new Intent(Principal.this, Tarefas.class);
+	    		Principal.this.startActivity(intent3);
+	    		Principal.this.finish();
+	    		return true;	
 	    	case R.id.action_configuracoes:
 	    		Intent intent2 = new Intent(Principal.this, Configuracoes.class);
 	    		Principal.this.startActivity(intent2);
