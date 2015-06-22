@@ -1,12 +1,20 @@
 package com.solucaoSistemas.AgendaApp;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import com.solucaoSistemas.AgendaApp.ConectaLocal;
 import com.solucaoSistemas.AgendaApp.R;
+
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -19,49 +27,96 @@ public class MainActivity extends Activity {
 	Button bAvanca, opcoes;
 	ConectaLocal conectUser;
 	Spinner spinnerUsuario;	
+	private static  String LOG = "teste";
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		conectUser = new ConectaLocal(getApplicationContext(), "USUARIO");     
         
-        telaInicial(); 
+        try {
+			telaInicial();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
     }
     
     
-	public void telaInicial(){	    	    
+	public void telaInicial() throws InterruptedException{	    	    
 		setContentView(R.layout.activity_login);
 		
 		if(login(true).equals("")){
 			installShortCut();
 			String[] s;
 			
-			conectUser.setOrder(" ORDER BY NMUSUARIO");
+			Conexao conexao = new Conexao(this);
+			String url = "";
 			
-			conectUser.setClausula("");
-			
-			s = (tStringArray(conectUser.select("NMUSUARIO")));
-			
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, s);
-			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			
-			spinnerUsuario = (Spinner) findViewById(R.id.spinnerUsuario);
-			spinnerUsuario.setAdapter(adapter);
-			
-			bAvanca = (Button) findViewById(R.id.blogin);
-			
-			bAvanca.setOnClickListener(new OnClickListener(){
+			if(conexao.isConected()){
+				url = conexao.pegaLink();
+				Log.i(LOG, "link:\n"+url);				
 				
-				@Override
-				public void onClick(View v){
-					String user = spinnerUsuario.getSelectedItem().toString();
-					
-					conectUser.setClausula(" WHERE NMUSUARIO='"+tiraEspaço(user)+"' ");
-					conectUser.update(" STATUS=1 ");
-					telaPrincipal();
+				String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=user";
+				ResponseHandler<String> handler = new BasicResponseHandler();
+				HttpClient client = new DefaultHttpClient();
+				HttpGet httpGet = new HttpGet("http://"+url+dados);
+				Log.i(LOG,"http://"+url+dados);
+				ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
+				
+				exec.start();
+				
+				do{
+//					Log.i(LOG,"sleep");
+					Thread.sleep(1000);
 				}
-			});	
-			
+				while(exec.respServer.equals(""));				
+
+				String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
+
+				if(aux.equals("")){
+					Log.i(LOG, "respServer == "+aux);
+				}
+				else{	
+					String[] campos = MyString.montaInsertUsuario(aux);			
+					
+					for(String i : campos){
+						conectUser.insert(i);
+					}
+					
+					
+					conectUser.setOrder(" ORDER BY NMUSUARIO");
+					
+					conectUser.setClausula("");
+					
+					s = (MyString.tStringArray(conectUser.select("NMUSUARIO")));
+					
+					ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, s);
+					adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+					
+					spinnerUsuario = (Spinner) findViewById(R.id.spinnerUsuario);
+					spinnerUsuario.setAdapter(adapter);
+					
+					bAvanca = (Button) findViewById(R.id.blogin);
+					
+					bAvanca.setOnClickListener(new OnClickListener(){
+						
+						@Override
+						public void onClick(View v){
+							String user = spinnerUsuario.getSelectedItem().toString();
+							
+							conectUser.setClausula(" WHERE NMUSUARIO='"+MyString.tiraEspaço(user)+"' ");
+							conectUser.update(" STATUS=1 ");
+							telaPrincipal();
+						}
+					});	
+				}
+			}
+			else{
+				Log.i(LOG, "Sem Conexão");
+				showToast("Sem Conexão");
+				finish();
+			}			
 		}
 		else{
 			telaPrincipal();
@@ -107,86 +162,14 @@ public class MainActivity extends Activity {
 		
 		conectUser.setClausula(" WHERE STATUS=1");
 		
-		nome = (tString(conectUser.select("NMUSUARIO")));
+		nome = (MyString.tString(conectUser.select("NMUSUARIO")));
 		
 		return nome;
 
 	}
 	
 	
-	public static String tString(Object string){
-		
-		String resul = string.toString();
-		char[] aux = new char[resul.length()];
-		
-		for(int i = 0; i < resul.length(); i++){
-			aux[i] = resul.charAt(i);
-		}
-		
-		resul = "";
-		
-		for(int i = 0; i < aux.length; i++){
-			
-			if(aux[i] == '$' || aux[i] == ']' || aux[i] == '[' || aux[i] == '}' || aux[i] == '{' || aux[i] == '"' || aux[i] == ',' || aux[i] == ':'){
-				
-			}
-			else{
-				resul += aux[i];
-			}
-		}	
-		return resul;
-	}
-
-	public static String[] tStringArray(Object string){
-		
-		String resul = string.toString();
-		char[] aux = new char[resul.length()];
-		
-		for(int i = 0; i < resul.length(); i++){
-			aux[i] = resul.charAt(i);
-		}
-		
-		resul = "";
-		
-		int j = 0;
-		for(int i = 0; i < aux.length; i++){
-			if(aux[i] == '$'){
-				j++;
-			}
-		}
-		
-		String[] a = new String[j];
-		j = 0;
-		for(int i = 0; i < aux.length; i++){
-			if(aux[i] == '$'){
-				a[j] = resul;
-				j++;
-				resul = "";
-			}
-			
-			else if(aux[i] == ']' || aux[i] == '[' || aux[i] == '}' || aux[i] == '{' || aux[i] == '"' || aux[i] == ',' || aux[i] == ':'){
-				
-			}
-			
-			else{
-				resul += aux[i];
-			}
-		}		
-		return a;
-	}
 	
-	public static String tiraEspaço(String string){
-		String resp = "";
-
-		for(int i = 0; i < string.length(); i++){
-			if(string.charAt(0) == ' ' && i == 0){
-			}
-			else{
-				resp += string.charAt(i);
-			}
-		}		
-		return resp;
-	}		
 }
 
 

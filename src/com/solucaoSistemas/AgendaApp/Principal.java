@@ -10,10 +10,12 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.text.GetChars;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -40,12 +42,15 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
     private TextView tvUsuario, tvUdescricao;
     private AlertDialog alerta;
     private int horaExpediente = 7;
-    private ProgressDialog progress;
+//    private ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        
+//    	progress = new ProgressDialog(this);
+//    	progress.setMessage("Sincronizando Dados da Agenda");
         
         conectAgenda = new ConectaLocal(getApplicationContext(), "AGENDA");
         conectConfig = new ConectaLocal(getApplicationContext(), "CONFIGURACOES");
@@ -53,7 +58,7 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
         conectLogAgenda = new ConectaLocal(getApplicationContext(), "LOGAGENDA");
         
         //inicia serviço de sincronização
-        if(MainActivity.tString(conectConfig.select("SINCRONIZAR")).equals("1")){
+        if(MyString.tString(conectConfig.select("SINCRONIZAR")).equals("1")){
         	boolean alarmeAtivo = (PendingIntent.getBroadcast(this, 0, new Intent("SINCRONIZACAO_AGENDA"), PendingIntent.FLAG_NO_CREATE) == null);
 			
 			if(alarmeAtivo){
@@ -73,9 +78,9 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
         
  
         conectUser.setClausula(" WHERE STATUS=1");	
-    	cdusuario = MainActivity.tString(conectUser.select("CDUSUARIO"));  
-    	usuario = MainActivity.tString(conectUser.select("NMUSUARIO"));
-    	uDescricao = MainActivity.tString(conectUser.select("DESCRICAO")); 
+    	cdusuario = MyString.tString(conectUser.select("CDUSUARIO"));  
+    	usuario = MyString.tString(conectUser.select("NMUSUARIO"));
+    	uDescricao = MyString.tString(conectUser.select("DESCRICAO")); 
     	tvUsuario = (TextView)findViewById(R.id.tvUsuario);
     	tvUsuario.setText(usuario);
     	tvUdescricao = (TextView)findViewById(R.id.tvUdescricao);
@@ -127,6 +132,7 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
         switch (id){
 	    	case R.id.action_configuracoes:
 	    		Intent intent2 = new Intent(Principal.this, Configuracoes.class);
@@ -134,12 +140,17 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
 	    		Principal.this.finish();
 	    		return true;	   
 	    	case R.id.action_atualizar:
-	            if(MainActivity.tString(conectConfig.select("SINCRONIZAR")).equals("0")){	
-	            	progress = new ProgressDialog(this);
-	            	progress.setMessage("Sincronizando Dados da Agenda");
-	            	progress.show();
-	            	aguardaSync();
-	            	startService();
+	            if(MyString.tString(conectConfig.select("SINCRONIZAR")).equals("0")){		            		 
+	            	Conexao conexao = new Conexao(this);
+	            	if(!conexao.isConected())
+	            		showToast("Sem Conexão");
+	            	else{
+//	            		progress.show();   
+//	            		aguardaSync();
+	            		startService();
+	            		
+	            	}
+
 	                mWeekView.goToToday(); 
 	                mWeekView.goToHour(horaExpediente);
 	    	    }  
@@ -248,30 +259,30 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
         
     	conectAgenda.setClausula("WHERE CDUSUARIO='"+cdusuario+"'");
 
-    	if(MainActivity.tString(conectConfig.select("BAIXADO")).equals("0")){
+    	if(MyString.tString(conectConfig.select("BAIXADO")).equals("0")){
     		conectAgenda.setClausula("WHERE CDUSUARIO='"+cdusuario+"' AND STATUS=0");
     	}
     	
-    	campoDescricao = MainActivity.tStringArray(conectAgenda.select("DESCRICAO").toString());
-    	campoData = MainActivity.tStringArray(conectAgenda.select("DATA").toString());
-    	campoHoraInicio = MainActivity.tStringArray(conectAgenda.select("HORAINICIO").toString());
-    	campoHoraFim = MainActivity.tStringArray(conectAgenda.select("HORAFIM").toString());
-    	campoCdEvento = MainActivity.tStringArray(conectAgenda.select("CDEVENTO").toString());
-    	campoStatus = MainActivity.tStringArray(conectAgenda.select("STATUS").toString());	
+    	campoDescricao = MyString.tStringArray(conectAgenda.select("DESCRICAO").toString());
+    	campoData = MyString.tStringArray(conectAgenda.select("DATA").toString());
+    	campoHoraInicio = MyString.tStringArray(conectAgenda.select("HORAINICIO").toString());
+    	campoHoraFim = MyString.tStringArray(conectAgenda.select("HORAFIM").toString());
+    	campoCdEvento = MyString.tStringArray(conectAgenda.select("CDEVENTO").toString());
+    	campoStatus = MyString.tStringArray(conectAgenda.select("STATUS").toString());	
     	
     	
     	for(int i=0; i < campoDescricao.length ; i++){
-    		campoStatus[i] = MainActivity.tiraEspaço(campoStatus[i]);
-    		campoData[i] = MainActivity.tiraEspaço(campoData[i].replace("\\", "")); 
-    		int month = Integer.parseInt(MainActivity.tiraEspaço(campoData[i].substring(3, 5)));
+    		campoStatus[i] = MyString.tiraEspaço(campoStatus[i]);
+    		campoData[i] = MyString.tiraEspaço(campoData[i].replace("\\", "")); 
+    		int month = Integer.parseInt(MyString.tiraEspaço(campoData[i].substring(3, 5)));
     		if(month == newMonth){
-    			int cdEvento = Integer.parseInt(MainActivity.tiraEspaço(campoCdEvento[i]));
-            	int day_of_month = Integer.parseInt(MainActivity.tiraEspaço(campoData[i].substring(0, 2)));        	
-            	int year = Integer.parseInt(MainActivity.tiraEspaço(campoData[i].substring(6, 10)));      	
-            	campoHoraInicio[i] = MainActivity.tiraEspaço(campoHoraInicio[i]);
+    			int cdEvento = Integer.parseInt(MyString.tiraEspaço(campoCdEvento[i]));
+            	int day_of_month = Integer.parseInt(MyString.tiraEspaço(campoData[i].substring(0, 2)));        	
+            	int year = Integer.parseInt(MyString.tiraEspaço(campoData[i].substring(6, 10)));      	
+            	campoHoraInicio[i] = MyString.tiraEspaço(campoHoraInicio[i]);
             	int start_hour_of_day = Integer.parseInt(campoHoraInicio[i].substring(0, 2));
             	int start_minute = Integer.parseInt(campoHoraInicio[i].substring(2, 4));
-            	campoHoraFim[i] = MainActivity.tiraEspaço(campoHoraFim[i]);
+            	campoHoraFim[i] = MyString.tiraEspaço(campoHoraFim[i]);
             	int end_hour_of_day = Integer.parseInt(campoHoraFim[i].substring(0, 2));
             	int end_minute = Integer.parseInt(campoHoraFim[i].substring(2, 4));
             	String title = campoDescricao[i];
@@ -305,6 +316,7 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
         return events;
     }
 
+
     private void aguardaSync(){
     	Thread t = new Thread(new Runnable() {
 			
@@ -316,12 +328,14 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
 					} catch (Exception e) {
 						// TODO: handle exception
 					}
-				} while (ServiceApp.ativo);
-				progress.dismiss();
+				} while (ServiceApp.ativo);				
+//				progress.dismiss();
 			}
 		});
     	t.start();
     }
+    
+
 
     private String getEventTitle(Calendar time, String title) {
         return String.format(title+"  %02d:%02d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE));
@@ -330,7 +344,7 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
 //        Toast.makeText(Principal.this, "Clicked " + event.getId(), Toast.LENGTH_SHORT).show();        
-    	String cdevento = MainActivity.tString(event.getId()); 
+    	String cdevento = MyString.tString(event.getId()); 
         Calendar date = Calendar.getInstance();
         date = event.getStartTime();
         int d = date.get(Calendar.DAY_OF_MONTH);
@@ -360,7 +374,7 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
     @Override
     public void onEventLongPress(final WeekViewEvent event, RectF eventRect) {
     	conectAgenda.setClausula("WHERE CDEVENTO = "+event.getId()+"");
-    	String status = MainActivity.tString(conectAgenda.select("STATUS"));
+    	String status = MyString.tString(conectAgenda.select("STATUS"));
     	if(status.equals("1"))
     		showToast("Evento já está baixado!");
    		else{
@@ -383,7 +397,7 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
     
     public void deletar(long eventID, Calendar date){
    		conectAgenda.setClausula(" WHERE CDEVENTO = "+eventID+"");
-   		String cdExt = MainActivity.tString(conectAgenda.select(" CDEVENTOEXT "));
+   		String cdExt = MyString.tString(conectAgenda.select(" CDEVENTOEXT "));
    		if(conectAgenda.delete()){
    			conectLogAgenda.insert(eventID+","+cdExt+",'D'"); // 'D' = delete
    			mWeekView.goToDate(date);

@@ -47,15 +47,15 @@ public class EditaEvento extends Activity{
 	    setContentView(R.layout.activity_edita_evento);    	
 	    conectAgenda.setClausula("WHERE CDEVENTO = "+cdevento+"");	    
 	    
-	    campoCdExt = MainActivity.tString(conectAgenda.select("CDEVENTOEXT"));
-	    campoDescricao = MainActivity.tString(conectAgenda.select("DESCRICAO"));
-	    campoLocal = MainActivity.tString(conectAgenda.select("LOCAL"));
-	    campoObservacao = MainActivity.tString(conectAgenda.select("OBSERVACAO"));
-	    campoData = MainActivity.tString(conectAgenda.select("DATA"));
+	    campoCdExt = MyString.tString(conectAgenda.select("CDEVENTOEXT"));
+	    campoDescricao = MyString.tString(conectAgenda.select("DESCRICAO"));
+	    campoLocal = MyString.tString(conectAgenda.select("LOCAL"));
+	    campoObservacao = MyString.tString(conectAgenda.select("OBSERVACAO"));
+	    campoData = MyString.tString(conectAgenda.select("DATA"));
 	    campoData = campoData.replace("\\", "");  
-	    campoHoraInicio = MainActivity.tString(conectAgenda.select("HORAINICIO"));
-	    campoHoraFim = MainActivity.tString(conectAgenda.select("HORAFIM"));
-	    campoStatus = MainActivity.tString(conectAgenda.select("STATUS"));
+	    campoHoraInicio = MyString.tString(conectAgenda.select("HORAINICIO"));
+	    campoHoraFim = MyString.tString(conectAgenda.select("HORAFIM"));
+	    campoStatus = MyString.tString(conectAgenda.select("STATUS"));
 	    
 	    etDescricao = (EditText)findViewById(R.id.campoDescricao);
 	    etLocal = (EditText)findViewById(R.id.campoLocal);
@@ -173,7 +173,7 @@ public class EditaEvento extends Activity{
 				   campoStatus = campoStatusAtualizado;
 			   }
 			   conectUser.setClausula(" WHERE STATUS=1");
-			   CDUSUARIO = (MainActivity.tString(conectUser.select("CDUSUARIO")));
+			   CDUSUARIO = (MyString.tString(conectUser.select("CDUSUARIO")));
 			   conectAgenda.setClausula(" WHERE CDEVENTO = "+cdevento+"");	   
 			   
 			   comando = "CDUSUARIO="+CDUSUARIO+", " +
@@ -242,8 +242,8 @@ public class EditaEvento extends Activity{
    public boolean validaHorarioIgual(String horaInicial, String data){
 	   conectAgenda.setOrder(" ORDER BY HORAINICIO ");	   
 	   conectAgenda.setClausula(" WHERE DATA = '"+data+"' AND HORAINICIO='"+horaInicial+"' ");
-	   if(MainActivity.tString(conectAgenda.select("CDEVENTO")) != ""){		   
-		    if(!MainActivity.tString(conectAgenda.select("CDEVENTO")).equals(cdevento)){
+	   if(MyString.tString(conectAgenda.select("CDEVENTO")) != ""){		   
+		    if(!MyString.tString(conectAgenda.select("CDEVENTO")).equals(cdevento)){
 		    	etHoraInicio.setError("Já existe um evento neste horário!!");
 		    	etHoraInicio.setFocusable(true);
 		    	etHoraInicio.requestFocus();

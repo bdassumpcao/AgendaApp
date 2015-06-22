@@ -14,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.solucaoSistemas.AgendaApp.R;
@@ -86,7 +85,7 @@ public class InsereEvento extends Activity{
 					
 	   conectUser.setClausula(" WHERE STATUS=1");
 		
-	   cdusuario = (MainActivity.tString(conectUser.select("CDUSUARIO")));
+	   cdusuario = (MyString.tString(conectUser.select("CDUSUARIO")));
 	   etDescricao = (EditText)findViewById(R.id.campoDescricao);
 	   campoDescricao = etDescricao.getText().toString();
 	   etLocal = (EditText)findViewById(R.id.campoLocal);
@@ -194,7 +193,7 @@ public class InsereEvento extends Activity{
    public boolean validaHorarioIgual(String horaInicial, String data){
 	   conectEvento.setOrder(" ORDER BY HORAINICIO");	   
 	   conectEvento.setClausula("WHERE DATA = '"+data+"' AND HORAINICIO='"+horaInicial+"'");
-	   if(MainActivity.tString(conectEvento.select("HORAINICIO")) != ""){
+	   if(MyString.tString(conectEvento.select("HORAINICIO")) != ""){
 		    etHoraInicio.setError("Já existe um evento neste horário!!");
 		    etHoraInicio.setFocusable(true);
 		    etHoraInicio.requestFocus();

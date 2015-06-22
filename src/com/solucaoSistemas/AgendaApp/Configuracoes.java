@@ -29,14 +29,14 @@ public class Configuracoes extends Activity {
 		    final CheckBox sincronizar = (CheckBox)findViewById(R.id.sincronizar);
 		    final CheckBox baixado = (CheckBox)findViewById(R.id.baixados);
 		    
-		    if(MainActivity.tString(conectConfig.select("SINCRONIZAR")).equals("1")){
+		    if(MyString.tString(conectConfig.select("SINCRONIZAR")).equals("1")){
 		    	sincronizar.setChecked(true);
 		    }
 		    else {
 				sincronizar.setChecked(false);
 			}
 		    
-		    if(MainActivity.tString(conectConfig.select("BAIXADO")).equals("1")){
+		    if(MyString.tString(conectConfig.select("BAIXADO")).equals("1")){
 		    	baixado.setChecked(true);
 		    }
 		    else {
