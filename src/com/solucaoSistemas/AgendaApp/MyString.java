@@ -303,6 +303,48 @@ public  class MyString {
 		return re;
 	}
 	
+	public static String[] montaInsertTarefa(String resultGet){
+		int x = 0;
+		int c = 0;
+		
+		char[] aux = new char[resultGet.length()];
+		String nm = "'";
+	
+		for(int i = 0; i < resultGet.length(); i++){
+			aux[i] = resultGet.charAt(i);
+			if(aux[i] == '$'){
+				x++;
+			}
+		}
+	
+		int j = 0;
+		cod = new String[x];
+		String[] re = new String[x];
+		String [] r = new String[5];
+		
+		for(int i = 0; i < aux.length; i++){
+			if(aux[i] == '§'){
+				nm += "'";
+				r[c] = nm;
+				nm = "'";
+				c++;
+			}
+			else if(aux[i] == '$'){
+				nm += "'";
+				r[c] = nm;
+				nm = "'";
+				c = 0;
+				re[j] = ordenaTarefa(r, j);
+				j++;
+			}
+			else{
+				nm += aux[i];
+			}
+		}
+		
+		return re;
+	}
+	
 	public static String[] montaUpdateAgenda(String resultGet){
 		int x = 0;
 		int c = 0;
@@ -359,6 +401,12 @@ public  class MyString {
 	}
 	
 	private static String ordenaUser(String[] array, int j){
+		String retorno = "";
+		retorno += array[0].replace("'", "")+","+array[1]+","+array[2]+",0";
+		return retorno;
+	}
+	
+	private static String ordenaTarefa(String[] array, int j){
 		String retorno = "";
 		retorno += array[0].replace("'", "")+","+array[1]+","+array[2]+",0";
 		return retorno;

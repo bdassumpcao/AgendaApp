@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -141,6 +142,8 @@ public class InsereTarefa extends Activity{
 	            }
 	        };
 	        lst_usuarios.setAdapter(lsvUsuariosAdapter);
+	        
+
 	    
 	 }
 	 
@@ -167,11 +170,9 @@ public class InsereTarefa extends Activity{
 		    			else		    				
 		    				cdDestinatarios += getCodUsuario(selecionados.get(i))+",";
 		    		}
-		    		Log.i(LOG, cdDestinatarios);
 		    		
 		    		conectTarefa.setClausula("");
-		    		conectTarefa.insert("null,'"+edt_desc.getText().toString()+"',0,'"+cdDestinatarios+"',"+usuarioAtivo);
-		    		Log.i(LOG, "null,'"+edt_desc.getText().toString()+"',0,'"+cdDestinatarios+"',"+usuarioAtivo);
+		    		conectTarefa.insert("null,'"+edt_desc.getText().toString()+"',0,'"+cdDestinatarios+"',"+usuarioAtivo+",null");
 		    		
 		    		return true;		    			
 	        }

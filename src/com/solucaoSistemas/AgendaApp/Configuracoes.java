@@ -91,6 +91,8 @@ public class Configuracoes extends Activity {
 	  public  void startService(){
 			Intent intent = new Intent("SERVICO_AGENDA");
 			startService(intent);
+			
+			startService(new Intent("SERVICO_TAREFA"));
 		}
 
 	  
@@ -99,6 +101,11 @@ public class Configuracoes extends Activity {
 			PendingIntent p = PendingIntent.getBroadcast(Configuracoes.this, 0, intent, 0);			
 			AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
 			alarme.cancel(p);
+			
+			Intent intent1 = new Intent("SINCRONIZACAO_TAREFA");
+			PendingIntent p1 = PendingIntent.getBroadcast(Configuracoes.this, 0, intent1, 0);			
+			AlarmManager alarme1 = (AlarmManager) getSystemService(ALARM_SERVICE);
+			alarme1.cancel(p1);
 		}
 	  
 	  @Override

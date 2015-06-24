@@ -75,11 +75,21 @@
 				<action android:name="SINCRONIZACAO_AGENDA"/>
 			</intent-filter>
 		</receiver>
-		<receiver android:name="BroadcastReboot">
+		<receiver android:name="BroadcastReboot" android:label="BroadcastReboot">
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED"/>
 			</intent-filter>
 		</receiver>
+		<receiver android:label="BroadcastTarefa" android:name="BroadcastTarefa">
+			<intent-filter>
+				<action android:name="SINCRONIZACAO_TAREFA"/>
+			</intent-filter>
+		</receiver>
+		<service android:name="ServiceTarefas" android:label="ServiceTarefas">
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT"/><action android:name="SERVICO_TAREFA"/>
+			</intent-filter>
+		</service>
     </application>
 
 </manifest>

@@ -362,13 +362,11 @@ public class ServiceApp extends Service {
 		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
 		
 		exec.start();
-		Log.i(LOG, "depois do exec.start");
 		do{
 //			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
-		Log.i(LOG, "antes do if");
 		String s = exec.respServer.substring(0, exec.respServer.indexOf("$"));
 		Log.i(LOG, "respServer:'"+s+"'");
 		
@@ -379,6 +377,7 @@ public class ServiceApp extends Service {
 			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTO ", cdU));
 			Log.i(LOG, "ultimoCdCelular"+ultimoCdCelular);			
 			
+			//se for igual a menos um não executa o restante pois não tem eventos para inserir
 			if(ultimoCdCelular!=-1){
 				String  cdEvento, desc, lc, obs, dt, hI, hF, st;
 				conectAgenda.setOrder("");
@@ -547,7 +546,6 @@ public class ServiceApp extends Service {
 	public String pegaUltimo(String campo, String cdU){
 		Log.i(LOG, "pegaUltimo()");
 		conectAgenda.setClausula(" WHERE CDUSUARIO="+cdU);
-//		conectAgenda.setClausula(" WHERE CDEVENTO=79 ");
 		conectAgenda.setOrder(" ORDER BY "+campo);		
 		String[] aux = MyString.tStringArray(conectAgenda.select(campo));
 		if(aux.length>0)

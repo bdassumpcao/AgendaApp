@@ -65,7 +65,7 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
         	boolean alarmeAtivo = (PendingIntent.getBroadcast(this, 0, new Intent("SINCRONIZACAO_AGENDA"), PendingIntent.FLAG_NO_CREATE) == null);
 			
 			if(alarmeAtivo){
-				Log.i("teste", "Novo alarme");
+				Log.i("teste", "Alarme Agenda");
 				
 				Intent intent = new Intent("SINCRONIZACAO_AGENDA");
 				PendingIntent p = PendingIntent.getBroadcast(this, 0, intent, 0);
@@ -76,6 +76,22 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
 				
 				AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
 				alarme.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), 120000, p);
+			}
+			
+        	boolean alarmeAtivo2 = (PendingIntent.getBroadcast(this, 0, new Intent("SINCRONIZACAO_TAREFA"), PendingIntent.FLAG_NO_CREATE) == null);
+			
+			if(alarmeAtivo2){
+				Log.i("teste", "Alarme Tarefa");
+				
+				Intent intent = new Intent("SINCRONIZACAO_TAREFA");
+				PendingIntent p = PendingIntent.getBroadcast(this, 0, intent, 0);
+				
+				Calendar c = Calendar.getInstance();
+				c.setTimeInMillis(System.currentTimeMillis());
+				c.add(Calendar.SECOND, 3);
+				
+				AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
+				alarme.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), 300000, p);
 			}
 	    }        
         
@@ -416,12 +432,16 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
 	  public  void startService(){
 			Intent intent = new Intent("SERVICO_AGENDA");
 			startService(intent);
+			
+			startService(new Intent("SERVICO_TAREFA"));
 		}
 
 	  
 	  public void stopService(){
 			Intent intent = new Intent("SERVICO_AGENDA");
 			stopService(intent);
+			
+			stopService(new Intent("SERVICO_TAREFA"));
 		}
     
     public void showToast(String texto){		

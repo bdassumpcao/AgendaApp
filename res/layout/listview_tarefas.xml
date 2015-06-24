@@ -3,7 +3,8 @@
  <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
      android:layout_width="wrap_content"
      android:layout_height="match_parent"
-     android:orientation="vertical" >
+     android:orientation="vertical"
+     android:paddingLeft="5dp" >
         
         <LinearLayout
             android:layout_width="match_parent"
@@ -11,9 +12,6 @@
             android:orientation="vertical" 
             android:baselineAligned="false">
             
-            <TableLayout 
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
                 
                 <TableRow
 				    android:id="@+id/tableRow2"
@@ -40,7 +38,7 @@
 				        android:layout_height="wrap_content"
 				        android:layout_gravity="center_vertical"
 				        android:gravity="left"
-				        android:text="Responsavel:"
+				        android:text="Responsavel: "
 				        android:textSize="17sp" />
 				    	
 				    <TextView
@@ -48,7 +46,6 @@
 				        android:layout_width="wrap_content"
 				        android:layout_height="wrap_content"
 				        android:layout_gravity="center_vertical"
-				        wrap_content=""
 				        android:gravity="left"
 				        android:textSize="17sp" />
  
@@ -64,7 +61,7 @@
 				        android:layout_height="wrap_content"
 				        android:layout_gravity="center_vertical"
 				        android:gravity="left"
-				        android:text="Para:"
+				        android:text="Para: "
 				        android:textSize="18sp" />
 				    	
 				    <TextView
@@ -72,7 +69,6 @@
 				        android:layout_width="wrap_content"
 				        android:layout_height="wrap_content"
 				        android:layout_gravity="center_vertical"
-				        wrap_content=""
 				        android:gravity="left"
 				        android:textSize="17sp" />
  
@@ -81,19 +77,34 @@
 
                  
 			    <TableRow
-				    android:id="@+id/tableRow1"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content" >    
-        
-				    <CheckBox
-				        android:id="@+id/check_tarefa"
-				        android:layout_width="wrap_content"
-				        android:layout_height="wrap_content"
-				        android:text="Concluido"
-				        android:textSize="17sp" />
+				    android:id="@+id/tableRow3"
+				    android:layout_width="match_parent"
+				    android:layout_height="wrap_content" >   
 
+				    <RelativeLayout
+				        android:layout_width="match_parent"
+				        android:layout_height="wrap_content" >
+
+					    <CheckBox
+					        android:id="@+id/check_tarefa"
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:text="Concluido"
+					        android:textSize="17sp" />
+
+					    <Button
+					        android:id="@+id/btn_deletar"
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:layout_alignParentRight="true"
+					        android:layout_alignParentTop="true"
+					        android:background="@android:drawable/ic_delete"
+					        android:minHeight="30dip"
+					        android:minWidth="30dip"
+					        android:padding="5dp" />
+
+					</RelativeLayout> 
 				</TableRow>
     			
-			</TableLayout>
 		</LinearLayout>
 </RelativeLayout>

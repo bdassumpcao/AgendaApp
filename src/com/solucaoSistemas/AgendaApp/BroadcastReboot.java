@@ -10,6 +10,8 @@ public class BroadcastReboot extends BroadcastReceiver{
 	public void onReceive(Context context, Intent intent) {
 		 intent = new Intent("SINCRONIZACAO_AGENDA");
 		 context.sendBroadcast(intent);
+		 
+		 context.sendBroadcast(new Intent("SINCRONIZACAO_TAREFA"));
 	}
 
 }
