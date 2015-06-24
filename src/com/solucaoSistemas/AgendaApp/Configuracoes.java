@@ -21,7 +21,7 @@ public class Configuracoes extends Activity {
 	  
 	  public void onCreate(Bundle icicle) {
 		    super.onCreate(icicle);
-		    setContentView(R.layout.configuracoes);
+		    setContentView(R.layout.activity_configuracoes);
 		    
 			getActionBar().setDisplayShowHomeEnabled(false);
 //			getActionBar().hide();

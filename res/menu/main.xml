@@ -6,7 +6,7 @@
     tools:context=".MyActivity" >
     <item android:id="@+id/action_tarefas"         
           android:title="@string/action_tarefas"
-          android:icon="@android:drawable/btn_star"
+          android:icon="@android:drawable/ic_menu_agenda"
           android:showAsAction="always" />  
     <item android:id="@+id/action_novoEvento"         
           android:title="@string/action_novoEvento"

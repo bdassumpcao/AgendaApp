@@ -64,7 +64,7 @@ public class InsereEvento extends Activity{
    @Override
    public boolean onCreateOptionsMenu(Menu menu) {
    	MenuInflater inflater = getMenuInflater();
-   	inflater.inflate(R.menu.insere_evento, menu);
+   	inflater.inflate(R.menu.menu_insere_evento, menu);
        return true;
    }
 

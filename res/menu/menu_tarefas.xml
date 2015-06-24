@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xml>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+     <item android:id="@+id/action_eventos"         
+          android:title="@string/action_eventos"
+          android:icon="@android:drawable/ic_menu_my_calendar"
+          android:showAsAction="always" /> 
      <item android:id="@+id/action_novaTarefa"         
           android:title="@string/action_novaTarefa"
           android:icon="@android:drawable/ic_input_add"
           android:showAsAction="always" /> 
-     <item android:id="@+id/action_eventos"         
-          android:title="@string/action_eventos"
-          android:icon="@android:drawable/ic_menu_agenda"
-          android:showAsAction="always" />       
+      
 </menu>

@@ -51,76 +51,83 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_login);
 		
 		if(login(true).equals("")){
-			installShortCut();
-			String[] s;
-			
-			Conexao conexao = new Conexao(this);
-			String url = "";
-			
-			if(conexao.isConected()){
-				url = conexao.pegaLink();
-				Log.i(LOG, "link:\n"+url);				
+			conectUser.setClausula(" ORDER BY CDUSUARIO ");
+			if(MyString.tString(conectUser.select(" * ")).equals("")){					
+				installShortCut();
 				
-				String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=user";
-				ResponseHandler<String> handler = new BasicResponseHandler();
-				HttpClient client = new DefaultHttpClient();
-				HttpGet httpGet = new HttpGet("http://"+url+dados);
-				Log.i(LOG,"http://"+url+dados);
-				ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
 				
-				exec.start();
+				Conexao conexao = new Conexao(this);
+				String url = "";
 				
-				do{
-//					Log.i(LOG,"sleep");
-					Thread.sleep(1000);
-				}
-				while(exec.respServer.equals(""));				
-
-				String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
-
-				if(aux.equals("")){
-					Log.i(LOG, "respServer == "+aux);
-				}
-				else{	
-					String[] campos = MyString.montaInsertUsuario(aux);			
+				if(conexao.isConected()){
+					url = conexao.pegaLink();
+					Log.i(LOG, "link:\n"+url);				
 					
-					for(String i : campos){
-						conectUser.insert(i);
+					String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=user";
+					ResponseHandler<String> handler = new BasicResponseHandler();
+					HttpClient client = new DefaultHttpClient();
+					HttpGet httpGet = new HttpGet("http://"+url+dados);
+					Log.i(LOG,"http://"+url+dados);
+					ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
+					
+					exec.start();
+					
+					do{
+	//					Log.i(LOG,"sleep");
+						Thread.sleep(1000);
 					}
-					
-					
-					conectUser.setOrder(" ORDER BY NMUSUARIO");
-					
-					conectUser.setClausula("");
-					
-					s = (MyString.tStringArray(conectUser.select("NMUSUARIO")));
-					
-					ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, s);
-					adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					
-					spinnerUsuario = (Spinner) findViewById(R.id.spinnerUsuario);
-					spinnerUsuario.setAdapter(adapter);
-					
-					bAvanca = (Button) findViewById(R.id.blogin);
-					
-					bAvanca.setOnClickListener(new OnClickListener(){
+					while(exec.respServer.equals(""));				
+	
+					String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
+	
+					if(aux.equals("")){
+						Log.i(LOG, "respServer == "+aux);
+					}
+					else{	
+						String[] campos = MyString.montaInsertUsuario(aux);			
 						
-						@Override
-						public void onClick(View v){
-							String user = spinnerUsuario.getSelectedItem().toString();
-							
-							conectUser.setClausula(" WHERE NMUSUARIO='"+MyString.tiraEspaço(user)+"' ");
-							conectUser.update(" STATUS=1 ");
-							telaPrincipal();
+						for(String i : campos){
+							conectUser.insert(i);
 						}
-					});	
+						
+					}
 				}
-			}
-			else{
-				Log.i(LOG, "Sem Conexão");
-				showToast("Sem Conexão");
-				finish();
-			}			
+				else{
+					Log.i(LOG, "Sem Conexão");
+					showToast("Sem Conexão");
+					finish();
+				}	
+				
+			}		
+			String[] s;
+		    conectUser.setOrder(" ORDER BY NMUSUARIO");
+						
+			conectUser.setClausula("");
+			
+			s = (MyString.tStringArray(conectUser.select("NMUSUARIO")));
+			
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, s);
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			
+			spinnerUsuario = (Spinner) findViewById(R.id.spinnerUsuario);
+			spinnerUsuario.setAdapter(adapter);
+			
+			bAvanca = (Button) findViewById(R.id.blogin);
+			
+			bAvanca.setOnClickListener(new OnClickListener(){
+				
+				@Override
+				public void onClick(View v){
+					String user = spinnerUsuario.getSelectedItem().toString();
+					
+					conectUser.setClausula(" WHERE NMUSUARIO='"+MyString.tiraEspaço(user)+"' ");
+					conectUser.update(" STATUS=1 ");
+					telaPrincipal();
+				}
+			});	
+					
+
+			
 		}
 		else{
 			telaPrincipal();
@@ -155,7 +162,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    
+  
 	public void showToast(String texto){		
 		Toast.makeText(this, texto, Toast.LENGTH_LONG).show();
 	}

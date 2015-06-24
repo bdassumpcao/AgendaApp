@@ -3,6 +3,7 @@
 <resources>
     <string name="app_name">AGENDA</string>
     <string name="editar">EDITAR</string>
+    <string name="action_removerTarefa">REMOVER TAREFA</string>
     <string name="action_eventos">EVENTOS</string>
     <string name="action_novoEvento">NOVO EVENTO</string>
     <string name="action_novaTarefa">NOVA TAREFA</string>

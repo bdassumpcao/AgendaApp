@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xml>
+ <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="wrap_content"
+     android:layout_height="match_parent"
+     android:orientation="vertical" >
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" 
+            android:baselineAligned="false">
+            
+            <TableLayout 
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                
+                <TableRow
+				    android:id="@+id/tableRow2"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content" > 
+				     
+				    <TextView
+				        android:id="@+id/txtv_Descricao"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center_vertical"
+				        android:gravity="left"
+				        android:textSize="17sp" />
+   
+				 </TableRow>  
+				 
+                 <TableRow
+				    android:id="@+id/tableRow1"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content" > 
+				     
+				    <TextView
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center_vertical"
+				        android:gravity="left"
+				        android:text="Responsavel:"
+				        android:textSize="17sp" />
+				    	
+				    <TextView
+				        android:id="@+id/txtv_nmResponsavel" 
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center_vertical"
+				        wrap_content=""
+				        android:gravity="left"
+				        android:textSize="17sp" />
+ 
+				 </TableRow>   
+				 
+                 <TableRow
+				    android:id="@+id/tableRow4"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content" > 
+				     
+				    <TextView
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center_vertical"
+				        android:gravity="left"
+				        android:text="Para:"
+				        android:textSize="18sp" />
+				    	
+				    <TextView
+				        android:id="@+id/txtv_nmDestinatarios"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:layout_gravity="center_vertical"
+				        wrap_content=""
+				        android:gravity="left"
+				        android:textSize="17sp" />
+ 
+				 </TableRow>   
+
+
+                 
+			    <TableRow
+				    android:id="@+id/tableRow1"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content" >    
+        
+				    <CheckBox
+				        android:id="@+id/check_tarefa"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="Concluido"
+				        android:textSize="17sp" />
+
+				</TableRow>
+    			
+			</TableLayout>
+		</LinearLayout>
+</RelativeLayout>
