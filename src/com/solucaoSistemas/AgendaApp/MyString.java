@@ -409,7 +409,7 @@ public  class MyString {
 	private static String ordenaTarefa(String[] array, int j){
 		String retorno = "";
 		cod[j] = array[0];
-		retorno += "null,"+array[1]+","+array[2]+","+array[3]+","+array[4]+","+array[0];
+		retorno += "null,"+array[1]+","+array[2]+","+array[3]+","+array[4]+","+array[5];
 //		Log.i(LOG, "retorno:"+retorno);
 		return retorno;
 	}

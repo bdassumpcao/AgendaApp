@@ -255,32 +255,35 @@ public class ServiceTarefas extends Service{
 		String dados = "";
 		String respServer = "";
 		
+		
 		if(cdRef.equals("-1")){
+			Log.i(LOG, "cdRef.equals('-1')");
 			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sar&cdU="+cdU;			
 			respServer = webservice(url, dados);
 			respServer = respServer.substring(0, respServer.indexOf("#"));
 			Log.i(LOG, "respServer == "+respServer);
-			insereCelular(respServer, true);
+			insereCelular(respServer);
 			
 			
 			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sad&cdU="+cdU;	
 			respServer = webservice(url, dados);
 			respServer = respServer.substring(0, respServer.indexOf("#"));
 			Log.i(LOG, "respServer == "+respServer);
-			insereCelular(respServer, false);
+			insereCelular(respServer);
 		}
 		
 		if(!cdRef.equals("-1")){
+			Log.i(LOG, "!cdRef.equals('-1')");
 			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdU="+cdU+"&cdE="+cdRef;
 			respServer = webservice(url, dados);	
 			respServer = respServer.substring(0, respServer.indexOf("#"));
-			insereCelular(respServer, false);
+			insereCelular(respServer);
 			Log.i(LOG, "respServer == "+respServer);
 		}
 
 	}
 	
-	public void insereCelular(String respServer, boolean atualiza_referencia){
+	public void insereCelular(String respServer){
 		Log.i(LOG, "insereCelular() TAREFA");
 		if(!respServer.equals("")){
 			try {
@@ -290,12 +293,7 @@ public class ServiceTarefas extends Service{
 				
 				for(String i : campos){
 					conectTarefa.insert(i);
-					Log.i(LOG, MyString.tString(conectTarefa.select(" CDTAREFA "))+" inserido no celular");
-					if(atualiza_referencia){
-						conectTarefa.setClausula(" WHERE CDREFERENCIA="+cod[j]);					
-						updateCodServidor(MyString.tString(conectTarefa.select(" CDTAREFA ")), cod[j]);						
-					}
-					j++;
+					Log.i(LOG, i+" |inserido no celular");
 				}
 				geraNotificacaoNovoEvento();
 			} catch (Exception e) {
