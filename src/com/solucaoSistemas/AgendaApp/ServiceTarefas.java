@@ -331,7 +331,7 @@ public class ServiceTarefas extends Service{
 			//Se ultimoCdCelular for igual a -1 não executa o restante pois não tem tarefas para inserir
 			if(!ultimoCdCelular.equals("-1")){
 				
-				String  cdTarefa, descricao, dest, responsavel, status;
+				String  cdTarefa, descricao, dest, responsavel, status, cdRef;
 				conectTarefa.setOrder("");
 				conectTarefa.setClausula("");
 				String[] cdE = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
@@ -346,18 +346,20 @@ public class ServiceTarefas extends Service{
 					responsavel = MyString.tString(conectTarefa.select("CDRESPONSAVEL"));
 					responsavel = URLEncoder.encode(responsavel, "UTF-8");
 					status = MyString.tString(conectTarefa.select("CDSTATUS"));	
+					cdRef = MyString.tString(conectTarefa.select("CDREFERENCIA"));	
 					
 					
 					destinatarios = getNmDestinatarios(dest);
 					
 					for(int x=0; x<destinatarios.size(); x++){
 						String d = URLEncoder.encode(destinatarios.get(x), "UTF-8");
-						String campos = "cdExt="+cdTarefa+"&descricao="+descricao+"&destinatario="+d+"&responsavel="+responsavel+"&status="+status;
+						String campos = "descricao="+descricao+"&destinatario="+d+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef;
 						Log.i(LOG, campos);
+						insereServidor(url, campos);	
 						
-						String cdRef = insereServidor(url, campos);						
-						conectTarefa.setClausula(" WHERE CDTAREFA="+cdE[i]);
-						conectTarefa.update(" CDREFERENCIA="+cdRef);
+//						String cdRef = insereServidor(url, campos);						
+//						conectTarefa.setClausula(" WHERE CDTAREFA="+cdE[i]);
+//						conectTarefa.update(" CDREFERENCIA="+cdRef);
 						Log.i(LOG, cdTarefa+" inserido no servidor");
 					}					
 				}
@@ -370,7 +372,7 @@ public class ServiceTarefas extends Service{
 			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDTAREFA ", cdU));
 			if(ultimoCdCelular != -1)
 			if(ultimoCdCelular>codigoServidor){
-				String  cdTarefa, descricao, dest, responsavel, status;
+				String  cdTarefa, descricao, dest, responsavel, status, cdRef;
 				conectTarefa.setOrder("");
 				conectTarefa.setClausula(" WHERE CDTAREFA>"+codigoServidor);
 				String[] cdE = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
@@ -387,17 +389,16 @@ public class ServiceTarefas extends Service{
 					responsavel = MyString.tString(conectTarefa.select("CDRESPONSAVEL"));
 					responsavel = URLEncoder.encode(responsavel, "UTF-8");
 					status = MyString.tString(conectTarefa.select("CDSTATUS"));	
+					cdRef = MyString.tString(conectTarefa.select("CDREFERENCIA"));	
 							
 					destinatarios = getNmDestinatarios(dest);
 					
 					for(int x=0; x<destinatarios.size(); x++){
 						String d = URLEncoder.encode(destinatarios.get(x), "UTF-8");
-						String campos = "cdExt="+cdTarefa+"&descricao="+descricao+"&destinatario="+d+"&responsavel="+responsavel+"&status="+status;
+						String campos = "descricao="+descricao+"&destinatario="+d+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef;
 						Log.i(LOG, campos);
-						
-						String cdRef = insereServidor(url, campos);						
-						conectTarefa.setClausula(" WHERE CDTAREFA="+cdE[i]);
-						conectTarefa.update(" CDREFERENCIA="+cdRef);
+						insereServidor(url, campos);	
+
 						Log.i(LOG, cdTarefa+" inserido no servidor");
 					}
 				}

@@ -3,11 +3,10 @@ package com.solucaoSistemas.AgendaApp;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
-
-
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +26,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -36,11 +36,11 @@ public class Tarefas extends Activity{
 	
 	private ConectaLocal conectUser;
 	private ConectaLocal conectTarefa;
-	private String[] TAREFAS;
-	private ListView lst_tarefas;
+	public List<String> TAREFAS = new ArrayList<String>();
+	public  ListView lst_tarefas;
 //	private List<String> selecionados = new ArrayList<String>();
 	private static  String LOG = "teste";
-	TarefasAdapter lsvTarefasAdapter;
+	public TarefasAdapter lsvTarefasAdapter;
 	
 	 @Override
 	 protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +57,11 @@ public class Tarefas extends Activity{
 			
 			conectTarefa.setClausula("");
 			
-			TAREFAS = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
-	        
-			
+			String[] aux = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
+	         for(String array : aux){
+	        	 TAREFAS.add(MyString.tiraEspaço(array));
+	         }
+				         
 			this.lst_tarefas = (ListView)findViewById(R.id.lst_tarefas);
 			this.lst_tarefas.setLongClickable(true);
 			this.lst_tarefas.setItemsCanFocus(true);
@@ -134,4 +136,10 @@ public class Tarefas extends Activity{
 		    return super.onKeyDown(keyCode, event);
 		}
 	 
+	 
 }
+
+
+
+
+
