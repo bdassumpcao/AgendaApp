@@ -251,39 +251,50 @@ public class ServiceTarefas extends Service{
 	 */
 	public void selectServidor(String url) throws InterruptedException{	
 		String cdU = userAtivo();
-		String cdExt = pegaUltimo(" CDTAREFAEXT ", cdU);
+		String cdRef = pegaUltimo(" CDREFERENCIA ", cdU);
 		String dados = "";
 		String respServer = "";
 		
-		if(cdExt.equals("-1")){
+		if(cdRef.equals("-1")){
 			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sar&cdU="+cdU;			
 			respServer = webservice(url, dados);
-			
 			respServer = respServer.substring(0, respServer.indexOf("#"));
+			Log.i(LOG, "respServer == "+respServer);
+			insereCelular(respServer, true);
+			
+			
 			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sad&cdU="+cdU;	
-			respServer += webservice(url, dados);
+			respServer = webservice(url, dados);
+			respServer = respServer.substring(0, respServer.indexOf("#"));
+			Log.i(LOG, "respServer == "+respServer);
+			insereCelular(respServer, false);
 		}
 		
-		if(!cdExt.equals("-1")){
-			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdU="+cdU+"&cdE="+cdExt;
-			respServer = webservice(url, dados);			
+		if(!cdRef.equals("-1")){
+			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdU="+cdU+"&cdE="+cdRef;
+			respServer = webservice(url, dados);	
+			respServer = respServer.substring(0, respServer.indexOf("#"));
+			insereCelular(respServer, false);
+			Log.i(LOG, "respServer == "+respServer);
 		}
-		
-		String aux = respServer.substring(0, respServer.indexOf("#"));
-		
-		Log.i(LOG, "respServer == "+aux);
-		
-		if(!aux.equals("")){
+
+	}
+	
+	public void insereCelular(String respServer, boolean atualiza_referencia){
+		Log.i(LOG, "insereCelular() TAREFA");
+		if(!respServer.equals("")){
 			try {
-				String[] campos = MyString.montaInsertAgenda(aux);
-				cod = MyString.getCod();
-				
+				String[] campos = MyString.montaInsertTarefa(respServer);
+				cod = MyString.getCod();				
 				int j = 0;
+				
 				for(String i : campos){
 					conectTarefa.insert(i);
-					conectTarefa.setClausula(" WHERE CDTAREFAEXT="+cod[j]);
 					Log.i(LOG, MyString.tString(conectTarefa.select(" CDTAREFA "))+" inserido no celular");
-					updateCodServidor(MyString.tString(conectTarefa.select(" CDTAREFAEXT ")), cod[j]);
+					if(atualiza_referencia){
+						conectTarefa.setClausula(" WHERE CDREFERENCIA="+cod[j]);					
+						updateCodServidor(MyString.tString(conectTarefa.select(" CDTAREFA ")), cod[j]);						
+					}
 					j++;
 				}
 				geraNotificacaoNovoEvento();
@@ -291,7 +302,6 @@ public class ServiceTarefas extends Service{
 				e.printStackTrace();
 			}
 		}
-		
 	}
 	
 	
@@ -315,7 +325,7 @@ public class ServiceTarefas extends Service{
 		
 		//Se webservice retornar "" então selecionamos todas as tarefas do celular para inserir
 		if(s.equals("")){			
-			String ultimoCdCelular = pegaUltimo(" CDTAREFAEXT ", cdU);
+			String ultimoCdCelular = pegaUltimo(" CDREFERENCIA ", cdU);
 			Log.i(LOG, "ultimoCdCelular"+ultimoCdCelular);			
 			
 			//Se ultimoCdCelular for igual a -1 não executa o restante pois não tem tarefas para inserir
@@ -337,6 +347,7 @@ public class ServiceTarefas extends Service{
 					responsavel = URLEncoder.encode(responsavel, "UTF-8");
 					status = MyString.tString(conectTarefa.select("CDSTATUS"));	
 					
+					
 					destinatarios = getNmDestinatarios(dest);
 					
 					for(int x=0; x<destinatarios.size(); x++){
@@ -344,9 +355,9 @@ public class ServiceTarefas extends Service{
 						String campos = "cdExt="+cdTarefa+"&descricao="+descricao+"&destinatario="+d+"&responsavel="+responsavel+"&status="+status;
 						Log.i(LOG, campos);
 						
-						String cdExt = insereServidor(url, campos);						
+						String cdRef = insereServidor(url, campos);						
 						conectTarefa.setClausula(" WHERE CDTAREFA="+cdE[i]);
-						conectTarefa.update(" CDTAREFAEXT="+cdExt);
+						conectTarefa.update(" CDREFERENCIA="+cdRef);
 						Log.i(LOG, cdTarefa+" inserido no servidor");
 					}					
 				}
@@ -384,9 +395,9 @@ public class ServiceTarefas extends Service{
 						String campos = "cdExt="+cdTarefa+"&descricao="+descricao+"&destinatario="+d+"&responsavel="+responsavel+"&status="+status;
 						Log.i(LOG, campos);
 						
-						String cdExt = insereServidor(url, campos);						
+						String cdRef = insereServidor(url, campos);						
 						conectTarefa.setClausula(" WHERE CDTAREFA="+cdE[i]);
-						conectTarefa.update(" CDTAREFAEXT="+cdExt);
+						conectTarefa.update(" CDREFERENCIA="+cdRef);
 						Log.i(LOG, cdTarefa+" inserido no servidor");
 					}
 				}
@@ -406,7 +417,7 @@ public class ServiceTarefas extends Service{
 	 */
 	public String insereServidor(String url, String campos) throws InterruptedException{	
 		Log.i(LOG, "entrou insereServidor()");
-		String cdExt = "";
+		String cdRef= "";
 		String dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=i&"+campos;
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
@@ -428,9 +439,9 @@ public class ServiceTarefas extends Service{
 			Log.i(LOG, "respServer == vazio"+aux);
 		}
 		else{
-			cdExt = aux;
+			cdRef = aux;
 		}
-		return cdExt;
+		return cdRef;
 		
 	}
 	
@@ -506,12 +517,12 @@ public class ServiceTarefas extends Service{
 	
 	
 	public void geraNotificacaoNovoEvento(){
-		gerarNotificacao(getApplicationContext(), new Intent(getBaseContext(),Principal.class), "Novos eventos adicionados", "Eventos", "Voce tem novos eventos em sua agenda");
+		gerarNotificacao(getApplicationContext(), new Intent(getBaseContext(),Tarefas.class), "Novas Tarefas Adicionadas", "Eventos", "Voce tem novos eventos em sua agenda");
 	}
 	
 	
 	public void geraNotificacaoEventosBaixados(){
-		gerarNotificacao(getApplicationContext(), new Intent(getBaseContext(),Principal.class), "Novos eventos baixados", "Eventos", "Eventos foram baixados em sua agenda");
+		gerarNotificacao(getApplicationContext(), new Intent(getBaseContext(),Tarefas.class), "Novos eventos baixados", "Eventos", "Eventos foram baixados em sua agenda");
 	}
 	
 	
@@ -589,6 +600,7 @@ public class ServiceTarefas extends Service{
 			return "-1";
 	}
 
+	
 	public String userAtivo(){
 		Log.i(LOG, "userAtivo()");
 		conectUser.setClausula(" WHERE STATUS=1 ");
@@ -597,11 +609,11 @@ public class ServiceTarefas extends Service{
 	}
 	
 	
-	public void updateCodServidor(String cdExt, String cdE) throws InterruptedException{
+	public void updateCodServidor(String cdRef, String cdE) throws InterruptedException{
 		Log.i(LOG, "updateCodServidor()");
 		Conexao conexao = new Conexao(this);
 		String url = conexao.pegaLink();
-		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=uc&cdE="+cdExt+"&cdExt="+cdE;
+		String dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=uc&cdE="+cdRef+"&cdRef="+cdE;
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://"+url+dados);
@@ -625,9 +637,11 @@ public class ServiceTarefas extends Service{
 		Log.i(LOG,"onDestroy() TAREFA");
 	}
 	
+	
 	public boolean getPendencia(){
 		return this.pendencia;
 	}
+	
 	
 	@Override
 	public IBinder onBind(Intent intent) {

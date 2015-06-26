@@ -163,17 +163,13 @@ public class InsereTarefa extends Activity{
 		    		InsereTarefa.this.startActivity(intent);
 		    		InsereTarefa.this.finish();
 		    		
-		    		String cdDestinatarios = "";
+		    		String cdDestinatario = "";
+		    		int referencia = (pegaUltimaRef()+1);
 		    		for(int i=0; i<selecionados.size() ; i++){
-		    			if( i == selecionados.size()-1)
-		    				cdDestinatarios += getCodUsuario(selecionados.get(i));
-		    			else		    				
-		    				cdDestinatarios += getCodUsuario(selecionados.get(i))+",";
+		    			cdDestinatario = getCodUsuario(selecionados.get(i));
+		    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"',0,"+cdDestinatario+","+usuarioAtivo+","+referencia);
 		    		}
-		    		
-		    		conectTarefa.setClausula("");
-		    		conectTarefa.insert("null,'"+edt_desc.getText().toString()+"',0,'"+cdDestinatarios+"',"+usuarioAtivo+",null");
-		    		
+
 		    		return true;		    			
 	        }
 		            return super.onOptionsItemSelected(item);
@@ -192,6 +188,15 @@ public class InsereTarefa extends Activity{
 		 return cd;
 	 }
 	 
+	 
+	public int pegaUltimaRef(){
+		conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+usuarioAtivo);
+		if(MyString.tString(conectTarefa.select(" MAX(CDREFERENCIA) ")).equals("null"))
+			return 0;
+		else return Integer.parseInt(MyString.tString(conectTarefa.select(" MAX(CDREFERENCIA) ")));
+	}
+	
+	
 	public void showToast(String texto){		
 		Toast.makeText(this, texto, Toast.LENGTH_LONG).show();
 	}

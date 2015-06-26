@@ -20,7 +20,8 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	private static  String LOG = "teste";
 	private Context mContext;
 	private int mInflater;
-	public String[] TAREFAS;
+//	public String[] TAREFAS;
+	private List<String> TAREFAS = new ArrayList<String>();
 	private List<String> selecionados = new ArrayList<String>();
 	private ConectaLocal conectUser;
 	private ConectaLocal conectTarefa;
@@ -31,7 +32,11 @@ public class TarefasAdapter extends ArrayAdapter<String>{
     	super(context, layoutResourceId, lista);
          mContext = context;
          this.mInflater = layoutResourceId;
-         this.TAREFAS = lista;    
+         
+         Log.i(LOG, "TarefasAdapter()");
+         for(String array : lista){
+        	 TAREFAS.add(MyString.tiraEspaço(array));
+         }
          
 	      conectUser = new ConectaLocal(mContext, "USUARIO"); 
 	      conectTarefa = new ConectaLocal(mContext, "TAREFA");
@@ -41,13 +46,13 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		return TAREFAS.length;
+		return TAREFAS.size();
 	}
 
 	@Override
 	public String getItem(int position) {
 		// TODO Auto-generated method stub
-		return TAREFAS[position];
+		return TAREFAS.get(position);
 	}
 
 	@Override
@@ -59,9 +64,39 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	@Override
     public View getView(final int position, View convertView, ViewGroup parent) {
             // Recuperando o Estado selecionado de acordo com a sua posição no ListView
-        final String cdTarefa = TAREFAS[position];
+        for(String array : TAREFAS){
+        	Log.i(LOG, array);
+        }
+        final String cdTarefa = TAREFAS.get(position);
+        Log.i(LOG, "cdTarefas:"+cdTarefa);
+        conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
+        String resp = MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")));
+        //SELECT NMDESTINATARIOS FROM TAREFA WHERE (SELECT CDREFERENCIA FROM TAREFA WHERE CDTAREFA=1)
 
-            // Se o ConvertView for diferente de null o layout já foi "inflado"
+        
+        conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" AND CDREFERENCIA=(SELECT CDREFERENCIA FROM TAREFA WHERE CDTAREFA="+cdTarefa+")");
+        String[] dest = MyString.tStringArray(conectTarefa.select(" NMDESTINATARIOS "));
+        String[] cd = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
+        
+        String destinatarios = "";
+        for(int i=0; i<dest.length; i++){
+        	Log.i(LOG, "dest[i]:"+dest[i]);
+        	if(i==(dest.length-1))
+        		destinatarios += getNmUsuario(dest[i]);
+        	else
+        		destinatarios += getNmUsuario(dest[i])+",";
+        }
+        
+        for(int j=0; j<cd.length; j++){        	
+        	if(!cd[j].equals(cdTarefa)){
+        		Log.i(LOG, "cd[j]:"+cd[j]);
+        		TAREFAS.remove(cd[j]);
+        		notifyDataSetChanged();
+        	}
+        	
+        }
+        
+        // Se o ConvertView for diferente de null o layout já foi "inflado"
         View v = convertView;
 
             if(v==null) {
@@ -77,7 +112,7 @@ public class TarefasAdapter extends ArrayAdapter<String>{
         conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
         String descricao = MyString.tString(conectTarefa.select(" NMDESCRICAO "));
         String responsavel = getNmUsuario(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")));
-        String destinatarios = getNmDestinatarios(MyString.tString3(conectTarefa.select(" NMDESTINATARIOS ")));
+//        String destinatarios = getNmDestinatarios(MyString.tString3(conectTarefa.select(" NMDESTINATARIOS ")));
         String status = MyString.tString(conectTarefa.select(" CDSTATUS "));
 
         if(status.equals("1")) {
@@ -128,7 +163,6 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	                selecionados.add(cdTarefa);
 	                conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 	                conectTarefa.update(" CDSTATUS=1 ");
-	                Log.i(LOG, "ONCLICK");
 	            } else if (!cb.isChecked()) {	            	
 	                selecionados.remove(cdTarefa);
 	                conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
@@ -138,7 +172,6 @@ public class TarefasAdapter extends ArrayAdapter<String>{
         });
         
         if(selecionados.contains(cdTarefa)) {
-        	Log.i(LOG, "aqui2");
             check.setChecked(true);
         } else {
             check.setChecked(false);
@@ -148,21 +181,22 @@ public class TarefasAdapter extends ArrayAdapter<String>{
     }
 	
 	public void deletar(String cd, int position){
-		conectTarefa.setClausula(" WHERE CDTAREFA="+cd);
+		conectTarefa.setClausula(" WHERE CDREFERENCIA=(SELECT CDREFERENCIA FROM TAREFA WHERE CDTAREFA="+cd+")");
+//		conectTarefa.setClausula(" WHERE CDTAREFA="+cd);
 		Log.i(LOG, "codigo que vai excluir:"+cd);
-		String[] aux= new String[TAREFAS.length-1];
 		
-		for(int i=0,  j=0; i<TAREFAS.length; i++){			
-			if(!TAREFAS[i].equals(cd)){
-				aux[j] = TAREFAS[i];
-				j++;
-			}
-		}
+		
+		TAREFAS.remove(cd);
 
-		TAREFAS = aux;
 		conectTarefa.delete();			
 		notifyDataSetChanged();
 	}
+	
+	 public String getUsuarioAtivo(){
+		 conectUser.setClausula(" WHERE STATUS=1");
+		 String cd = MyString.tString(conectUser.select(" CDUSUARIO "));
+		 return cd;
+	 }
 	
 	public String getNmUsuario(String cd){
 		conectUser.setClausula(" WHERE CDUSUARIO="+cd);
