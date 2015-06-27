@@ -257,7 +257,7 @@ public class ServiceTarefas extends Service{
 		
 		
 		if(cdRef.equals("-1")){
-			Log.i(LOG, "cdRef.equals('-1')");
+			Log.i(LOG, "cdRef == '-1' ");
 			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sar&cdU="+cdU;			
 			respServer = webservice(url, dados);
 			respServer = respServer.substring(0, respServer.indexOf("#"));
@@ -273,12 +273,24 @@ public class ServiceTarefas extends Service{
 		}
 		
 		if(!cdRef.equals("-1")){
-			Log.i(LOG, "!cdRef.equals('-1')");
-			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdU="+cdU+"&cdE="+cdRef;
-			respServer = webservice(url, dados);	
-			respServer = respServer.substring(0, respServer.indexOf("#"));
-			insereCelular(respServer);
-			Log.i(LOG, "respServer == "+respServer);
+			Log.i(LOG, " cdRef != '-1' ");
+			conectUser.setClausula(" WHERE STATUS=0 ");
+			String[] usuarios = MyString.tStringArray(conectUser.select(" CDUSUARIO "));
+			
+			for(String i : usuarios){
+				i = MyString.tiraEspaço(i);
+				String ref = pegaUltimo(" CDREFERENCIA ", i);
+				if(!ref.equals("-1")){
+					dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdResp="+i+"&cdRef="+ref+"&cdU="+cdU;
+					respServer = webservice(url, dados);	
+					respServer = respServer.substring(0, respServer.indexOf("#"));
+					Log.i(LOG, "AQUI");
+					insereCelular(respServer);
+					Log.i(LOG, "respServer == "+respServer);
+				}
+				else
+					Log.i(LOG, "sem tarefas para o usuario responsavel "+i);
+			}
 		}
 
 	}
@@ -318,16 +330,16 @@ public class ServiceTarefas extends Service{
 		String dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sc&cdU="+cdU;
 		respServer = webservice(url, dados);
 		
-		String s = respServer.substring(0, respServer.indexOf("$"));
-		Log.i(LOG, "respServer:'"+s+"'");
+		respServer = respServer.substring(0, respServer.indexOf("$"));
+		Log.i(LOG, "respServer:'"+respServer+"'");
 		
 		//Se webservice retornar "" então selecionamos todas as tarefas do celular para inserir
-		if(s.equals("")){			
-			String ultimoCdCelular = pegaUltimo(" CDREFERENCIA ", cdU);
-			Log.i(LOG, "ultimoCdCelular"+ultimoCdCelular);			
+		if(respServer.equals("")){			
+			String ultRef = pegaUltimo(" CDREFERENCIA ", cdU);
+			Log.i(LOG, "ultimoCdCelular"+ultRef);			
 			
 			//Se ultimoCdCelular for igual a -1 não executa o restante pois não tem tarefas para inserir
-			if(!ultimoCdCelular.equals("-1")){
+			if(!ultRef.equals("-1")){
 				
 				String  cdTarefa, descricao, dest, responsavel, status, cdRef;
 				conectTarefa.setOrder("");
@@ -340,12 +352,12 @@ public class ServiceTarefas extends Service{
 					cdTarefa = MyString.tString(conectTarefa.select("CDTAREFA"));
 					descricao = MyString.tString(conectTarefa.select("NMDESCRICAO"));
 					descricao = URLEncoder.encode(descricao, "UTF-8");
-					dest = MyString.tString3(conectTarefa.select("NMDESTINATARIOS"));
+					dest = MyString.tString(conectTarefa.select("NMDESTINATARIOS"));
 					responsavel = MyString.tString(conectTarefa.select("CDRESPONSAVEL"));
 					responsavel = URLEncoder.encode(responsavel, "UTF-8");
 					status = MyString.tString(conectTarefa.select("CDSTATUS"));	
-					cdRef = MyString.tString(conectTarefa.select("CDREFERENCIA"));	
-					
+					cdRef = MyString.tString(conectTarefa.select("CDREFERENCIA"));					
+
 					
 					destinatarios = getNmDestinatarios(dest);
 					
@@ -355,35 +367,31 @@ public class ServiceTarefas extends Service{
 						Log.i(LOG, campos);
 						insereServidor(url, campos);	
 						
-//						String cdRef = insereServidor(url, campos);						
-//						conectTarefa.setClausula(" WHERE CDTAREFA="+cdE[i]);
-//						conectTarefa.update(" CDREFERENCIA="+cdRef);
 						Log.i(LOG, cdTarefa+" inserido no servidor");
-					}					
+					}
+														
 				}
 			}
 
 		}
 		//Seleciona apenas tarefas que ainda não foram adicionadas no servidor
-		else if(!s.equals("")){
-			int codigoServidor = Integer.parseInt(s);
-			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDTAREFA ", cdU));
-			if(ultimoCdCelular != -1)
-			if(ultimoCdCelular>codigoServidor){
+		else if(!respServer.equals("")){
+			int ultrefServ = Integer.parseInt(respServer);
+			int ultRefCel = Integer.parseInt(pegaUltimo(" CDREFERENCIA ", cdU));
+			if(ultRefCel != -1)
+			if(ultRefCel>ultrefServ){
 				String  cdTarefa, descricao, dest, responsavel, status, cdRef;
 				conectTarefa.setOrder("");
-				conectTarefa.setClausula(" WHERE CDTAREFA>"+codigoServidor);
+				conectTarefa.setClausula(" WHERE CDREFERENCIA>"+ultrefServ+" AND CDRESPONSAVEL="+userAtivo());
 				String[] cdE = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
 				for(int i=0; i<cdE.length; i++){
 					Log.i(LOG, cdE[i]);
 					conectTarefa.setClausula(" WHERE CDTAREFA="+cdE[i]);
-					
-					
+										
 					cdTarefa = MyString.tString(conectTarefa.select("CDTAREFA"));
 					descricao = MyString.tString(conectTarefa.select("NMDESCRICAO"));
 					descricao = URLEncoder.encode(descricao, "UTF-8");
-					dest = MyString.tString3(conectTarefa.select("NMDESTINATARIOS"));
-					Log.i(LOG, "destinatarios:"+dest);
+					dest = MyString.tString(conectTarefa.select("NMDESTINATARIOS"));
 					responsavel = MyString.tString(conectTarefa.select("CDRESPONSAVEL"));
 					responsavel = URLEncoder.encode(responsavel, "UTF-8");
 					status = MyString.tString(conectTarefa.select("CDSTATUS"));	
@@ -396,9 +404,10 @@ public class ServiceTarefas extends Service{
 						String campos = "descricao="+descricao+"&destinatario="+d+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef;
 						Log.i(LOG, campos);
 						insereServidor(url, campos);	
-
+						
 						Log.i(LOG, cdTarefa+" inserido no servidor");
 					}
+					
 				}
 			}
 			
@@ -516,7 +525,7 @@ public class ServiceTarefas extends Service{
 	
 	
 	public void geraNotificacaoNovoEvento(){
-		gerarNotificacao(getApplicationContext(), new Intent(getBaseContext(),Tarefas.class), "Novas Tarefas Adicionadas", "Eventos", "Voce tem novos eventos em sua agenda");
+		gerarNotificacao(getApplicationContext(), new Intent(getBaseContext(),Tarefas.class), "Novas Tarefas Adicionadas", "Tarefas", "Voce tem novas tarefas.");
 	}
 	
 	
@@ -526,8 +535,8 @@ public class ServiceTarefas extends Service{
 	
 	
 	public void gerarNotificacao(Context context, Intent intent, CharSequence ticker, CharSequence titulo, CharSequence descricao){
-		NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		PendingIntent p = PendingIntent.getActivity(context, 0, intent, 0);
+		NotificationManager nm1 = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		PendingIntent p1 = PendingIntent.getActivity(context, 0, intent, 0);
 		
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 		builder.setTicker(ticker);
@@ -535,12 +544,12 @@ public class ServiceTarefas extends Service{
 		builder.setContentText(descricao);
 		builder.setSmallIcon(R.drawable.ic_launcher);
 		builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
-		builder.setContentIntent(p);
+		builder.setContentIntent(p1);
 		
-		Notification n = builder.build();
-		n.vibrate = new long[]{150, 300, 150, 600};
-		n.flags = Notification.FLAG_AUTO_CANCEL;
-		nm.notify(R.drawable.ic_launcher, n);
+		Notification n1 = builder.build();
+		n1.vibrate = new long[]{150, 300, 150, 600};
+		n1.flags = Notification.FLAG_AUTO_CANCEL;
+		nm1.notify(R.drawable.ic_launcher, n1);
 		
 		try{
 			Uri som = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

@@ -5,12 +5,11 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
-
 import com.solucaoSistemas.AgendaApp.ConectaLocal;
 import com.solucaoSistemas.AgendaApp.R;
-
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
  
  
+@SuppressLint("NewApi")
 public class MainActivity extends Activity {
 	Button bAvanca, opcoes;
 	ConectaLocal conectUser;
