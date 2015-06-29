@@ -402,7 +402,7 @@ public  class MyString {
 	
 	private static String ordenaUser(String[] array, int j){
 		String retorno = "";
-		retorno += array[0].replace("'", "")+","+array[1]+","+array[2]+",0";
+		retorno += array[0]+","+array[1]+","+array[2]+",0";
 		return retorno;
 	}
 	

@@ -331,7 +331,7 @@ public class ServiceTarefas extends Service{
 		respServer = webservice(url, dados);
 		
 		respServer = respServer.substring(0, respServer.indexOf("$"));
-		Log.i(LOG, "respServer:'"+respServer+"'");
+		Log.i(LOG, "respServer:"+respServer+"");
 		
 		//Se webservice retornar "" então selecionamos todas as tarefas do celular para inserir
 		if(respServer.equals("")){			
@@ -377,6 +377,7 @@ public class ServiceTarefas extends Service{
 		//Seleciona apenas tarefas que ainda não foram adicionadas no servidor
 		else if(!respServer.equals("")){
 			int ultrefServ = Integer.parseInt(respServer);
+			Log.i(LOG, "ultrefServ:"+ultrefServ+"");
 			int ultRefCel = Integer.parseInt(pegaUltimo(" CDREFERENCIA ", cdU));
 			if(ultRefCel != -1)
 			if(ultRefCel>ultrefServ){
