@@ -22,6 +22,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
  
  
+/**
+ * @author BRUNO
+ *
+ */
+
+
+
 @SuppressLint("NewApi")
 public class MainActivity extends Activity {
 	Button bAvanca, opcoes;
@@ -134,6 +141,7 @@ public class MainActivity extends Activity {
 		}
 		
 	}
+	
 	
 	public void telaPrincipal(){		
         Intent intent = new Intent(MainActivity.this, Principal.class);  

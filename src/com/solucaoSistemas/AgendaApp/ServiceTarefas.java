@@ -284,7 +284,6 @@ public class ServiceTarefas extends Service{
 					dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdResp="+i+"&cdRef="+ref+"&cdU="+cdU;
 					respServer = webservice(url, dados);	
 					respServer = respServer.substring(0, respServer.indexOf("#"));
-					Log.i(LOG, "AQUI");
 					insereCelular(respServer);
 					Log.i(LOG, "respServer == "+respServer);
 				}
@@ -376,14 +375,19 @@ public class ServiceTarefas extends Service{
 		}
 		//Seleciona apenas tarefas que ainda não foram adicionadas no servidor
 		else if(!respServer.equals("")){
-			int ultrefServ = Integer.parseInt(respServer);
-			Log.i(LOG, "ultrefServ:"+ultrefServ+"");
+			int ultRefServ = 0;
+			try {
+				ultRefServ = Integer.parseInt(respServer);
+			} catch(NumberFormatException e) {
+			   Log.i(LOG, "Could not parse " + e);
+			} 
+			Log.i(LOG, "ultrefServ:"+ultRefServ+"");
 			int ultRefCel = Integer.parseInt(pegaUltimo(" CDREFERENCIA ", cdU));
 			if(ultRefCel != -1)
-			if(ultRefCel>ultrefServ){
+			if(ultRefCel>ultRefServ){
 				String  cdTarefa, descricao, dest, responsavel, status, cdRef;
 				conectTarefa.setOrder("");
-				conectTarefa.setClausula(" WHERE CDREFERENCIA>"+ultrefServ+" AND CDRESPONSAVEL="+userAtivo());
+				conectTarefa.setClausula(" WHERE CDREFERENCIA>"+ultRefServ+" AND CDRESPONSAVEL='"+userAtivo()+"'");
 				String[] cdE = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
 				for(int i=0; i<cdE.length; i++){
 					Log.i(LOG, cdE[i]);
@@ -599,7 +603,7 @@ public class ServiceTarefas extends Service{
 	
 	public String pegaUltimo(String campo, String cdU){
 		Log.i(LOG, "pegaUltimo()");
-		conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+cdU);
+		conectTarefa.setClausula(" WHERE CDRESPONSAVEL='"+cdU+"'");
 		conectTarefa.setOrder(" ORDER BY "+campo);		
 		String[] aux = MyString.tStringArray(conectTarefa.select(campo));
 		
