@@ -40,6 +40,21 @@ public class ServiceApp extends Service {
 	static String[] cod;
 	static boolean ativo = false;
 	private static  String LOG = "teste";
+	/** Para a normalização dos caracteres de 32 a 255, primeiro caracter */  
+	private static final char[] FIRST_CHAR =  
+		    (" !'#$%&'()*+\\-./0123456789:;<->?@ABCDEFGHIJKLMNOPQRSTUVWXYZ"  
+		        + "[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ E ,f'.++^%S<O Z  ''''.-"  
+		        + "-~Ts>o ZY !C#$Y|$'(a<--(_o+23'u .,1o>113?AAAAAAACEEEEIIIIDNOO"  
+		        + "OOOXOUUUUyTsaaaaaaaceeeeiiiidnooooo/ouuuuyty")  
+		        .toCharArray();  
+	/** Para a normalização dos caracteres de 32 a 255, segundo caracter */  
+	private static final char[] SECOND_CHAR =  
+		    ("  '         ,                                               "  
+		        + "\\                                   $  r'. + o  E      ''  "  
+		        + "  M  e     #  =  'C.<  R .-..     ..>424     E E            "  
+		        + "   E E     hs    e e         h     e e     h ")  
+		        .toCharArray(); 
+	
 	@Override
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
@@ -281,13 +296,14 @@ public class ServiceApp extends Service {
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
-		String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
-
-		if(aux.equals("")){
-			Log.i(LOG, "respServer == "+aux);
+		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("#"));
+		respServer = normalize(respServer);
+				
+		if(respServer.equals("")){
+			Log.i(LOG, "respServer == "+respServer);
 		}
 		else{
-			String[] campos = MyString.tStringArray(aux);
+			String[] campos = MyString.tStringArray(respServer);
 			for(int i=0 ;i<campos.length ;i++){		
 					conectAgenda.setOrder("");
 					conectAgenda.setClausula(" WHERE CDEVENTOEXT="+campos[i]);
@@ -323,15 +339,15 @@ public class ServiceApp extends Service {
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
-		String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
+		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("#"));
+		respServer = normalize(respServer);
 		
-		
-		if(aux.equals("")){
-			Log.i(LOG, "respServer == "+aux);
+		if(respServer.equals("")){
+			Log.i(LOG, "respServer == "+respServer);
 		}
 		else{
 			try {
-				String[] campos = MyString.montaInsertAgenda(aux);
+				String[] campos = MyString.montaInsertAgenda(respServer);
 				cod = MyString.getCod();
 				
 				int j = 0;
@@ -367,12 +383,12 @@ public class ServiceApp extends Service {
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
-		String s = exec.respServer.substring(0, exec.respServer.indexOf("$"));
-		Log.i(LOG, "respServer:'"+s+"'");
+		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("$"));
+		respServer = normalize(respServer);
+		Log.i(LOG, "respServer:'"+respServer+"'");
 		
-		
-		if(s.equals("")){
-			Log.i(LOG, "respServer == "+s);
+		if(respServer.equals("")){
+			Log.i(LOG, "respServer == "+respServer);
 			
 			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTO ", cdU));
 			Log.i(LOG, "ultimoCdCelular"+ultimoCdCelular);			
@@ -418,8 +434,8 @@ public class ServiceApp extends Service {
 			}
 
 		}
-		else if(!s.equals("")){
-			int codigoServidor = Integer.parseInt(s);
+		else if(!respServer.equals("")){
+			int codigoServidor = Integer.parseInt(respServer);
 			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTO ", cdU));
 			if(ultimoCdCelular != -1)
 			if(ultimoCdCelular>codigoServidor){
@@ -485,13 +501,14 @@ public class ServiceApp extends Service {
 		}
 		while(exec.respServer.equals(""));
 		
-		String aux = exec.respServer.substring(0, exec.respServer.indexOf("$"));
+		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("$"));
+		respServer = normalize(respServer);
 		
-		if(aux.equals("")){
-			Log.i(LOG, "respServer == vazio"+aux);
+		if(respServer.equals("")){
+			Log.i(LOG, "respServer == vazio"+respServer);
 		}
 		else{
-			cdExt = aux;
+			cdExt = respServer;
 		}
 		return cdExt;
 		
@@ -515,13 +532,14 @@ public class ServiceApp extends Service {
 		}
 		while(exec.respServer.equals(""));
 		
-		String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
+		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("#"));
+		respServer = normalize(respServer);
 		
-		if(aux.equals("")){
-			Log.i(LOG, "respServer == "+aux);
+		if(respServer.equals("")){
+			Log.i(LOG, "respServer == "+respServer);
 		}
 		else{
-			String[] campos = MyString.montaUpdateAgenda(aux);
+			String[] campos = MyString.montaUpdateAgenda(respServer);
 			cod = MyString.getCod();
 			
 			int j=0;
@@ -609,4 +627,24 @@ public class ServiceApp extends Service {
 		}
 		catch(Exception e){}
 	}
+	
+	public static String normalize(String str) {  
+	    char[] chars = str.toCharArray();  
+	    StringBuffer ret = new StringBuffer(chars.length * 2);  
+	    for (int i = 0; i < chars.length; ++i) {  
+	        char aChar = chars[i];  
+	        if (aChar == ' ' || aChar == '\t') {  
+	            ret.append(' '); // convertido para espaço  
+	        } else if (aChar > ' ' && aChar < 256) {  
+	            if (FIRST_CHAR[aChar - ' '] != ' ') {  
+	                ret.append(FIRST_CHAR[aChar - ' ']); // 1 caracter  
+	            }  
+	            if (SECOND_CHAR[aChar - ' '] != ' ') {  
+	                ret.append(SECOND_CHAR[aChar - ' ']); // 2 caracteres  
+	            }  
+	        }  
+	    }  
+	  
+	    return ret.toString();  
+	}  
 }

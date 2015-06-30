@@ -31,7 +31,20 @@ public class ServiceTarefas extends Service{
 	public boolean pendencia = false;
 	ConectaLocal conectTarefa;
 	ConectaLocal conectUser;
-	
+	/** Para a normalização dos caracteres de 32 a 255, primeiro caracter */  
+	private static final char[] FIRST_CHAR =  
+		    (" !'#$%&'()*+\\-./0123456789:;<->?@ABCDEFGHIJKLMNOPQRSTUVWXYZ"  
+		        + "[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ E ,f'.++^%S<O Z  ''''.-"  
+		        + "-~Ts>o ZY !C#$Y|$'(a<--(_o+23'u .,1o>113?AAAAAAACEEEEIIIIDNOO"  
+		        + "OOOXOUUUUyTsaaaaaaaceeeeiiiidnooooo/ouuuuyty")  
+		        .toCharArray();  
+	/** Para a normalização dos caracteres de 32 a 255, segundo caracter */  
+	private static final char[] SECOND_CHAR =  
+		    ("  '         ,                                               "  
+		        + "\\                                   $  r'. + o  E      ''  "  
+		        + "  M  e     #  =  'C.<  R .-..     ..>424     E E            "  
+		        + "   E E     hs    e e         h     e e     h ")  
+		        .toCharArray(); 
 	
 	@Override
 	public void onCreate(){
@@ -261,6 +274,7 @@ public class ServiceTarefas extends Service{
 			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sar&cdU="+cdU;			
 			respServer = webservice(url, dados);
 			respServer = respServer.substring(0, respServer.indexOf("#"));
+			respServer = normalize(respServer);
 			Log.i(LOG, "respServer == "+respServer);
 			insereCelular(respServer);
 			
@@ -268,6 +282,7 @@ public class ServiceTarefas extends Service{
 			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sad&cdU="+cdU;	
 			respServer = webservice(url, dados);
 			respServer = respServer.substring(0, respServer.indexOf("#"));
+			respServer = normalize(respServer);
 			Log.i(LOG, "respServer == "+respServer);
 			insereCelular(respServer);
 		}
@@ -284,6 +299,7 @@ public class ServiceTarefas extends Service{
 					dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdResp="+i+"&cdRef="+ref+"&cdU="+cdU;
 					respServer = webservice(url, dados);	
 					respServer = respServer.substring(0, respServer.indexOf("#"));
+					respServer = normalize(respServer);
 					insereCelular(respServer);
 					Log.i(LOG, "respServer == "+respServer);
 				}
@@ -330,7 +346,9 @@ public class ServiceTarefas extends Service{
 		respServer = webservice(url, dados);
 		
 		respServer = respServer.substring(0, respServer.indexOf("$"));
+		respServer = normalize(respServer);
 		Log.i(LOG, "respServer:"+respServer+"");
+		
 		
 		//Se webservice retornar "" então selecionamos todas as tarefas do celular para inserir
 		if(respServer.equals("")){			
@@ -375,6 +393,8 @@ public class ServiceTarefas extends Service{
 		}
 		//Seleciona apenas tarefas que ainda não foram adicionadas no servidor
 		else if(!respServer.equals("")){
+		
+			
 			int ultRefServ = 0;
 			try {
 				ultRefServ = Integer.parseInt(respServer);
@@ -446,13 +466,14 @@ public class ServiceTarefas extends Service{
 		}
 		while(exec.respServer.equals(""));
 		
-		String aux = exec.respServer.substring(0, exec.respServer.indexOf("$"));
+		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("$"));
+		respServer = normalize(respServer);
 		
-		if(aux.equals("")){
-			Log.i(LOG, "respServer == vazio"+aux);
+		if(respServer.equals("")){
+			Log.i(LOG, "respServer == vazio"+respServer);
 		}
 		else{
-			cdRef = aux;
+			cdRef = respServer;
 		}
 		return cdRef;
 		
@@ -655,6 +676,26 @@ public class ServiceTarefas extends Service{
 		return this.pendencia;
 	}
 	
+	
+	public static String normalize(String str) {  
+	    char[] chars = str.toCharArray();  
+	    StringBuffer ret = new StringBuffer(chars.length * 2);  
+	    for (int i = 0; i < chars.length; ++i) {  
+	        char aChar = chars[i];  
+	        if (aChar == ' ' || aChar == '\t') {  
+	            ret.append(' '); // convertido para espaço  
+	        } else if (aChar > ' ' && aChar < 256) {  
+	            if (FIRST_CHAR[aChar - ' '] != ' ') {  
+	                ret.append(FIRST_CHAR[aChar - ' ']); // 1 caracter  
+	            }  
+	            if (SECOND_CHAR[aChar - ' '] != ' ') {  
+	                ret.append(SECOND_CHAR[aChar - ' ']); // 2 caracteres  
+	            }  
+	        }  
+	    }  
+	  
+	    return ret.toString();  
+	}  
 	
 	@Override
 	public IBinder onBind(Intent intent) {
