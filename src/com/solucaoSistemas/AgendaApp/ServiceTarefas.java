@@ -274,17 +274,17 @@ public class ServiceTarefas extends Service{
 			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sar&cdU="+cdU;			
 			respServer = webservice(url, dados);
 			respServer = respServer.substring(0, respServer.indexOf("#"));
-			respServer = normalize(respServer);
 			Log.i(LOG, "respServer == "+respServer);
-			insereCelular(respServer);
+			if(!respServer.equals(""))
+				insereCelular(respServer);
 			
 			
 			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sad&cdU="+cdU;	
 			respServer = webservice(url, dados);
 			respServer = respServer.substring(0, respServer.indexOf("#"));
-			respServer = normalize(respServer);
 			Log.i(LOG, "respServer == "+respServer);
-			insereCelular(respServer);
+			if(!respServer.equals(""))
+				insereCelular(respServer);
 		}
 		
 		if(!cdRef.equals("-1")){
@@ -292,20 +292,35 @@ public class ServiceTarefas extends Service{
 			conectUser.setClausula(" WHERE STATUS=0 ");
 			String[] usuarios = MyString.tStringArray(conectUser.select(" CDUSUARIO "));
 			
-			for(String i : usuarios){
-				i = MyString.tiraEspaço(i);
-				String ref = pegaUltimo(" CDREFERENCIA ", i);
-				if(!ref.equals("-1")){
-					dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdResp="+i+"&cdRef="+ref+"&cdU="+cdU;
-					respServer = webservice(url, dados);	
-					respServer = respServer.substring(0, respServer.indexOf("#"));
-					respServer = normalize(respServer);
-					insereCelular(respServer);
-					Log.i(LOG, "respServer == "+respServer);
+//			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdResp="+i+"&cdRef="+ref+"&cdU="+cdU;
+			
+			String cdResp = "";
+			String r = "";
+			for(int i=0; i<usuarios.length;i++){
+				usuarios[i] = normalize(MyString.tiraEspaço(usuarios[i]));
+				String ref = pegaUltimo(" CDREFERENCIA ", usuarios[i]);
+				if(ref.equals("-1"))
+					ref = "0";
+				if(i==(usuarios.length-1)){
+					cdResp += usuarios[i];
+					r += ref;
 				}
-				else
-					Log.i(LOG, "sem tarefas para o usuario responsavel "+i);
+				else{
+					cdResp += usuarios[i]+"-";
+					r += ref+"-";
+				}
 			}
+			
+			dados += "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdU="+cdU+"&cdResp="+cdResp+"&cdRef="+r;
+			
+			Log.i(LOG, "dados:"+dados);
+			respServer = webservice(url, dados);	
+			respServer = respServer.substring(0, respServer.indexOf("#"));
+			if(!respServer.equals("")){
+				insereCelular(respServer);
+				Log.i(LOG, "respServer == "+respServer);
+			}
+			
 		}
 
 	}
@@ -315,14 +330,12 @@ public class ServiceTarefas extends Service{
 		if(!respServer.equals("")){
 			try {
 				String[] campos = MyString.montaInsertTarefa(respServer);
-				cod = MyString.getCod();				
-				int j = 0;
 				
 				for(String i : campos){
 					conectTarefa.insert(i);
 					Log.i(LOG, i+" |inserido no celular");
 				}
-				geraNotificacaoNovoEvento();
+				geraNotificacaoNovaTarefa();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -550,12 +563,12 @@ public class ServiceTarefas extends Service{
 	}
 	
 	
-	public void geraNotificacaoNovoEvento(){
+	public void geraNotificacaoNovaTarefa(){
 		gerarNotificacao(getApplicationContext(), new Intent(getBaseContext(),Tarefas.class), "Novas Tarefas Adicionadas", "Tarefas", "Voce tem novas tarefas.");
 	}
 	
 	
-	public void geraNotificacaoEventosBaixados(){
+	public void geraNotificacaoTarefaBaixada(){
 		gerarNotificacao(getApplicationContext(), new Intent(getBaseContext(),Tarefas.class), "Novos eventos baixados", "Eventos", "Eventos foram baixados em sua agenda");
 	}
 	

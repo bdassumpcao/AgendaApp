@@ -5,6 +5,7 @@ package com.solucaoSistemas.AgendaApp;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import org.apache.http.client.ClientProtocolException;
@@ -317,6 +318,7 @@ public class ServiceApp extends Service {
 	public void selectServidor(String url) throws InterruptedException{	
 		String cdU = userAtivo();
 		String cdExt = pegaUltimo(" CDEVENTOEXT ", cdU);
+		cdExt = normalize(cdExt);
 		String dados = "";
 		if(cdExt.equals("-1")){
 			dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sall&cdU="+cdU;
@@ -324,8 +326,8 @@ public class ServiceApp extends Service {
 		
 		if(!cdExt.equals("-1")){
 			dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=su&cdU="+cdU+"&cdE="+cdExt;
-			
 		}
+
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://"+url+dados);
@@ -340,7 +342,7 @@ public class ServiceApp extends Service {
 		}
 		while(exec.respServer.equals(""));
 		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("#"));
-		respServer = normalize(respServer);
+//		respServer = normalize(respServer);
 		
 		if(respServer.equals("")){
 			Log.i(LOG, "respServer == "+respServer);
@@ -352,15 +354,20 @@ public class ServiceApp extends Service {
 				
 				int j = 0;
 				for(String i : campos){
+					Log.i(LOG, "i:"+i);
 					conectAgenda.insert(i);
-					conectAgenda.setClausula(" WHERE CDEVENTOEXT="+cod[j]);
+					conectAgenda.setClausula(" WHERE CDEVENTOEXT='"+cod[j]+"'");
+					Log.i(LOG, " WHERE CDEVENTOEXT="+cod[j]);
 					Log.i(LOG, MyString.tString(conectAgenda.select(" CDEVENTO "))+" inserido no celular");
+					Log.i(LOG, "updateCodServidor:"+MyString.tString(conectAgenda.select(" CDEVENTO ")));
 					updateCodServidor(MyString.tString(conectAgenda.select(" CDEVENTO ")), cod[j]);
+					
 					j++;
 				}
 				geraNotificacaoNovoEvento();
 			} catch (Exception e) {
 				e.printStackTrace();
+				Log.i(LOG, e+"");
 			}
 		}
 		
@@ -587,7 +594,11 @@ public class ServiceApp extends Service {
 		Log.i(LOG, "updateCodServidor()");
 		Conexao conexao = new Conexao(this);
 		String url = conexao.pegaLink();
+		cdE = normalize(cdE);
+		Log.i(LOG, "cdE:"+cdE);
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=uc&cdE="+cdExt+"&cdExt="+cdE;
+		
+		
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://"+url+dados);
