@@ -74,3 +74,5 @@ $RECYCLE.BIN/
 .classpath
 .classpath
 *.properties
+project.properties
+.classpath

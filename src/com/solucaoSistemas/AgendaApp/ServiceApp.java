@@ -344,7 +344,7 @@ public class ServiceApp extends Service {
 		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("#"));
 //		respServer = normalize(respServer);
 		
-		if(respServer.equals("")){
+		if(normalize(respServer).equals("")){
 			Log.i(LOG, "respServer == "+respServer);
 		}
 		else{
@@ -389,7 +389,7 @@ public class ServiceApp extends Service {
 //			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
-		while(exec.respServer.equals(""));
+		while(normalize(exec.respServer).equals(""));
 		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("$"));
 		respServer = normalize(respServer);
 		Log.i(LOG, "respServer:'"+respServer+"'");

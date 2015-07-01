@@ -327,7 +327,7 @@ public class ServiceTarefas extends Service{
 	
 	public void insereCelular(String respServer){
 		Log.i(LOG, "insereCelular() TAREFA");
-		if(!respServer.equals("")){
+		if(!normalize(respServer).equals("")){
 			try {
 				String[] campos = MyString.montaInsertTarefa(respServer);
 				
