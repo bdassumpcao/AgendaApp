@@ -25,6 +25,7 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	private List<String> selecionados = new ArrayList<String>();
 	private ConectaLocal conectUser;
 	private ConectaLocal conectTarefa;
+	private ConectaLocal conectLogTarefa;
 	private AlertDialog alerta;
 	private int tamanho;
 	
@@ -40,6 +41,7 @@ public class TarefasAdapter extends ArrayAdapter<String>{
          
 	     conectUser = new ConectaLocal(mContext, "USUARIO"); 
 	     conectTarefa = new ConectaLocal(mContext, "TAREFA");
+	     conectLogTarefa= new ConectaLocal(mContext, "LOGTAREFA");
 	     selecionados.clear();
     }
 
@@ -187,11 +189,15 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 				+ "CDREFERENCIA=(SELECT CDREFERENCIA FROM TAREFA WHERE CDTAREFA="+cd+")");
 //		conectTarefa.setClausula(" WHERE CDTAREFA="+cd);
 		Log.i(LOG, "codigo que vai excluir:"+cd);
+		String[] ref = MyString.tStringArray(conectTarefa.select(" CDREFERENCIA "));
+		conectLogTarefa.insert(cd+","+ref[0]+",'D'");
 		
 		
 		TAREFAS.remove(cd);
+		conectTarefa.delete();	
 
-		conectTarefa.delete();			
+		
+		
 		notifyDataSetChanged();
 	}
 	

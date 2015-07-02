@@ -31,6 +31,8 @@ public class ServiceTarefas extends Service{
 	public boolean pendencia = false;
 	ConectaLocal conectTarefa;
 	ConectaLocal conectUser;
+	ConectaLocal conectLogTarefa;
+	
 	/** Para a normalização dos caracteres de 32 a 255, primeiro caracter */  
 	private static final char[] FIRST_CHAR =  
 		    (" !'#$%&'()*+\\-./0123456789:;<->?@ABCDEFGHIJKLMNOPQRSTUVWXYZ"  
@@ -63,7 +65,7 @@ public class ServiceTarefas extends Service{
 				try{
 					conectTarefa = new ConectaLocal(this, "TAREFA");
 					conectUser = new ConectaLocal(this, "USUARIO");
-//					conectLogAgenda = new ConectaLocal(getApplicationContext(), "LOGAGENDA");
+					conectLogTarefa = new ConectaLocal(this, "LOGTAREFA");
 					monitor();
 				}catch(Exception e){
 					Log.i(LOG, "erro no monitor\n"+e);
@@ -89,6 +91,11 @@ public class ServiceTarefas extends Service{
 			Log.i(LOG, "link:\n"+url);
 			
 			//----------------------------------
+			Log.i(LOG,"entrou deleteServidor()");
+			deleteServidor(url);
+			Log.i(LOG,"saiu deleteServidor()");
+			Log.i(LOG, "");
+			
 			
 			Log.i(LOG,"entrou selectCelular()");
 			selectCelular(url);
@@ -99,6 +106,9 @@ public class ServiceTarefas extends Service{
 			selectServidor(url);
 			Log.i(LOG,"saiu selectServidor()");
 			Log.i(LOG, "");
+			
+
+
 
 
 		}
@@ -175,53 +185,69 @@ public class ServiceTarefas extends Service{
 //		
 //	}
 	
-//	public void deleteServidor(String url) throws InterruptedException{	
-//		String cdU = userAtivo();
-//		String[] cdE;				
-//
-//		conectLogAgenda.setOrder("");
-//		conectLogAgenda.setClausula(" WHERE OPERACAO='D' ");
-//		cdE = MyString.tStringArray(conectLogAgenda.select(" CDEVENTOEXT "));
-//		String cdExt="";
-//		
-//		if(cdE.length!=0){
-//		for(int j=0; j<cdE.length; j++){
-//			Log.i(LOG, "cdE[j]"+cdE[j]);
-//			if(!cdE[j].equals("null")){
-//				if(j == cdE.length-1)
-//					cdExt += MyString.tiraEspaço(cdE[j]);
-//				else
-//					cdExt += MyString.tiraEspaço(cdE[j])+","; 
-//			}
-//		}
-//
-//			String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=d&cdU="+cdU+"&cdE="+cdExt;
-//			ResponseHandler<String> handler = new BasicResponseHandler();
-//			HttpClient client = new DefaultHttpClient();
-//			HttpGet httpGet = new HttpGet("http://"+url+dados);
-//			Log.i(LOG,"http://"+url+dados);
-//			ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
-//			
-//			exec.start();
-//			
-//			do{
-////				Log.i(LOG,"sleep");
-//				Thread.sleep(1000);
-//			}
-//			while(exec.respServer.equals(""));
-//			
-//			if(!exec.respServer.equals("$")){
-//				Log.i(LOG, "respServer == "+exec.respServer);
-//			}
-//			else{
-//				conectLogAgenda.setOrder("");
-//				conectLogAgenda.setClausula(" WHERE OPERACAO='D' ");
-//				conectLogAgenda.delete();
-//				Log.i(LOG, cdExt+" excluido no servidor!");
-//			}
-//		}
-//		
-//	}
+	public void deleteServidor(String url) throws InterruptedException {	
+		String cdU = userAtivo();
+		String[] cdT, resp, dest;				
+
+		conectLogTarefa.setOrder("");
+		conectLogTarefa.setClausula(" WHERE DSOPERACAO='D' ");
+		cdT = MyString.tStringArray(conectLogTarefa.select(" CDTAREFA "));
+		resp = MyString.tStringArray(conectLogTarefa.select(" CDRESPONSAVEL "));
+		dest = MyString.tStringArray(conectLogTarefa.select(" CDDESTINATARIO "));
+		String cdResp="";
+		String cdDest="";
+		
+		if(cdT.length!=0){
+		for(int j=0; j<cdT.length; j++){
+			Log.i(LOG, "cdE[j]"+cdT[j]);
+			if(!cdT[j].equals("null")){
+				conectTarefa.setClausula(" WHERE CDTAREFA="+cdT[j]);
+				if(j == cdT.length-1){					
+					cdResp += MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")));
+					cdDest += MyString.tiraEspaço(MyString.tString(conectTarefa.select(" NMDESTINATARIOS ")));
+				}
+				else{
+					cdResp += MyString.tiraEspaço(resp[j])+"-";
+					cdDest += MyString.tiraEspaço(dest[j])+"-";
+				}
+			}
+		}
+		
+		
+		for(int i=0; i<cdT.length; i++){
+			conectLogTarefa.setClausula(" WHERE CDTAREFA="+cdT[i]);
+			String ref = MyString.tString(conectLogTarefa.select(" CDREFERENCIA "));
+			String op = MyString.tString(conectLogTarefa.select(" DSOPERACAO "));
+			Log.i(LOG, cdT[i]+","+ref+","+op);
+		}
+
+			String dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=d&cdU="+cdU+"&cdResp="+cdResp+"&cdDest="+cdDest;
+			ResponseHandler<String> handler = new BasicResponseHandler();
+			HttpClient client = new DefaultHttpClient();
+			HttpGet httpGet = new HttpGet("http://"+url+dados);
+			Log.i(LOG,"http://"+url+dados);
+			ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
+			
+			exec.start();
+			
+			do{
+//				Log.i(LOG,"sleep");
+				Thread.sleep(1000);
+			}
+			while(exec.respServer.equals(""));
+			
+			if(!exec.respServer.equals("$")){
+				Log.i(LOG, "respServer == "+exec.respServer);
+			}
+			else{
+				conectLogTarefa.setOrder("");
+				conectLogTarefa.setClausula(" WHERE DSOPERACAO='D' ");
+				conectLogTarefa.delete();
+				Log.i(LOG, cdExt+" excluido no servidor!");
+			}
+		}
+		
+	}
 	
 	
 //	public void deleteCelular(String url) throws InterruptedException{	
@@ -313,7 +339,6 @@ public class ServiceTarefas extends Service{
 			
 			dados += "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdU="+cdU+"&cdResp="+cdResp+"&cdRef="+r;
 			
-			Log.i(LOG, "dados:"+dados);
 			respServer = webservice(url, dados);	
 			respServer = respServer.substring(0, respServer.indexOf("#"));
 			if(!respServer.equals("")){
@@ -636,7 +661,7 @@ public class ServiceTarefas extends Service{
 	
 	
 	public String pegaUltimo(String campo, String cdU){
-		Log.i(LOG, "pegaUltimo()");
+//		Log.i(LOG, "pegaUltimo()");
 		conectTarefa.setClausula(" WHERE CDRESPONSAVEL='"+cdU+"'");
 		conectTarefa.setOrder(" ORDER BY "+campo);		
 		String[] aux = MyString.tStringArray(conectTarefa.select(campo));
