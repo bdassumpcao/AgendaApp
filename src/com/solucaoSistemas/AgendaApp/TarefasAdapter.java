@@ -78,12 +78,12 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	        final String cdTarefa = TAREFAS.get(position);
 	        conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 	        final String resp = MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")));
-	        //SELECT NMDESTINATARIOS FROM TAREFA WHERE (SELECT CDREFERENCIA FROM TAREFA WHERE CDTAREFA=1)
+	        //SELECT CDDESTINATARIO FROM TAREFA WHERE (SELECT CDREFERENCIA FROM TAREFA WHERE CDTAREFA=1)
 	
 	        
 	        conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" "
 	        		+ "AND CDREFERENCIA=(SELECT CDREFERENCIA FROM TAREFA WHERE CDTAREFA="+cdTarefa+")");
-	        String[] dest = MyString.tStringArray(conectTarefa.select(" NMDESTINATARIOS "));
+	        String[] dest = MyString.tStringArray(conectTarefa.select(" CDDESTINATARIO "));
 	        String[] cd = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
 	        
 	        String destinatarios = "";
@@ -112,7 +112,7 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	        conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 	        String descricao = MyString.tString(conectTarefa.select(" NMDESCRICAO "));
 	        String responsavel = getNmUsuario(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")));
-	//        String destinatarios = getNmDestinatarios(MyString.tString3(conectTarefa.select(" NMDESTINATARIOS ")));
+	//        String destinatarios = getNmDestinatarios(MyString.tString3(conectTarefa.select(" CDDESTINATARIO ")));
 	        String status = MyString.tString(conectTarefa.select(" CDSTATUS "));
 	
 	        if(status.equals("1")) {

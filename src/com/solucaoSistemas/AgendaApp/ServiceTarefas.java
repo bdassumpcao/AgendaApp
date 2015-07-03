@@ -187,28 +187,31 @@ public class ServiceTarefas extends Service{
 	
 	public void deleteServidor(String url) throws InterruptedException {	
 		String cdU = userAtivo();
-		String[] cdT, resp, dest;				
+		String[] cdT;				
 
 		conectLogTarefa.setOrder("");
 		conectLogTarefa.setClausula(" WHERE DSOPERACAO='D' ");
 		cdT = MyString.tStringArray(conectLogTarefa.select(" CDTAREFA "));
-		resp = MyString.tStringArray(conectLogTarefa.select(" CDRESPONSAVEL "));
-		dest = MyString.tStringArray(conectLogTarefa.select(" CDDESTINATARIO "));
-		String cdResp="";
-		String cdDest="";
+		String cdResp="", cdDest="", cdRef="";
 		
 		if(cdT.length!=0){
 		for(int j=0; j<cdT.length; j++){
 			Log.i(LOG, "cdE[j]"+cdT[j]);
-			if(!cdT[j].equals("null")){
+			if(!cdT[j].equals("")){
+				Log.i(LOG, "!cdT[j].equals('')");
 				conectTarefa.setClausula(" WHERE CDTAREFA="+cdT[j]);
-				if(j == cdT.length-1){					
-					cdResp += MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")));
-					cdDest += MyString.tiraEspaço(MyString.tString(conectTarefa.select(" NMDESTINATARIOS ")));
+				
+				if(j == cdT.length-1){						
+					cdResp += MyString.tString(conectTarefa.select(" CDRESPONSAVEL "));
+					cdDest += MyString.tString(conectTarefa.select(" CDDESTINATARIO "));
+					cdRef += MyString.tString(conectTarefa.select(" CDREFERENCIA "));
+					Log.i(LOG, "AAAAAA:"+cdResp+"\n"+cdDest+"\n"+cdRef);
 				}
 				else{
-					cdResp += MyString.tiraEspaço(resp[j])+"-";
-					cdDest += MyString.tiraEspaço(dest[j])+"-";
+					cdResp += MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")))+"-";
+					cdDest += MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDDESTINATARIO ")))+"-";
+					cdRef += MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDREFERENCIA ")))+"-";
+					Log.i(LOG, "AAAAAA:"+cdResp+"\n"+cdDest+"\n"+cdRef);
 				}
 			}
 		}
@@ -221,7 +224,7 @@ public class ServiceTarefas extends Service{
 			Log.i(LOG, cdT[i]+","+ref+","+op);
 		}
 
-			String dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=d&cdU="+cdU+"&cdResp="+cdResp+"&cdDest="+cdDest;
+			String dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=d&cdU="+cdU+"&cdRef="+cdRef+"&cdResp="+cdResp+"&cdDest="+cdDest;
 			ResponseHandler<String> handler = new BasicResponseHandler();
 			HttpClient client = new DefaultHttpClient();
 			HttpGet httpGet = new HttpGet("http://"+url+dados);
@@ -243,7 +246,7 @@ public class ServiceTarefas extends Service{
 				conectLogTarefa.setOrder("");
 				conectLogTarefa.setClausula(" WHERE DSOPERACAO='D' ");
 				conectLogTarefa.delete();
-				Log.i(LOG, cdExt+" excluido no servidor!");
+				Log.i(LOG, cdT+" excluido no servidor!");
 			}
 		}
 		
@@ -407,7 +410,7 @@ public class ServiceTarefas extends Service{
 					cdTarefa = MyString.tString(conectTarefa.select("CDTAREFA"));
 					descricao = MyString.tString(conectTarefa.select("NMDESCRICAO"));
 					descricao = URLEncoder.encode(descricao, "UTF-8");
-					dest = MyString.tString(conectTarefa.select("NMDESTINATARIOS"));
+					dest = MyString.tString(conectTarefa.select("CDDESTINATARIO"));
 					responsavel = MyString.tString(conectTarefa.select("CDRESPONSAVEL"));
 					responsavel = URLEncoder.encode(responsavel, "UTF-8");
 					status = MyString.tString(conectTarefa.select("CDSTATUS"));	
@@ -454,7 +457,7 @@ public class ServiceTarefas extends Service{
 					cdTarefa = MyString.tString(conectTarefa.select("CDTAREFA"));
 					descricao = MyString.tString(conectTarefa.select("NMDESCRICAO"));
 					descricao = URLEncoder.encode(descricao, "UTF-8");
-					dest = MyString.tString(conectTarefa.select("NMDESTINATARIOS"));
+					dest = MyString.tString(conectTarefa.select("CDDESTINATARIO"));
 					responsavel = MyString.tString(conectTarefa.select("CDRESPONSAVEL"));
 					responsavel = URLEncoder.encode(responsavel, "UTF-8");
 					status = MyString.tString(conectTarefa.select("CDSTATUS"));	
