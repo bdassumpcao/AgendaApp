@@ -33,20 +33,6 @@ public class ServiceTarefas extends Service{
 	ConectaLocal conectUser;
 	ConectaLocal conectLogTarefa;
 	
-	/** Para a normalização dos caracteres de 32 a 255, primeiro caracter */  
-	private static final char[] FIRST_CHAR =  
-		    (" !'#$%&'()*+\\-./0123456789:;<->?@ABCDEFGHIJKLMNOPQRSTUVWXYZ"  
-		        + "[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ E ,f'.++^%S<O Z  ''''.-"  
-		        + "-~Ts>o ZY !C#$Y|$'(a<--(_o+23'u .,1o>113?AAAAAAACEEEEIIIIDNOO"  
-		        + "OOOXOUUUUyTsaaaaaaaceeeeiiiidnooooo/ouuuuyty")  
-		        .toCharArray();  
-	/** Para a normalização dos caracteres de 32 a 255, segundo caracter */  
-	private static final char[] SECOND_CHAR =  
-		    ("  '         ,                                               "  
-		        + "\\                                   $  r'. + o  E      ''  "  
-		        + "  M  e     #  =  'C.<  R .-..     ..>424     E E            "  
-		        + "   E E     hs    e e         h     e e     h ")  
-		        .toCharArray(); 
 	
 	@Override
 	public void onCreate(){
@@ -194,24 +180,28 @@ public class ServiceTarefas extends Service{
 		cdT = MyString.tStringArray(conectLogTarefa.select(" CDTAREFA "));
 		String cdResp="", cdDest="", cdRef="";
 		
+				
 		if(cdT.length!=0){
 		for(int j=0; j<cdT.length; j++){
 			Log.i(LOG, "cdE[j]"+cdT[j]);
 			if(!cdT[j].equals("")){
 				Log.i(LOG, "!cdT[j].equals('')");
-				conectTarefa.setClausula(" WHERE CDTAREFA="+cdT[j]);
 				
-				if(j == cdT.length-1){						
-					cdResp += MyString.tString(conectTarefa.select(" CDRESPONSAVEL "));
-					cdDest += MyString.tString(conectTarefa.select(" CDDESTINATARIO "));
-					cdRef += MyString.tString(conectTarefa.select(" CDREFERENCIA "));
-					Log.i(LOG, "AAAAAA:"+cdResp+"\n"+cdDest+"\n"+cdRef);
+				if(j == cdT.length-1){	
+					conectTarefa.setClausula(" WHERE CDTAREFA='"+cdT[j]+"'");
+					Log.i(LOG, "1 WHERE CDTAREFA='"+cdT[j]+"'");
+					cdResp += MyString.tString(conectLogTarefa.select(" CDRESPONSAVEL "));
+					cdDest += MyString.tString(conectLogTarefa.select(" CDDESTINATARIO "));
+					cdRef +=  MyString.tString(conectLogTarefa.select(" CDREFERENCIA "));
+					Log.i(LOG, "1 AAAAAA:'"+cdResp+"','"+cdDest+"','"+cdRef+"'");
 				}
-				else{
-					cdResp += MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")))+"-";
-					cdDest += MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDDESTINATARIO ")))+"-";
-					cdRef += MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDREFERENCIA ")))+"-";
-					Log.i(LOG, "AAAAAA:"+cdResp+"\n"+cdDest+"\n"+cdRef);
+				else{					
+					conectTarefa.setClausula("2 WHERE CDTAREFA='"+cdT[j]+"'");
+					Log.i(LOG, " WHERE CDTAREFA='"+cdT[j]+"'");
+					cdResp += MyString.tString(conectLogTarefa.select(" CDRESPONSAVEL "))+"-";
+					cdDest += MyString.tString(conectLogTarefa.select(" CDDESTINATARIO "))+"-";
+					cdRef += MyString.tString(conectLogTarefa.select(" CDREFERENCIA "))+"-";
+					Log.i(LOG, "2 AAAAAA:'"+cdResp+"','"+cdDest+"','"+cdRef+"'");
 				}
 			}
 		}
@@ -326,7 +316,7 @@ public class ServiceTarefas extends Service{
 			String cdResp = "";
 			String r = "";
 			for(int i=0; i<usuarios.length;i++){
-				usuarios[i] = normalize(MyString.tiraEspaço(usuarios[i]));
+				usuarios[i] = MyString.normalize(MyString.tiraEspaço(usuarios[i]));
 				String ref = pegaUltimo(" CDREFERENCIA ", usuarios[i]);
 				if(ref.equals("-1"))
 					ref = "0";
@@ -355,7 +345,7 @@ public class ServiceTarefas extends Service{
 	
 	public void insereCelular(String respServer){
 		Log.i(LOG, "insereCelular() TAREFA");
-		if(!normalize(respServer).equals("")){
+		if(!MyString.normalize(respServer).equals("")){
 			try {
 				String[] campos = MyString.montaInsertTarefa(respServer);
 				
@@ -387,7 +377,7 @@ public class ServiceTarefas extends Service{
 		respServer = webservice(url, dados);
 		
 		respServer = respServer.substring(0, respServer.indexOf("$"));
-		respServer = normalize(respServer);
+		respServer = MyString.normalize(respServer);
 		Log.i(LOG, "respServer:"+respServer+"");
 		
 		
@@ -508,7 +498,7 @@ public class ServiceTarefas extends Service{
 		while(exec.respServer.equals(""));
 		
 		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("$"));
-		respServer = normalize(respServer);
+		respServer = MyString.normalize(respServer);
 		
 		if(respServer.equals("")){
 			Log.i(LOG, "respServer == vazio"+respServer);
@@ -665,8 +655,7 @@ public class ServiceTarefas extends Service{
 	
 	public String pegaUltimo(String campo, String cdU){
 //		Log.i(LOG, "pegaUltimo()");
-		conectTarefa.setClausula(" WHERE CDRESPONSAVEL='"+cdU+"'");
-		conectTarefa.setOrder(" ORDER BY "+campo);		
+		conectTarefa.setClausula(" WHERE CDRESPONSAVEL='"+cdU+"'");	
 		String[] aux = MyString.tStringArray(conectTarefa.select(campo));
 		
 		if(aux.length>0)
@@ -717,27 +706,7 @@ public class ServiceTarefas extends Service{
 		return this.pendencia;
 	}
 	
-	
-	public static String normalize(String str) {  
-	    char[] chars = str.toCharArray();  
-	    StringBuffer ret = new StringBuffer(chars.length * 2);  
-	    for (int i = 0; i < chars.length; ++i) {  
-	        char aChar = chars[i];  
-	        if (aChar == ' ' || aChar == '\t') {  
-	            ret.append(' '); // convertido para espaço  
-	        } else if (aChar > ' ' && aChar < 256) {  
-	            if (FIRST_CHAR[aChar - ' '] != ' ') {  
-	                ret.append(FIRST_CHAR[aChar - ' ']); // 1 caracter  
-	            }  
-	            if (SECOND_CHAR[aChar - ' '] != ' ') {  
-	                ret.append(SECOND_CHAR[aChar - ' ']); // 2 caracteres  
-	            }  
-	        }  
-	    }  
-	  
-	    return ret.toString();  
-	}  
-	
+		
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub

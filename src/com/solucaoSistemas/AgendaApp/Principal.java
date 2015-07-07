@@ -342,8 +342,9 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
 
 
     private void aguardaSync(){
+    	
     	Thread t = new Thread(new Runnable() {
-			
+    		
 			@Override
 			public void run() {
 				do {
@@ -419,30 +420,33 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
    		}
     }
     
+    
     public void deletar(long eventID, Calendar date){
    		conectAgenda.setClausula(" WHERE CDEVENTO = "+eventID+"");
    		String cdExt = MyString.tString(conectAgenda.select(" CDEVENTOEXT "));
    		if(conectAgenda.delete()){
+   			cdExt = MyString.normalize(cdExt);
    			conectLogAgenda.insert(eventID+","+cdExt+",'D'"); // 'D' = delete
    			mWeekView.goToDate(date);
    			mWeekView.goToHour(horaExpediente);
    		}
     }
     
-	  public  void startService(){
+    
+	 public  void startService(){
 			Intent intent = new Intent("SERVICO_AGENDA");
 			startService(intent);
 			
 			startService(new Intent("SERVICO_TAREFA"));
-		}
+	 }
 
 	  
-	  public void stopService(){
+	 public void stopService(){
 			Intent intent = new Intent("SERVICO_AGENDA");
 			stopService(intent);
 			
 			stopService(new Intent("SERVICO_TAREFA"));
-		}
+	 }
     
     public void showToast(String texto){		
 		Toast.makeText(this, texto, Toast.LENGTH_SHORT).show();

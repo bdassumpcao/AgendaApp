@@ -18,6 +18,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -41,20 +42,6 @@ public class ServiceApp extends Service {
 	static String[] cod;
 	static boolean ativo = false;
 	private static  String LOG = "teste";
-	/** Para a normalização dos caracteres de 32 a 255, primeiro caracter */  
-	private static final char[] FIRST_CHAR =  
-		    (" !'#$%&'()*+\\-./0123456789:;<->?@ABCDEFGHIJKLMNOPQRSTUVWXYZ"  
-		        + "[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ E ,f'.++^%S<O Z  ''''.-"  
-		        + "-~Ts>o ZY !C#$Y|$'(a<--(_o+23'u .,1o>113?AAAAAAACEEEEIIIIDNOO"  
-		        + "OOOXOUUUUyTsaaaaaaaceeeeiiiidnooooo/ouuuuyty")  
-		        .toCharArray();  
-	/** Para a normalização dos caracteres de 32 a 255, segundo caracter */  
-	private static final char[] SECOND_CHAR =  
-		    ("  '         ,                                               "  
-		        + "\\                                   $  r'. + o  E      ''  "  
-		        + "  M  e     #  =  'C.<  R .-..     ..>424     E E            "  
-		        + "   E E     hs    e e         h     e e     h ")  
-		        .toCharArray(); 
 	
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -71,6 +58,7 @@ public class ServiceApp extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
 		Log.i(LOG, "onStartCommand()");
+		
 		
 		if(!pendencia){
 			pendencia = true;
@@ -177,57 +165,47 @@ public class ServiceApp extends Service {
 		String desc, lc, obs, dt, hI, hF, st;
 		
 		if(cdE.length!=0){
-		for(int j=0; j<cdE.length; j++){
-			if(!cdE[j].equals("null")){
-			Log.i(LOG, "cdE[j]"+cdE[j]);		
-			conectAgenda.setOrder("");
-			conectAgenda.setClausula(" WHERE CDEVENTOEXT="+cdE[j]);	
-			
-//			cdEvento = MainActivity.tString(conectAgenda.select("CDEVENTO"));
-			desc = MyString.tString(conectAgenda.select("DESCRICAO"));
-			desc = URLEncoder.encode(desc, "UTF-8");
-			lc = MyString.tString(conectAgenda.select("LOCAL"));
-			lc = URLEncoder.encode(lc, "UTF-8");
-			obs = MyString.tString(conectAgenda.select("OBSERVACAO"));
-			obs = URLEncoder.encode(obs, "UTF-8");
-			dt = MyString.tString(conectAgenda.select("DATA"));
-			dt = dt.replace( "\\" , ""); 
-			hI = MyString.tString(conectAgenda.select("HORAINICIO"));
-			String aux = hI.substring(0, 2) +":";
-			aux += hI.substring(2, 4);
-			hI = aux;
-			hF = MyString.tString(conectAgenda.select("HORAFIM"));
-			aux = hF.substring(0, 2) +":";
-			aux += hF.substring(2, 4);
-			hF = aux;
-			st = MyString.tString(conectAgenda.select("STATUS"));					
-			
-			String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=u&cdU="+cdU+"&cdE="+cdE[j]+"&desc="+desc+"&obs="+obs+"&st="+st+"&dt="+dt+"&hI="+hI+"&hF="+hF+"&lc="+lc;
-			ResponseHandler<String> handler = new BasicResponseHandler();
-			HttpClient client = new DefaultHttpClient();
-			HttpGet httpGet = new HttpGet("http://"+url+dados);	
-			Log.i(LOG,"http://"+url+dados);
-			ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);			
-			
-			exec.start();
-			
-			do{
-//				Log.i(LOG,"sleep");
-				Thread.sleep(1000);
+			for(int j=0; j<cdE.length; j++){
+				if(!cdE[j].equals("null")){
+				Log.i(LOG, "cdE[j]"+cdE[j]);		
+				conectAgenda.setOrder("");
+				conectAgenda.setClausula(" WHERE CDEVENTOEXT="+cdE[j]);	
+				
+	//			cdEvento = MainActivity.tString(conectAgenda.select("CDEVENTO"));
+				desc = MyString.tiraEspaço(MyString.tString(conectAgenda.select("DESCRICAO")));
+				desc = URLEncoder.encode(desc, "UTF-8");
+				lc = MyString.tiraEspaço(MyString.tString(conectAgenda.select("LOCAL")));
+				lc = URLEncoder.encode(lc, "UTF-8");
+				obs = MyString.tiraEspaço(MyString.tString(conectAgenda.select("OBSERVACAO")));
+				obs = URLEncoder.encode(obs, "UTF-8");
+				dt = MyString.tiraEspaço(MyString.tString(conectAgenda.select("DATA")));
+				dt = dt.replace( "\\" , ""); 
+				hI = MyString.tiraEspaço(MyString.tString(conectAgenda.select("HORAINICIO")));
+				String aux = hI.substring(0, 2) +":";
+				aux += hI.substring(2, 4);
+				hI = aux;
+				hF = MyString.tiraEspaço(MyString.tString(conectAgenda.select("HORAFIM")));
+				aux = hF.substring(0, 2) +":";
+				aux += hF.substring(2, 4);
+				hF = aux;
+				st = MyString.tiraEspaço(MyString.tString(conectAgenda.select("STATUS")));					
+				
+				String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=u&cdU="+cdU+"&cdE="+cdE[j]+"&desc="+desc+"&obs="+obs+"&st="+st+"&dt="+dt+"&hI="+hI+"&hF="+hF+"&lc="+lc;
+				String respServer = webservice(url, dados);
+				respServer = respServer.substring(0, respServer.indexOf("$"));
+				
+				
+				if(respServer.equals("")){
+					Log.i(LOG, "respServer == "+respServer);
+				}
+				else{
+					conectLogAgenda.setOrder("");
+					conectLogAgenda.setClausula(" WHERE CDEVENTOEXT="+cdE[j]);
+					conectLogAgenda.delete();
+					Log.i(LOG, cdE[j]+" alterado no servidor");
+				}
+				}
 			}
-			while(exec.respServer.equals(""));
-			
-			if(!exec.respServer.equals("$")){
-				Log.i(LOG, "respServer == "+exec.respServer);
-			}
-			else{
-				conectLogAgenda.setOrder("");
-				conectLogAgenda.setClausula(" WHERE CDEVENTOEXT="+cdE[j]);
-				conectLogAgenda.delete();
-				Log.i(LOG, cdE[j]+" alterado no servidor");
-			}
-			}
-		}
 		}
 		
 	}
@@ -253,22 +231,12 @@ public class ServiceApp extends Service {
 		}
 
 			String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=d&cdU="+cdU+"&cdE="+cdExt;
-			ResponseHandler<String> handler = new BasicResponseHandler();
-			HttpClient client = new DefaultHttpClient();
-			HttpGet httpGet = new HttpGet("http://"+url+dados);
-			Log.i(LOG,"http://"+url+dados);
-			ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
+			String respServer = webservice(url, dados);
+			respServer = respServer.substring(0, respServer.indexOf("$"));
+			respServer = MyString.normalize(respServer);
 			
-			exec.start();
-			
-			do{
-//				Log.i(LOG,"sleep");
-				Thread.sleep(1000);
-			}
-			while(exec.respServer.equals(""));
-			
-			if(!exec.respServer.equals("$")){
-				Log.i(LOG, "respServer == "+exec.respServer);
+			if(!respServer.equals("")){
+				Log.i(LOG, "respServer == "+respServer);
 			}
 			else{
 				conectLogAgenda.setOrder("");
@@ -285,20 +253,9 @@ public class ServiceApp extends Service {
 		String cdU = userAtivo();	
 
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sd&cdU="+cdU;
-		ResponseHandler<String> handler = new BasicResponseHandler();
-		HttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet("http://"+url+dados);
-		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
-			
-		exec.start();
-			
-		do{
-//			Log.i(LOG,"sleep");
-			Thread.sleep(1000);
-		}
-		while(exec.respServer.equals(""));
-		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("#"));
-		respServer = normalize(respServer);
+		String respServer = webservice(url, dados);
+		respServer = respServer.substring(0, respServer.indexOf("#"));
+		respServer = MyString.normalize(respServer);
 				
 		if(respServer.equals("")){
 			Log.i(LOG, "respServer == "+respServer);
@@ -318,7 +275,8 @@ public class ServiceApp extends Service {
 	public void selectServidor(String url) throws InterruptedException{	
 		String cdU = userAtivo();
 		String cdExt = pegaUltimo(" CDEVENTOEXT ", cdU);
-		cdExt = normalize(cdExt);
+		cdExt = MyString.normalize(cdExt);
+		Log.i(LOG, "cdExt:'"+cdExt+"'");
 		String dados = "";
 		if(cdExt.equals("-1")){
 			dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sall&cdU="+cdU;
@@ -328,24 +286,13 @@ public class ServiceApp extends Service {
 			dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=su&cdU="+cdU+"&cdE="+cdExt;
 		}
 
-		ResponseHandler<String> handler = new BasicResponseHandler();
-		HttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet("http://"+url+dados);
-		Log.i(LOG,"http://"+url+dados);
-		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
 		
-		exec.start();
-		
-		do{
-//			Log.i(LOG,"sleep");
-			Thread.sleep(1000);
-		}
-		while(exec.respServer.equals(""));
-		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("#"));
+		String respServer = webservice(url, dados);
+		respServer = respServer.substring(0, respServer.indexOf("#"));
 //		respServer = normalize(respServer);
 		
-		if(normalize(respServer).equals("")){
-			Log.i(LOG, "respServer == "+respServer);
+		if(MyString.normalize(respServer).equals("")){
+			Log.i(LOG, "respServer == "+MyString.normalize(respServer));
 		}
 		else{
 			try {
@@ -389,9 +336,9 @@ public class ServiceApp extends Service {
 //			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
-		while(normalize(exec.respServer).equals(""));
+		while(MyString.normalize(exec.respServer).equals(""));
 		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("$"));
-		respServer = normalize(respServer);
+		respServer = MyString.normalize(respServer);
 		Log.i(LOG, "respServer:'"+respServer+"'");
 		
 		if(respServer.equals("")){
@@ -494,22 +441,10 @@ public class ServiceApp extends Service {
 		Log.i(LOG, "entrou insereServidor()");
 		String cdExt = "";
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=i&"+campos;
-		ResponseHandler<String> handler = new BasicResponseHandler();
-		HttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet("http://"+url+dados);
-		Log.i(LOG,"http://"+url+dados);
-		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
-		
-		exec.start();
-		
-		do{
-//			Log.i(LOG,"sleep");
-			Thread.sleep(1000);
-		}
-		while(exec.respServer.equals(""));
-		
-		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("$"));
-		respServer = normalize(respServer);
+
+		String respServer = webservice(url, dados);
+		respServer = respServer.substring(0, respServer.indexOf("$"));
+		respServer = MyString.normalize(respServer);
 		
 		if(respServer.equals("")){
 			Log.i(LOG, "respServer == vazio"+respServer);
@@ -521,28 +456,16 @@ public class ServiceApp extends Service {
 		
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void updateCelular(String url) throws InterruptedException{	
 		String cdU = userAtivo();
 		
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sa&cdU="+cdU;
-		ResponseHandler<String> handler = new BasicResponseHandler();
-		HttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet("http://"+url+dados);
-		Log.i(LOG,"http://"+url+dados);
-		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
+		String respServer = webservice(url, dados);		
+		respServer = respServer.substring(0, respServer.indexOf("#"));
+//		respServer = MyString.normalize(respServer);
 		
-		exec.start();
-		
-		do{
-//			Log.i(LOG,"sleep");
-			Thread.sleep(1000);
-		}
-		while(exec.respServer.equals(""));
-		
-		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("#"));
-		respServer = normalize(respServer);
-		
-		if(respServer.equals("")){
+		if(MyString.normalize(respServer).equals("")){
 			Log.i(LOG, "respServer == "+respServer);
 		}
 		else{
@@ -568,11 +491,34 @@ public class ServiceApp extends Service {
 		
 	}
 	
+	/**
+	 * 
+	 * @param url
+	 * @param dados
+	 * @return exec.respServer
+	 * @throws InterruptedException
+	 */
+	public String webservice(String url, String dados) throws InterruptedException{
+		ResponseHandler<String> handler = new BasicResponseHandler();
+		HttpClient client = new DefaultHttpClient();
+		HttpGet httpGet = new HttpGet("http://"+url+dados);
+		Log.i(LOG,"http://"+url+dados);
+		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
+		
+		exec.start();
+		
+		do{
+//			Log.i(LOG,"sleep");
+			Thread.sleep(1000);
+		}
+		while(exec.respServer.equals(""));
+		return exec.respServer;
+	}
+	
 	public String pegaUltimo(String campo, String cdU){
-		Log.i(LOG, "pegaUltimo()");
-		conectAgenda.setClausula(" WHERE CDUSUARIO="+cdU);
-		conectAgenda.setOrder(" ORDER BY "+campo);		
+		conectAgenda.setClausula(" WHERE CDUSUARIO="+cdU);	
 		String[] aux = MyString.tStringArray(conectAgenda.select(campo));
+
 		if(aux.length>0)
 			return MyString.tiraEspaço(aux[aux.length-1]);
 		else
@@ -594,7 +540,7 @@ public class ServiceApp extends Service {
 		Log.i(LOG, "updateCodServidor()");
 		Conexao conexao = new Conexao(this);
 		String url = conexao.pegaLink();
-		cdE = normalize(cdE);
+		cdE = MyString.normalize(cdE);
 		Log.i(LOG, "cdE:"+cdE);
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=uc&cdE="+cdExt+"&cdExt="+cdE;
 		
@@ -639,23 +585,7 @@ public class ServiceApp extends Service {
 		catch(Exception e){}
 	}
 	
-	public static String normalize(String str) {  
-	    char[] chars = str.toCharArray();  
-	    StringBuffer ret = new StringBuffer(chars.length * 2);  
-	    for (int i = 0; i < chars.length; ++i) {  
-	        char aChar = chars[i];  
-	        if (aChar == ' ' || aChar == '\t') {  
-	            ret.append(' '); // convertido para espaço  
-	        } else if (aChar > ' ' && aChar < 256) {  
-	            if (FIRST_CHAR[aChar - ' '] != ' ') {  
-	                ret.append(FIRST_CHAR[aChar - ' ']); // 1 caracter  
-	            }  
-	            if (SECOND_CHAR[aChar - ' '] != ' ') {  
-	                ret.append(SECOND_CHAR[aChar - ' ']); // 2 caracteres  
-	            }  
-	        }  
-	    }  
-	  
-	    return ret.toString();  
-	}  
+
+	
+ 
 }

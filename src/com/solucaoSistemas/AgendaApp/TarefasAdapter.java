@@ -187,16 +187,20 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	public void deletar(String cd, String resp, int position){
 		conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" AND "
 				+ "CDREFERENCIA=(SELECT CDREFERENCIA FROM TAREFA WHERE CDTAREFA="+cd+")");
-//		conectTarefa.setClausula(" WHERE CDTAREFA="+cd);
 		Log.i(LOG, "codigo que vai excluir:"+cd);
-		String[] ref = MyString.tStringArray(conectTarefa.select(" CDREFERENCIA "));
-		conectLogTarefa.insert(cd+","+ref[0]+",'D'");
+		String[] cdT = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
 		
+		for(int i=0; i<cdT.length; i++){
+			conectTarefa.setClausula(" WHERE CDTAREFA='"+cdT[0]+"'");
+			String ref = MyString.tString(conectTarefa.select(" CDREFERENCIA "));
+			String dest = MyString.tString(conectTarefa.select(" CDDESTINATARIO "));
+			conectLogTarefa.insert(cdT[0]+","+ref+","+dest+","+resp+","+"'D'");		
+		}		
 		
 		TAREFAS.remove(cd);
-		conectTarefa.delete();	
-
-		
+		conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" AND "
+				+ "CDREFERENCIA=(SELECT CDREFERENCIA FROM TAREFA WHERE CDTAREFA="+cd+")");
+		conectTarefa.delete();			
 		
 		notifyDataSetChanged();
 	}

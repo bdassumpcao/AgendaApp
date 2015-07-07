@@ -220,6 +220,7 @@ public class EditaEvento extends Activity{
    public void deletar(Intent intent){
 	   conectAgenda.setClausula(" WHERE CDEVENTO = "+cdevento+"");
 	   if(conectAgenda.delete()){
+		   campoCdExt = MyString.normalize(campoCdExt);
 		   conectLogAgenda.insert(cdevento+","+campoCdExt+",'D'");
 		   Bundle b = new Bundle();
 		   b.putString("key", dataSelecionada);
