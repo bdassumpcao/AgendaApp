@@ -3,6 +3,7 @@ package com.solucaoSistemas.AgendaApp;
 import java.util.ArrayList;
 import java.util.List;
 
+import Utilitarios.MyString;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;

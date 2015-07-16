@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import Utilitarios.MyString;
+import Web.Conexao;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -435,7 +437,7 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
     
 	 public  void startService(){
 			Intent intent = new Intent("SERVICO_AGENDA");
-			startService(intent);
+			//startService(intent);
 			
 			startService(new Intent("SERVICO_TAREFA"));
 	 }

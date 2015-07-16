@@ -11,6 +11,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import Utilitarios.MyString;
+import Web.Conexao;
+import Web.ExecutaWeb;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;

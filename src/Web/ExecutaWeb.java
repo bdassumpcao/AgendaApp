@@ -1,4 +1,4 @@
-package com.solucaoSistemas.AgendaApp;
+package Web;
 
 import java.io.IOException;
 
@@ -9,13 +9,13 @@ import org.apache.http.client.methods.HttpGet;
 
 import android.util.Log;
 
-class  ExecutaWeb extends Thread{
+public class  ExecutaWeb extends Thread{
 	private static  String LOG = "teste";
 	ResponseHandler<String> handler;
 	HttpClient client;
 	HttpGet httpGet;
 	String url;
-	String respServer;
+	public String respServer;
 	
 	public ExecutaWeb(ResponseHandler<String> handler, HttpClient client,			
 		HttpGet httpGet) {

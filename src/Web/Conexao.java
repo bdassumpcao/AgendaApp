@@ -1,4 +1,4 @@
-package com.solucaoSistemas.AgendaApp;
+package Web;
 
 import java.io.InputStreamReader;
 

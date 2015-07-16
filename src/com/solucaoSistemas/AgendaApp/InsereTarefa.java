@@ -4,6 +4,7 @@ package com.solucaoSistemas.AgendaApp;
 import java.util.ArrayList;
 import java.util.List;
 
+import Utilitarios.MyString;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

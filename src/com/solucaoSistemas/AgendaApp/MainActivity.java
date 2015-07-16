@@ -5,8 +5,13 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+
 import com.solucaoSistemas.AgendaApp.ConectaLocal;
 import com.solucaoSistemas.AgendaApp.R;
+
+import Utilitarios.MyString;
+import Web.Conexao;
+import Web.ExecutaWeb;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.annotation.SuppressLint;
@@ -75,7 +80,7 @@ public class MainActivity extends Activity {
 					HttpClient client = new DefaultHttpClient();
 					HttpGet httpGet = new HttpGet("http://"+url+dados);
 					Log.i(LOG,"http://"+url+dados);
-					ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
+					Web.ExecutaWeb exec = new Web.ExecutaWeb(handler, client, httpGet);
 					
 					exec.start();
 					

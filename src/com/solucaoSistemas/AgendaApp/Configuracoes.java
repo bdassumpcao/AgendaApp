@@ -3,6 +3,7 @@ package com.solucaoSistemas.AgendaApp;
 
 import java.util.Calendar;
 
+import Utilitarios.MyString;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;

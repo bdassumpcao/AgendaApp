@@ -3,6 +3,8 @@ package com.solucaoSistemas.AgendaApp;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import Utilitarios.MyString;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -16,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.solucaoSistemas.AgendaApp.R;
 
 @SuppressLint("SimpleDateFormat")
