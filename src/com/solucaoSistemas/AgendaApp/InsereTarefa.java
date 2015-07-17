@@ -168,6 +168,7 @@ public class InsereTarefa extends Activity{
 		    		int referencia = (pegaUltimaRef()+1);
 		    		for(int i=0; i<selecionados.size() ; i++){
 		    			cdDestinatario = getCodUsuario(selecionados.get(i));
+		    		//	Log.i("teste","conectTarefa="+edt_desc.getText().toString());
 		    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"',0,"+cdDestinatario+","+usuarioAtivo+","+referencia);
 		    		}
 
