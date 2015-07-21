@@ -35,11 +35,13 @@ public class ServiceTarefas extends Service{
 	ConectaLocal conectTarefa;
 	ConectaLocal conectUser;
 	ConectaLocal conectLogTarefa;
+	ArrayList<Thread> listaThread;
 	
 	
 	@Override
 	public void onCreate(){
 		super.onCreate();
+		listaThread = new ArrayList<Thread>();
 		Log.i(LOG, "onCreate() TAREFA");
 	}
 	
@@ -73,31 +75,90 @@ public class ServiceTarefas extends Service{
 	public void  monitor() throws InterruptedException, UnsupportedEncodingException{
 		Log.i(LOG, "entrou monitor() TAREFA");
 		Conexao conexao = new Conexao(this);
-		String url = "";
+		final String url;
 		
 		if(conexao.isConected()){
 			url = conexao.pegaLink();
 			Log.i(LOG, "link:\n"+url);
 			
 			//----------------------------------
-			Log.i(LOG,"entrou deleteServidor()");
-			deleteServidor(url);
-			Log.i(LOG,"saiu deleteServidor()");
-			Log.i(LOG, "");
 			
+			listaThread.add(new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					Log.i(LOG,"entrou deleteServidor()");
+					try {
+						deleteServidor(url);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Log.i(LOG,"saiu deleteServidor()");
+					Log.i(LOG, "");
+					try {
+						this.finalize();
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}));
 			
-			Log.i(LOG,"entrou selectCelular()");
-			selectCelular(url);
-			Log.i(LOG,"saiu selectCelular()");
-			Log.i(LOG, "");
+			listaThread.add(new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					Log.i(LOG,"entrou selectCelular()");
+					try {
+						selectCelular(url);
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Log.i(LOG,"saiu selectCelular()");
+					Log.i(LOG, "");
+					try {
+						this.finalize();
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}));
 			
-			Log.i(LOG,"entrou selectServidor()");
-			selectServidor(url);
-			Log.i(LOG,"saiu selectServidor()");
-			Log.i(LOG, "");
+			listaThread.add(new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					Log.i(LOG,"entrou selectServidor()");
+					try {
+						selectServidor(url);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Log.i(LOG,"saiu selectServidor()");
+					Log.i(LOG, "");
+					try {
+						this.finalize();
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}));
 			
-
-
+			for(Thread t: listaThread){
+				t.start();
+				Log.i(LOG, "");
+				while (t.isAlive()) {
+					Thread.sleep(1000);
+				}
+			}
 
 
 		}
@@ -199,8 +260,8 @@ public class ServiceTarefas extends Service{
 					Log.i(LOG, "1 AAAAAA:'"+cdResp+"','"+cdDest+"','"+cdRef+"'");
 				}
 				else{					
-					conectTarefa.setClausula("2 WHERE CDTAREFA='"+cdT[j]+"'");
-					Log.i(LOG, " WHERE CDTAREFA='"+cdT[j]+"'");
+					conectTarefa.setClausula(" WHERE CDTAREFA='"+cdT[j]+"'");
+					Log.i(LOG, "2 WHERE CDTAREFA='"+cdT[j]+"'");
 					cdResp += MyString.tString(conectLogTarefa.select(" CDRESPONSAVEL "))+"-";
 					cdDest += MyString.tString(conectLogTarefa.select(" CDDESTINATARIO "))+"-";
 					cdRef += MyString.tString(conectLogTarefa.select(" CDREFERENCIA "))+"-";
