@@ -2,6 +2,7 @@ package com.solucaoSistemas.AgendaApp;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import Utilitarios.MyString;
@@ -169,7 +170,7 @@ public class InsereTarefa extends Activity{
 		    		for(int i=0; i<selecionados.size() ; i++){
 		    			cdDestinatario = getCodUsuario(selecionados.get(i));
 		    		//	Log.i("teste","conectTarefa="+edt_desc.getText().toString());
-		    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"',0,"+cdDestinatario+","+usuarioAtivo+","+referencia);
+		    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"',0,"+cdDestinatario+","+usuarioAtivo+","+referencia+",'");
 		    		}
 
 		    		return true;		    			
