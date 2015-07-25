@@ -1,15 +1,16 @@
 package com.solucaoSistemas.AgendaApp;
 
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import Utilitarios.MyString;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,7 +18,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -165,12 +165,21 @@ public class InsereTarefa extends Activity{
 		    		InsereTarefa.this.startActivity(intent);
 		    		InsereTarefa.this.finish();
 		    		
+		    		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		    		Date data = new Date();
+		    		Calendar c = Calendar.getInstance();
+		    		c.setTime(data);
+		    		Date dataAtual = c.getTime();
+		    		data.getTime();
+		    		
+		    		final String actualData = dateFormat.format(dataAtual);
+		    		
 		    		String cdDestinatario = "";
 		    		int referencia = (pegaUltimaRef()+1);
 		    		for(int i=0; i<selecionados.size() ; i++){
 		    			cdDestinatario = getCodUsuario(selecionados.get(i));
 		    		//	Log.i("teste","conectTarefa="+edt_desc.getText().toString());
-		    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"',0,"+cdDestinatario+","+usuarioAtivo+","+referencia+",'");
+		    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"',0,"+cdDestinatario+","+usuarioAtivo+","+referencia+",'"+actualData+"',null");
 		    		}
 
 		    		return true;		    			
