@@ -104,32 +104,32 @@ public class ServiceTarefas extends Service{
 					}
 				}
 			}));
-			
-			listaThread.add(new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					Log.i(LOG,"entrou selectCelular()");
-					try {
-						selectCelular(url);
-					} catch (UnsupportedEncodingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					Log.i(LOG,"saiu selectCelular()");
-					Log.i(LOG, "");
-					try {
-						this.finalize();
-					} catch (Throwable e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}));
-			
+			//---------------------------------------------
+//			listaThread.add(new Thread(new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//					Log.i(LOG,"entrou selectCelular()");
+//					try {
+//						selectCelular(url);
+//					} catch (UnsupportedEncodingException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					Log.i(LOG,"saiu selectCelular()");
+//					Log.i(LOG, "");
+//					try {
+//						this.finalize();
+//					} catch (Throwable e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
+//			}));
+			//----------------------------------------------
 //			listaThread.add(new Thread(new Runnable() {
 //				
 //				@Override
@@ -285,7 +285,7 @@ public class ServiceTarefas extends Service{
 			Log.i(LOG,"http://"+url+dados);
 			ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
 			
-			exec.start();
+			//exec.start();
 			
 			do{
 //				Log.i(LOG,"sleep");
