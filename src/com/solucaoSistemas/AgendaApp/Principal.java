@@ -57,6 +57,7 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
 //    	progress = new ProgressDialog(this);
 //    	progress.setMessage("Sincronizando Dados da Agenda");
         
+		//conexões com as tabelas do banco
         conectAgenda = new ConectaLocal(getApplicationContext(), "AGENDA");
         conectConfig = new ConectaLocal(getApplicationContext(), "CONFIGURACOES");
         conectUser = new ConectaLocal(getApplicationContext(), "USUARIO"); 
@@ -437,7 +438,7 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
     
 	 public  void startService(){
 			Intent intent = new Intent("SERVICO_AGENDA");
-			//startService(intent);
+			startService(intent);
 			
 			startService(new Intent("SERVICO_TAREFA"));
 	 }
