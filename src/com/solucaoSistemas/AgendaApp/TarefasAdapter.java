@@ -1,6 +1,9 @@
 package com.solucaoSistemas.AgendaApp;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import Utilitarios.MyString;
@@ -115,6 +118,8 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	        String responsavel = getNmUsuario(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")));
 	//        String destinatarios = getNmDestinatarios(MyString.tString3(conectTarefa.select(" CDDESTINATARIO ")));
 	        String status = MyString.tString(conectTarefa.select(" CDSTATUS "));
+	        String dataLanc = (MyString.tString(conectTarefa.select(" DTLANCAMENTO "))).replace("\\", "");
+	        String dataConc = (MyString.tString(conectTarefa.select(" DTBAIXA "))).replace("\\", "");
 	
 	        if(status.equals("1")) {
 	            check.setChecked(true);
@@ -128,9 +133,17 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	        TextView txtv_Descricao = (TextView) v.findViewById(R.id.txtv_Descricao);
 	        TextView txtv_nmResponsavel = (TextView) v.findViewById(R.id.txtv_nmResponsavel);
 	        TextView txtv_nmDestinatario = (TextView) v.findViewById(R.id.txtv_nmDestinatarios);
+	        TextView txtv_nmDataLanc = (TextView) v.findViewById(R.id.txtv_nmDataLanc);
+	        TextView txtv_nmDataConc = (TextView) v.findViewById(R.id.txtv_nmDataConc);
 	        txtv_Descricao.setText(descricao.trim());
 	        txtv_nmResponsavel.setText(responsavel.trim());
 	        txtv_nmDestinatario.setText(destinatarios.trim());
+	        if(dataLanc.equals("null"))
+	        	dataLanc = "";
+	        txtv_nmDataLanc.setText(dataLanc.trim());
+	        if(dataConc.equals("null"))
+	        	dataConc = "";
+	        txtv_nmDataConc.setText(dataConc.trim());
 	        
 	            
 	        Button btn_deletar = (Button) v.findViewById(R.id.btn_deletar);
@@ -159,24 +172,37 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	        check.setOnClickListener(new View.OnClickListener() {
 	            @Override
 	            public void onClick(View v) {
-		            CheckBox cb = (CheckBox) v.findViewById(R.id.check_tarefa);	            
-		            if (cb.isChecked()) {	 	            	
+		            CheckBox cb = (CheckBox) v.findViewById(R.id.check_tarefa);	
+		            
+		    		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		    		Date data = new Date();
+		    		Calendar c = Calendar.getInstance();
+		    		c.setTime(data);
+		    		Date dataAtual = c.getTime();
+		    		data.getTime();
+		    		
+		    		final String actualData = dateFormat.format(dataAtual);
+		    		
+		            if (cb.isChecked()) {	 	  
+		            	Log.i(LOG, "cb.isChecked"+cdTarefa);
 		                selecionados.add(cdTarefa);
 		                conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 		                conectTarefa.update(" CDSTATUS=1 ");
-		            } else if (!cb.isChecked()) {	            	
+		                conectTarefa.update(" DTBAIXA='"+actualData+"'");
+		                Log.i(LOG, actualData);
+		            } else if (!cb.isChecked()) {
+		            	Log.i(LOG, "!cb.isChecked"+cdTarefa);
 		                selecionados.remove(cdTarefa);
 		                conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 		                conectTarefa.update(" CDSTATUS=0 ");
+		                conectTarefa.update("  DTBAIXA="+"null");		               
 		            }
+		            selecionados(check, cdTarefa);
+		            notifyDataSetChanged();
 	            }
 	        });
-	        
-	        if(selecionados.contains(cdTarefa)) {
-	            check.setChecked(true);
-	        } else {
-	            check.setChecked(false);
-	        }
+
+	        selecionados(check, cdTarefa);
 	        
         
         }
@@ -184,6 +210,15 @@ public class TarefasAdapter extends ArrayAdapter<String>{
         
     }
 	
+	public void selecionados(CheckBox check, String cdTarefa){
+        if(selecionados.contains(cdTarefa)) {
+        	Log.i(LOG, "selecionados"+cdTarefa);
+            check.setChecked(true);
+        } else {
+        	Log.i(LOG, "!selecionados"+cdTarefa);
+            check.setChecked(false);
+        }
+	}
 	
 	public void deletar(String cd, String resp, int position){
 		conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" AND "

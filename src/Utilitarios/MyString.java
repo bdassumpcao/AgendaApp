@@ -358,7 +358,7 @@ public  class MyString {
 		int j = 0;
 		cod = new String[x];
 		String[] re = new String[x];
-		String [] r = new String[6];
+		String [] r = new String[8];
 		
 		for(int i = 0; i < aux.length; i++){
 			if(aux[i] == '§'){
@@ -447,7 +447,7 @@ public  class MyString {
 	private static String ordenaTarefa(String[] array, int j){
 		String retorno = "";
 		cod[j] = array[0];
-		retorno += "null,"+array[1]+","+array[2]+","+array[3]+","+array[4]+","+array[5];
+		retorno += "null,"+array[1]+","+array[2]+","+array[3]+","+array[4]+","+array[5]+","+array[6].replace("-", "/")+","+array[7].replace("-", "/");
 //		Log.i(LOG, "retorno:"+retorno);
 		return retorno;
 	}

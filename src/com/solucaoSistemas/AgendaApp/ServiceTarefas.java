@@ -152,13 +152,18 @@ public class ServiceTarefas extends Service{
 				}
 			}));
 			
+			
 			for(Thread t: listaThread){
-				t.start();
-				Log.i(LOG, "");
+				if(!t.isAlive()){
+					t.start();
+					}
+				Log.i(LOG, t.getName()+"");
 				while (t.isAlive()) {
 					Thread.sleep(1000);
 				}
+				
 			}
+			listaThread.clear();
 
 
 		}

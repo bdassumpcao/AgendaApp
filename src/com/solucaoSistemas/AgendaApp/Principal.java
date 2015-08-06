@@ -437,8 +437,8 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
     
     
 	 public  void startService(){
-			Intent intent = new Intent("SERVICO_AGENDA");
-			startService(intent);
+//			Intent intent = new Intent("SERVICO_AGENDA");
+//			startService(intent);
 			
 			startService(new Intent("SERVICO_TAREFA"));
 	 }
