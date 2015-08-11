@@ -8,11 +8,12 @@
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="21" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -20,76 +21,96 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.solucaoSistemas.AgendaApp.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity 
-		    android:name="com.solucaoSistemas.AgendaApp.MyListActivity"
-			android:label="@string/app_name">
-		</activity>
-		<activity 
-		    android:name="com.solucaoSistemas.AgendaApp.Calendar"
-			android:label="@string/app_name">
-		</activity>
-		<activity 
-		    android:name="com.solucaoSistemas.AgendaApp.Principal"
-			android:label="@string/app_name">
-		</activity>
-		<activity 
-		    android:name="com.solucaoSistemas.AgendaApp.InsereEvento"
-			android:label="@string/action_novoEvento">
-		</activity>
-		<activity 
-		    android:name="com.solucaoSistemas.AgendaApp.EditaEvento"
-			android:label="@string/editar">
-		</activity>
-		<activity 
-		    android:name="com.solucaoSistemas.AgendaApp.Configuracoes"
-			android:label="@string/action_configuracoesM">
-         
-		</activity>
-		<activity 
-		    android:name="com.solucaoSistemas.AgendaApp.Tarefas"
-			android:label="@string/action_tarefas">
-         
-		</activity>
-		<activity 
-		    android:name="com.solucaoSistemas.AgendaApp.InsereTarefa"
-			android:label="@string/action_novaTarefa">
-         
-		</activity>
-		<service android:name="ServiceApp" android:label="ServiceApp"
-		    android:exported="false">
-			<intent-filter>
-				<category android:name="android.intent.category.DEFAULT"/>
-				<action android:name="SERVICO_AGENDA"/>
-			</intent-filter>
-		</service>
-		<receiver android:label="BroadcastApp" android:name="BroadcastApp"
-			android:exported="false">
-			<intent-filter>
-				<action android:name="SINCRONIZACAO_AGENDA"/>
-			</intent-filter>
-		</receiver>
-		<receiver android:name="BroadcastReboot" android:label="BroadcastReboot">
-			<intent-filter>
-				<action android:name="android.intent.action.BOOT_COMPLETED"/>
-			</intent-filter>
-		</receiver>
-		<receiver android:label="BroadcastTarefa" android:name="BroadcastTarefa">
-			<intent-filter>
-				<action android:name="SINCRONIZACAO_TAREFA"/>
-			</intent-filter>
-		</receiver>
-		<service android:name="ServiceTarefas" android:label="ServiceTarefas">
-			<intent-filter>
-				<category android:name="android.intent.category.DEFAULT"/><action android:name="SERVICO_TAREFA"/>
-			</intent-filter>
-		</service>
+        <activity
+            android:name=".MyListActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".Calendar"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".Principal"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".InsereEvento"
+            android:label="@string/action_novoEvento" >
+        </activity>
+        <activity
+            android:name=".EditaEvento"
+            android:label="@string/editar" >
+        </activity>
+        <activity
+            android:name=".Configuracoes"
+            android:label="@string/action_configuracoesM" >
+        </activity>
+        <activity
+            android:name=".Tarefas"
+            android:label="@string/action_tarefas" >
+        </activity>
+        <activity
+            android:name=".InsereTarefa"
+            android:label="@string/action_novaTarefa" >
+        </activity>
+
+        <service
+            android:name=".ServiceApp"
+            android:exported="false"
+            android:label="ServiceApp" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="SERVICO_AGENDA" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".BroadcastApp"
+            android:exported="false"
+            android:label="BroadcastApp" >
+            <intent-filter>
+                <action android:name="SINCRONIZACAO_AGENDA" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".BroadcastReboot"
+            android:label="BroadcastReboot" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".BroadcastTarefa"
+            android:label="BroadcastTarefa" >
+            <intent-filter>
+                <action android:name="SINCRONIZACAO_TAREFA" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".ServiceTarefas"
+            android:label="ServiceTarefas" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="SERVICO_TAREFA" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".Splash"
+            android:label="@string/title_activity_splash" 
+            android:theme="@android:style/Theme.Dialog">
+        </activity>
     </application>
 
 </manifest>

@@ -25,6 +25,7 @@
         android:layout_alignEnd="@+id/sincronizar"
         android:layout_below="@+id/sincronizar"
         android:layout_marginTop="50dp"
+        android:background="@drawable/button"
         android:text="@string/btSalvar" />
 
     <CheckBox

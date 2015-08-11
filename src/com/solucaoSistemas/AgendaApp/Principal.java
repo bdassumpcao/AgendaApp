@@ -44,7 +44,6 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
     private TextView tvUsuario, tvUdescricao;
     private AlertDialog alerta;
     private int horaExpediente = 7;
-//    private ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +53,6 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
 		getActionBar().setDisplayShowHomeEnabled(false);
 //		getActionBar().hide();
         
-//    	progress = new ProgressDialog(this);
-//    	progress.setMessage("Sincronizando Dados da Agenda");
         
 		//conexões com as tabelas do banco
         conectAgenda = new ConectaLocal(getApplicationContext(), "AGENDA");
@@ -171,10 +168,10 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
 	            	Conexao conexao = new Conexao(this);
 	            	if(!conexao.isConected())
 	            		showToast("Sem Conexão");
-	            	else{
-//	            		progress.show();   
-//	            		aguardaSync();
-	            		startService();
+	            	else{  
+	            		Intent intent = new Intent(Principal.this, Splash.class);
+	                	startActivity(intent);
+	            		//startService();
 	            		
 	            	}
 
@@ -343,28 +340,6 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
         return events;
     }
 
-
-    private void aguardaSync(){
-    	
-    	Thread t = new Thread(new Runnable() {
-    		
-			@Override
-			public void run() {
-				do {
-					try {
-						Thread.sleep(1000);
-					} catch (Exception e) {
-						// TODO: handle exception
-					}
-				} while (ServiceApp.ativo);				
-//				progress.dismiss();
-			}
-		});
-    	t.start();
-    }
-    
-
-
     private String getEventTitle(Calendar time, String title) {
         return String.format(title+"  %02d:%02d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE));
     }
@@ -437,10 +412,10 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
     
     
 	 public  void startService(){
-//			Intent intent = new Intent("SERVICO_AGENDA");
-//			startService(intent);
+			Intent intent = new Intent("SERVICO_AGENDA");
+			startService(intent);
 			
-			startService(new Intent("SERVICO_TAREFA"));
+//			startService(new Intent("SERVICO_TAREFA"));
 	 }
 
 	  

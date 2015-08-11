@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE xml>
 <resources>
+
     <string name="app_name">AGENDA</string>
     <string name="editar">EDITAR</string>
     <string name="action_removerTarefa">REMOVER TAREFA</string>
@@ -35,6 +36,7 @@
     <string name="action_day_view">Visualizar por dia</string>
     <string name="action_three_day_view">Visualizar 3 dias</string>
     <string name="action_week_view">Visualizar por semana</string>
-    
+    <string name="title_activity_splash">Atualizando</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

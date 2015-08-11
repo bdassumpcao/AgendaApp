@@ -1,6 +1,4 @@
-/**@author maxissuel*/
 package com.solucaoSistemas.AgendaApp;
-import com.solucaoSistemas.AgendaApp.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -15,22 +13,22 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import Utilitarios.MyString;
 import Web.Conexao;
 import Web.ExecutaWeb;
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.IBinder;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.KeyEvent;
 
-public class ServiceApp extends Service {
+public class Splash extends Activity {
 	public boolean pendencia = false;
 	public boolean exec = true;
 	final public boolean statusServico = true;
@@ -44,62 +42,36 @@ public class ServiceApp extends Service {
 	int num;
 	
 	@Override
-	public IBinder onBind(Intent arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public void onCreate(){
-		super.onCreate();
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		listaThread = new ArrayList<Thread>();
-		Log.i(LOG, "onCreate()");
-	}
-	
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId){
-		Log.i(LOG, "onStartCommand()");
+		conectAgenda = new ConectaLocal(this, "AGENDA");
+		conectUser = new ConectaLocal(this, "USUARIO");
+		conectLogAgenda = new ConectaLocal(getApplicationContext(), "LOGAGENDA");
+		this.setFinishOnTouchOutside(false);
+		setContentView(R.layout.activity_splash);
 		
-		
-		if(!pendencia){
-			pendencia = true;
-			ativo = true;
+		Thread t = new Thread(new Runnable() {
 			
-			
-			
-//				try{
-//					conectAgenda = new ConectaLocal(this, "AGENDA");
-//					conectUser = new ConectaLocal(this, "USUARIO");
-//					conectLogAgenda = new ConectaLocal(getApplicationContext(), "LOGAGENDA");
-//					monitor();
-//				}catch(Exception e){
-//					Log.i(LOG, "erro no monitor\n"+e);
-//				}
-		}
+			@Override
+			public void run() {
+				try {
+					monitor();
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				Splash.this.finish();
+			}
+		});
+		t.start();
 		
-		onDestroy();
-		
-		return(START_STICKY);
 	}
 	
-	@Override
-	public void onDestroy(){
-		pendencia = ativo = false;
-		super.onDestroy();
-		Log.i(LOG,"onDestroy()");
-	}
 	
-	public boolean getPendencia(){
-		return this.pendencia;
-	}
-	
-	/**verifica no servidor se tem algo a mais
-	 * verifica no banco do cel se tem algo a mais
-	 * caso houver alteraçoes, realizar os respectivos updates
-	 * deleta do servidor o que foi deletado no celular
-	 * @throws InterruptedException 
-	 * @throws UnsupportedEncodingException 
-	 * */
 	public void  monitor() throws InterruptedException, UnsupportedEncodingException{
 		Log.i(LOG, "entrou monitor()");
 		Conexao conexao = new Conexao(this);
@@ -659,7 +631,11 @@ public class ServiceApp extends Service {
 		catch(Exception e){}
 	}
 	
-
-	
- 
+	  @Override
+	    public boolean onKeyDown(int keyCode, KeyEvent event) {
+	        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+	            return true;
+	        }
+	        return super.onKeyDown(keyCode, event);
+	    }
 }
