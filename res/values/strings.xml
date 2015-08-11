@@ -38,5 +38,6 @@
     <string name="action_week_view">Visualizar por semana</string>
     <string name="title_activity_splash">Atualizando</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_splash2">Atualizando</string>
 
 </resources>

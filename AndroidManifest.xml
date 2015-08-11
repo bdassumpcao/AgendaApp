@@ -108,8 +108,13 @@
 
         <activity
             android:name=".Splash"
-            android:label="@string/title_activity_splash" 
-            android:theme="@android:style/Theme.Dialog">
+            android:label="@string/title_activity_splash"
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>
+        <activity
+            android:name=".Splash2"
+            android:label="@string/title_activity_splash2"
+            android:theme="@android:style/Theme.Dialog" >
         </activity>
     </application>
 

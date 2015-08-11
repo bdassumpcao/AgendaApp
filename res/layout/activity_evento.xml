@@ -13,8 +13,8 @@
 
     <ScrollView
         android:id="@+id/scrollView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
@@ -28,26 +28,26 @@
 
             <TableRow
                 android:id="@+id/tableRow1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
                 
                 <TextView
                     android:id="@+id/checkedTextView1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:text="@string/Desc"
                     android:textSize="25sp" />
             </TableRow>
 
             <TableRow
                 android:id="@+id/tableRow2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
                 
               	<EditText
               	    android:id="@+id/campoDescricao"
-              	    android:layout_width="wrap_content"
-              	    android:layout_height="wrap_content"
+              	    android:layout_width="match_parent"
+              	    android:layout_height="match_parent"
               	    android:ems="10"
               	    android:inputType="textCapCharacters" >
                 </EditText>
@@ -55,26 +55,26 @@
             
             <TableRow
                 android:id="@+id/tableRow3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
                 
                 <TextView
                     android:id="@+id/checkedTextView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:text="@string/Local"
                     android:textSize="25sp" />
             </TableRow>
 
             <TableRow
                 android:id="@+id/tableRow4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
                 
               	<EditText
               	    android:id="@+id/campoLocal"
-              	    android:layout_width="wrap_content"
-              	    android:layout_height="wrap_content"
+              	    android:layout_width="match_parent"
+              	    android:layout_height="match_parent"
               	    android:ems="10"
               	    android:inputType="textCapCharacters" >
                 </EditText>
@@ -82,26 +82,26 @@
 
             <TableRow
                 android:id="@+id/tableRow5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
 
                 <TextView
                     android:id="@+id/checkedTextView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:text="@string/Obs"
                     android:textSize="25sp" />
             </TableRow>
 
             <TableRow
                 android:id="@+id/tableRow6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
 
                 <EditText
                     android:id="@+id/campoObservacao"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:ems="10"
                     android:inputType="textCapCharacters" >
                 </EditText>
@@ -110,26 +110,26 @@
 
               <TableRow
                 android:id="@+id/tableRow7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
 
                   <TextView
                       android:id="@+id/checkedTextView4"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
                       android:text="@string/Data"
                       android:textSize="25sp" />
             </TableRow>
             
             <TableRow
                 android:id="@+id/tableRow8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
 
                 <com.solucaoSistemas.AgendaApp.MaskedEditText
                     android:id="@+id/campoData"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:inputType="date"
                     mask:mask="##/##/####"
                     mask:mask_fill="_" >
@@ -139,26 +139,26 @@
             
             <TableRow
                 android:id="@+id/tableRow9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
                 
                 <TextView
                     android:id="@+id/checkedTextView5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:text="@string/HoraInicio"
                     android:textSize="25sp" />
             </TableRow>
 
             <TableRow
                 android:id="@+id/tableRow10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
                 
               	<com.solucaoSistemas.AgendaApp.MaskedEditText
               	    android:id="@+id/campoHoraInicio"
-              	    android:layout_width="wrap_content"
-              	    android:layout_height="wrap_content"
+              	    android:layout_width="match_parent"
+              	    android:layout_height="match_parent"
               	    android:inputType="time"
               	    mask:mask="##:##"
               	    mask:mask_fill="_" >
@@ -167,26 +167,26 @@
             
             <TableRow
                 android:id="@+id/tableRow11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
                 
                 <TextView
                     android:id="@+id/checkedTextView6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:text="@string/HoraFim"
                     android:textSize="25sp" />
             </TableRow>
             
             <TableRow
                 android:id="@+id/tableRow12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
                 
               	<com.solucaoSistemas.AgendaApp.MaskedEditText
               	    android:id="@+id/campoHoraFim"
-              	    android:layout_width="wrap_content"
-              	    android:layout_height="wrap_content"
+              	    android:layout_width="match_parent"
+              	    android:layout_height="match_parent"
               	    android:inputType="time"
               	    mask:mask="##:##"
               	    mask:mask_fill="_" >

@@ -1,6 +1,6 @@
 /**@author maxissuel*/
 package com.solucaoSistemas.AgendaApp;
-import com.solucaoSistemas.AgendaApp.*;
+
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -64,17 +64,15 @@ public class ServiceApp extends Service {
 		if(!pendencia){
 			pendencia = true;
 			ativo = true;
-			
-			
-			
-//				try{
-//					conectAgenda = new ConectaLocal(this, "AGENDA");
-//					conectUser = new ConectaLocal(this, "USUARIO");
-//					conectLogAgenda = new ConectaLocal(getApplicationContext(), "LOGAGENDA");
-//					monitor();
-//				}catch(Exception e){
-//					Log.i(LOG, "erro no monitor\n"+e);
-//				}
+
+				try{
+					conectAgenda = new ConectaLocal(this, "AGENDA");
+					conectUser = new ConectaLocal(this, "USUARIO");
+					conectLogAgenda = new ConectaLocal(getApplicationContext(), "LOGAGENDA");
+					monitor();
+				}catch(Exception e){
+					Log.i(LOG, "erro no monitor\n"+e);
+				}
 		}
 		
 		onDestroy();
