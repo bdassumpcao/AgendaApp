@@ -120,7 +120,7 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	        String dataLanc = (MyString.tString(conectTarefa.select(" DTLANCAMENTO "))).replace("\\", "");
 	        String dataConc = (MyString.tString(conectTarefa.select(" DTBAIXA "))).replace("\\", "");
 	
-	        if(status.equals("1")) {
+	        if(status.equals("B")) {
 	            check.setChecked(true);
 	            selecionados.add(cdTarefa);
 	        } else {
@@ -186,14 +186,14 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 		            	Log.i(LOG, "cb.isChecked"+cdTarefa);
 		                selecionados.add(cdTarefa);
 		                conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
-		                conectTarefa.update(" CDSTATUS=1 ");
+		                conectTarefa.update(" CDSTATUS='B' ");
 		                conectTarefa.update(" DTBAIXA='"+actualData+"'");
 		                Log.i(LOG, actualData);
 		            } else if (!cb.isChecked()) {
 		            	Log.i(LOG, "!cb.isChecked"+cdTarefa);
 		                selecionados.remove(cdTarefa);
 		                conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
-		                conectTarefa.update(" CDSTATUS=0 ");
+		                conectTarefa.update(" CDSTATUS='A' ");
 		                conectTarefa.update("  DTBAIXA="+"null");		               
 		            }
 		            selecionados(check, cdTarefa);
@@ -241,7 +241,7 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	}
 	
 	 public String getUsuarioAtivo(){
-		 conectUser.setClausula(" WHERE STATUS=1");
+		 conectUser.setClausula(" WHERE STATUS=B");
 		 String cd = MyString.tString(conectUser.select(" CDUSUARIO "));
 		 return cd;
 	 }

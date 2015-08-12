@@ -169,7 +169,8 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
 	            		Intent intent = new Intent(Principal.this, Splash.class);
 	            		Intent intentt2 = new Intent(Principal.this, Splash2.class);
 	                	//startActivity(intent);
-	                	startActivity(intentt2);
+	                	//startActivity(intentt2);
+	            		startService();
 	            	}
 
 	                mWeekView.goToToday(); 
@@ -409,10 +410,10 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
     
     
 	 public  void startService(){
-			Intent intent = new Intent("SERVICO_AGENDA");
-			startService(intent);
+//			Intent intent = new Intent("SERVICO_AGENDA");
+//			startService(intent);
 			
-//			startService(new Intent("SERVICO_TAREFA"));
+			startService(new Intent("SERVICO_TAREFA"));
 	 }
 
 	  

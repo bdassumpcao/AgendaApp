@@ -83,27 +83,27 @@ public class ServiceTarefas extends Service{
 			
 			//----------------------------------
 			
-			listaThread.add(new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					Log.i(LOG,"entrou deleteServidor()");
-					try {
-						deleteServidor(url);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					Log.i(LOG,"saiu deleteServidor()");
-					Log.i(LOG, "");
-					try {
-						this.finalize();
-					} catch (Throwable e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}));
+//			listaThread.add(new Thread(new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//					Log.i(LOG,"entrou deleteServidor()");
+//					try {
+//						deleteServidor(url);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					Log.i(LOG,"saiu deleteServidor()");
+//					Log.i(LOG, "");
+//					try {
+//						this.finalize();
+//					} catch (Throwable e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
+//			}));
 			//---------------------------------------------
 //			listaThread.add(new Thread(new Runnable() {
 //				
@@ -357,58 +357,58 @@ public class ServiceTarefas extends Service{
 		String respServer = "";
 		
 		
-		if(cdRef.equals("-1")){
-			Log.i(LOG, "cdRef == '-1' ");
-			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sar&cdU="+cdU;			
-			respServer = webservice(url, dados);
-			respServer = respServer.substring(0, respServer.indexOf("#"));
-			Log.i(LOG, "respServer == "+respServer);
-			if(!respServer.equals(""))
-				insereCelular(respServer);
-			
-			
-			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sad&cdU="+cdU;	
-			respServer = webservice(url, dados);
-			respServer = respServer.substring(0, respServer.indexOf("#"));
-			Log.i(LOG, "respServer == "+respServer);
-			if(!respServer.equals(""))
-				insereCelular(respServer);
-		}
+
+		Log.i(LOG, "cdRef == '-1' ");
+		dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sar&cdU="+cdU;			
+		respServer = webservice(url, dados);
+		respServer = respServer.substring(0, respServer.indexOf("#"));
+		Log.i(LOG, "respServer == "+respServer);
+		if(!respServer.equals(""))
+			insereCelular(respServer);
 		
-		if(!cdRef.equals("-1")){
-			Log.i(LOG, " cdRef != '-1' ");
-			conectUser.setClausula(" WHERE STATUS=0 ");
-			String[] usuarios = MyString.tStringArray(conectUser.select(" CDUSUARIO "));
+		
+		dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sad&cdU="+cdU;	
+		respServer = webservice(url, dados);
+		respServer = respServer.substring(0, respServer.indexOf("#"));
+		Log.i(LOG, "respServer == "+respServer);
+		if(!respServer.equals(""))
+			insereCelular(respServer);
+
+		
+//		if(!cdRef.equals("-1")){
+//			Log.i(LOG, " cdRef != '-1' ");
+//			conectUser.setClausula(" WHERE STATUS=0 ");
+//			String[] usuarios = MyString.tStringArray(conectUser.select(" CDUSUARIO "));
+//			
+////			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdResp="+i+"&cdRef="+ref+"&cdU="+cdU;
+//			
+//			String cdResp = "";
+//			String r = "";
+//			for(int i=0; i<usuarios.length;i++){
+//				usuarios[i] = MyString.normalize(MyString.tiraEspaço(usuarios[i]));
+//				String ref = pegaUltimo(" CDREFERENCIA ", usuarios[i]);
+//				if(ref.equals("-1"))
+//					ref = "0";
+//				if(i==(usuarios.length-1)){
+//					cdResp += usuarios[i];
+//					r += ref;
+//				}
+//				else{
+//					cdResp += usuarios[i]+"-";
+//					r += ref+"-";
+//				}
+//			}
 			
-//			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdResp="+i+"&cdRef="+ref+"&cdU="+cdU;
+//			dados += "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdU="+cdU+"&cdResp="+cdResp+"&cdRef="+r;
+//			
+//			respServer = webservice(url, dados);	
+//			respServer = respServer.substring(0, respServer.indexOf("#"));
+//			if(!respServer.equals("")){
+//				insereCelular(respServer);
+//				Log.i(LOG, "respServer == "+respServer);
+//			}
 			
-			String cdResp = "";
-			String r = "";
-			for(int i=0; i<usuarios.length;i++){
-				usuarios[i] = MyString.normalize(MyString.tiraEspaço(usuarios[i]));
-				String ref = pegaUltimo(" CDREFERENCIA ", usuarios[i]);
-				if(ref.equals("-1"))
-					ref = "0";
-				if(i==(usuarios.length-1)){
-					cdResp += usuarios[i];
-					r += ref;
-				}
-				else{
-					cdResp += usuarios[i]+"-";
-					r += ref+"-";
-				}
-			}
-			
-			dados += "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdU="+cdU+"&cdResp="+cdResp+"&cdRef="+r;
-			
-			respServer = webservice(url, dados);	
-			respServer = respServer.substring(0, respServer.indexOf("#"));
-			if(!respServer.equals("")){
-				insereCelular(respServer);
-				Log.i(LOG, "respServer == "+respServer);
-			}
-			
-		}
+//		}
 
 	}
 	
