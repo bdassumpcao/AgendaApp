@@ -1,16 +1,16 @@
 package com.solucaoSistemas.AgendaApp;
 
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import Utilitarios.MyString;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,8 +25,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class InsereTarefa extends Activity{	
-	
+public class InsereTarefa extends Activity{		
 	private ConectaLocal conectUser;
 	private ConectaLocal conectTarefa;
 	private String[] USUARIOS;
@@ -47,12 +46,9 @@ public class InsereTarefa extends Activity{
 	        conectUser = new ConectaLocal(getApplicationContext(), "USUARIO"); 
 	        conectTarefa = new ConectaLocal(getApplicationContext(), "TAREFA");
 	        
-			conectUser.setOrder(" ORDER BY NMUSUARIO");
-			
-			conectUser.setClausula("");
-			
-			USUARIOS = (MyString.tStringArray(conectUser.select("NMUSUARIO")));
-			
+			conectUser.setOrder(" ORDER BY NMUSUARIO");			
+			conectUser.setClausula("");			
+			USUARIOS = (MyString.tStringArray(conectUser.select("NMUSUARIO")));			
 			usuarioAtivo = getUsuarioAtivo();
 	        
 			this.edt_desc = (EditText)findViewById(R.id.edt_desc);
@@ -75,7 +71,6 @@ public class InsereTarefa extends Activity{
 		                v.getParent().requestDisallowInterceptTouchEvent(false);
 		                break;
 		            }
-
 		            // Handle ListView touch events.
 		            v.onTouchEvent(event);
 		            return true;
@@ -85,54 +80,78 @@ public class InsereTarefa extends Activity{
 			selecionados.clear();
 			
 			ArrayAdapter<String> lsvUsuariosAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1) {	
+				@SuppressLint("InflateParams")
 				@Override
 	            public View getView(final int position, View convertView, ViewGroup parent) {
 	                // Recuperando o Estado selecionado de acordo com a sua posição no ListView
-	            final String usuario = USUARIOS[position];
-	 
-	                // Se o ConvertView for diferente de null o layout já foi "inflado"
-	            View v = convertView;
-	 
-	                if(v==null) {
-		                // "Inflando" o layout do item caso o isso ainda não tenha sido feito
-		                LayoutInflater inflater = getLayoutInflater();
-		                v = (View) inflater.inflate(R.layout.listview_usuarios, null);
-	                }
-	                
-
-	 
-	            // Recuperando o checkbox
-	            final CheckBox check = (CheckBox) v.findViewById(R.id.check_usuario);
+		            final String usuario = USUARIOS[position];
+		 
+		            // Se o ConvertView for diferente de null o layout já foi "inflado"
+		            View v = convertView;	 
+		               
+		            if(v==null) {
+		            	// "Inflando" o layout do item caso o isso ainda não tenha sido feito
+			            LayoutInflater inflater = getLayoutInflater();
+			            v = (View) inflater.inflate(R.layout.listview_usuarios, null);
+		            }	      
+		                
+		            TextView txv = (TextView) v.findViewById(R.id.txtv_nmUsuario);
+			        txv.setText(usuario.trim());
+		                
+		            // Recuperando o checkbox
+		            final CheckBox check = (CheckBox) v.findViewById(R.id.check_usuario);
 	 	 
-	                /** Definindo uma ação ao clicar no checkbox. Aqui poderiamos armazenar um valor chave
-	             * que identifique o objeto selecionado para que o mesmo possa ser, por exemplo, excluído
-	             * mais tarde.
-	             */
-	            check.setOnClickListener(new View.OnClickListener() {
-	            @Override
-	            public void onClick(View v) {
+		            
+	                /** Definindo uma ação ao clicar no checkbox.
+		             */
+		            check.setOnClickListener(new View.OnClickListener() {
+			            @Override
+			            public void onClick(View view) {
+				            selecionados(view, usuario);	
+		            	}
+		            });
+		            
+		            final View v1 = v;		            
+		            v.setOnClickListener(new View.OnClickListener() {
+			            @Override
+			            public void onClick(View v) {
+				            selecionados(v, usuario);
+		            	}
+		            });
+		            
+		            if(selecionados.contains(usuario)) {
+		                check.setChecked(true);
+		            } else {
+		                check.setChecked(false);
+		            } 
+	           
+		            
+		            return v;
+	            }
+				
+				public void selecionados(View v, String usuario){
 		            CheckBox cb = (CheckBox) v.findViewById(R.id.check_usuario);
-		            if (cb.isChecked()) {
-		                selecionados.add(usuario);
-		            } else if (!cb.isChecked()) {
-		                selecionados.remove(usuario);
+		            
+		            for(int i=0;i<selecionados.size();i++){
+		            	Log.i(LOG, "sel: "+selecionados.get(i));
 		            }
-
-	            }
-	        });
-	            if(selecionados.contains(usuario)) {
-	                check.setChecked(true);
-	            } else {
-	                check.setChecked(false);
-	            }
-	 
-	                // Preenche o TextView do layout com o nome do Estado
-	            TextView txv = (TextView) v.findViewById(R.id.txtv_nmUsuario);
-	            txv.setText(usuario.trim());
-	 
-	            return v;
-	            }
-	 
+		            
+		            if (cb.isChecked()) {
+		            	if(!selecionados.contains(usuario)){
+		            		selecionados.add(usuario);
+		            	}
+		            } else if (!cb.isChecked()) {
+		            	if(selecionados.contains(usuario)){
+		            		selecionados.remove(usuario);
+		            	}
+		            }	
+		            
+		            for(int i=0;i<selecionados.size();i++){
+		            	Log.i(LOG, "sel1: "+selecionados.get(i));
+		            }
+		            notifyDataSetChanged();
+				}
+				
 	            @Override
 	            public long getItemId(int position) {
 	                return position;
@@ -143,10 +162,7 @@ public class InsereTarefa extends Activity{
 	                return USUARIOS.length;
 	            }
 	        };
-	        lst_usuarios.setAdapter(lsvUsuariosAdapter);
-	        
-
-	    
+	        lst_usuarios.setAdapter(lsvUsuariosAdapter);   
 	 }
 	 
 	 @Override
@@ -208,7 +224,6 @@ public class InsereTarefa extends Activity{
 		else return Integer.parseInt(MyString.tString(conectTarefa.select(" MAX(CDREFERENCIA) ")));
 	}
 	
-	
 	public void showToast(String texto){		
 		Toast.makeText(this, texto, Toast.LENGTH_LONG).show();
 	}
@@ -221,5 +236,4 @@ public class InsereTarefa extends Activity{
 	    }
 	    return super.onKeyDown(keyCode, event);
 	}
-	
 }

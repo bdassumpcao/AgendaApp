@@ -11,7 +11,6 @@ import com.solucaoSistemas.AgendaApp.R;
 
 import Utilitarios.MyString;
 import Web.Conexao;
-import Web.ExecutaWeb;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.annotation.SuppressLint;

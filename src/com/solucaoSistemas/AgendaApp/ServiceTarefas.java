@@ -688,7 +688,6 @@ public class ServiceTarefas extends Service{
 	
 	public List<String> getNmDestinatarios(String string){
 		List<String> lista = new ArrayList<String>();
-		String destinatarios = "";
 		String nm = "";
 		char[] aux = new char[string.length()];
 		int x = 0;

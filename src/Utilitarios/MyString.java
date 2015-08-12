@@ -1,7 +1,5 @@
 package Utilitarios;
 
-import java.net.URLDecoder;
-
 import android.util.Log;
 
 public  class MyString {

@@ -25,7 +25,6 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -691,7 +690,6 @@ public class Splash2 extends Activity {
 	
 	public List<String> getNmDestinatarios(String string){
 		List<String> lista = new ArrayList<String>();
-		String destinatarios = "";
 		String nm = "";
 		char[] aux = new char[string.length()];
 		int x = 0;
