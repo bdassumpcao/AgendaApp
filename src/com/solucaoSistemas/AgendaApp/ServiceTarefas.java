@@ -134,9 +134,15 @@ public class ServiceTarefas extends Service{
 				
 				@Override
 				public void run() {
+					conectTarefa.setClausula("");
+					conectTarefa.delete();
+					String[] a = MyString.tStringArray(conectTarefa.select(" NMDESCRICAO "));
+					if(a.length>0)
+						Log.i(LOG, "NMDESCRICAO:"+a[0]);
+					
+					Log.i(LOG,"Apagou dados da tarefa");
 					Log.i(LOG,"entrou selectServidor()");
-					try {
-						conectTarefa.delete();
+					try {						
 						selectServidor(url);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
@@ -520,8 +526,8 @@ public class ServiceTarefas extends Service{
 					responsavel = URLEncoder.encode(responsavel, "UTF-8");
 					status = MyString.tString(conectTarefa.select("CDSTATUS"));	
 					cdRef = MyString.tString(conectTarefa.select("CDREFERENCIA"));	
-					String dtLanc = (MyString.tString(conectTarefa.select("DTLANCAMENTO"))).replaceAll("\\/", ".");
-					String dtBaixa = (MyString.tString(conectTarefa.select("DTBAIXA"))).replaceAll("\\/", ".");
+					String dtLanc = (MyString.tString(conectTarefa.select("DTLANCAMENTO")));
+					String dtBaixa = (MyString.tString(conectTarefa.select("DTBAIXA")));
 
 					destinatarios = getNmDestinatarios(dest);
 					

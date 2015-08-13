@@ -46,10 +46,11 @@ public class InsereTarefa extends Activity{
 	        conectUser = new ConectaLocal(getApplicationContext(), "USUARIO"); 
 	        conectTarefa = new ConectaLocal(getApplicationContext(), "TAREFA");
 	        
+	        usuarioAtivo = getUsuarioAtivo();
 			conectUser.setOrder(" ORDER BY NMUSUARIO");			
-			conectUser.setClausula("");			
+			conectUser.setClausula(" WHERE CDUSUARIO!="+usuarioAtivo);			
 			USUARIOS = (MyString.tStringArray(conectUser.select("NMUSUARIO")));			
-			usuarioAtivo = getUsuarioAtivo();
+			
 	        
 			this.edt_desc = (EditText)findViewById(R.id.edt_desc);
 			this.lst_usuarios = (ListView)findViewById(R.id.lst_usuarios);
@@ -192,6 +193,7 @@ public class InsereTarefa extends Activity{
 		    		
 		    		String cdDestinatario = "";
 		    		int referencia = (pegaUltimaRef()+1);
+		    		conectTarefa.insert("null,'"+edt_desc.getText().toString()+"','A',"+usuarioAtivo+","+usuarioAtivo+","+referencia+",'"+actualData+"',null");		    		
 		    		for(int i=0; i<selecionados.size() ; i++){
 		    			cdDestinatario = getCodUsuario(selecionados.get(i));
 		    		//	Log.i("teste","conectTarefa="+edt_desc.getText().toString());

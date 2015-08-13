@@ -44,11 +44,6 @@ public  class MyString {
 	
 	public static String retiraQuebraLinha(String string){
 		if(!string.equals("")){
-//			Log.i(LOG, "retiraQuebraLinha("+string+")");
-//			String parte1 = string.substring(0, string.indexOf('\\'));
-//			Log.i(LOG, parte1);
-//			string = parte1+"%5C"+string.substring(string.indexOf('\\')+1, string.length()-1);
-//			Log.i(LOG, string);
 			string.replace("\\n|\\r|\n|\r", "%5Cn");
 			Log.i(LOG, "string: "+string);
 		}
@@ -77,9 +72,6 @@ public  class MyString {
 		   j = 0;
 		   for(int i = 0; i < aux.length; i++){
 		    if(aux[i] == '$'){
-//		     a[j] = resul;
-//		     j++;
-//		     resul = "";
 		    }
 		    
 		    else if(aux[i] == ']' || aux[i] == '[' || aux[i] == '}' || aux[i] == '{' || aux[i] == '"' ||aux[i] == ','){
