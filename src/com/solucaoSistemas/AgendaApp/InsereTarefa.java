@@ -195,7 +195,7 @@ public class InsereTarefa extends Activity{
 		    		for(int i=0; i<selecionados.size() ; i++){
 		    			cdDestinatario = getCodUsuario(selecionados.get(i));
 		    		//	Log.i("teste","conectTarefa="+edt_desc.getText().toString());
-		    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"',0,"+cdDestinatario+","+usuarioAtivo+","+referencia+",'"+actualData+"',null");
+		    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"','A',"+cdDestinatario+","+usuarioAtivo+","+referencia+",'"+actualData+"',null");
 		    		}
 
 		    		return true;		    			

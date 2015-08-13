@@ -105,30 +105,30 @@ public class ServiceTarefas extends Service{
 //				}
 //			}));
 			//---------------------------------------------
-//			listaThread.add(new Thread(new Runnable() {
-//				
-//				@Override
-//				public void run() {
-//					Log.i(LOG,"entrou selectCelular()");
-//					try {
-//						selectCelular(url);
-//					} catch (UnsupportedEncodingException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//					Log.i(LOG,"saiu selectCelular()");
-//					Log.i(LOG, "");
-//					try {
-//						this.finalize();
-//					} catch (Throwable e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}
-//			}));
+			listaThread.add(new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					Log.i(LOG,"entrou selectCelular()");
+					try {
+						selectCelular(url);
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Log.i(LOG,"saiu selectCelular()");
+					Log.i(LOG, "");
+					try {
+						this.finalize();
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}));
 			//----------------------------------------------
 			listaThread.add(new Thread(new Runnable() {
 				
@@ -136,6 +136,7 @@ public class ServiceTarefas extends Service{
 				public void run() {
 					Log.i(LOG,"entrou selectServidor()");
 					try {
+						conectTarefa.delete();
 						selectServidor(url);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
@@ -356,16 +357,12 @@ public class ServiceTarefas extends Service{
 		String dados = "";
 		String respServer = "";
 		
-		
-
-		Log.i(LOG, "cdRef == '-1' ");
 		dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sar&cdU="+cdU;			
 		respServer = webservice(url, dados);
 		respServer = respServer.substring(0, respServer.indexOf("#"));
 		Log.i(LOG, "respServer == "+respServer);
 		if(!respServer.equals(""))
 			insereCelular(respServer);
-		
 		
 		dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sad&cdU="+cdU;	
 		respServer = webservice(url, dados);
@@ -458,7 +455,7 @@ public class ServiceTarefas extends Service{
 			//Se ultimoCdCelular for igual a -1 não executa o restante pois não tem tarefas para inserir
 			if(!ultRef.equals("-1")){
 				
-				String  cdTarefa, descricao, dest, responsavel, status, cdRef;
+				String  cdTarefa, descricao, dest, responsavel, status, cdRef, dtLanc, dtBaixa;
 				conectTarefa.setOrder("");
 				conectTarefa.setClausula("");
 				String[] cdE = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
@@ -474,14 +471,16 @@ public class ServiceTarefas extends Service{
 					responsavel = URLEncoder.encode(responsavel, "UTF-8");
 					status = MyString.tString(conectTarefa.select("CDSTATUS"));	
 					cdRef = MyString.tString(conectTarefa.select("CDREFERENCIA"));					
-
+					dtLanc = (MyString.tString(conectTarefa.select("DTLANCAMENTO"))).replaceAll("\\/", ".");
+					dtBaixa = (MyString.tString(conectTarefa.select("DTBAIXA"))).replaceAll("\\/", ".");
 					
 					destinatarios = getNmDestinatarios(dest);
 					
 					for(int x=0; x<destinatarios.size(); x++){
 						String d = URLEncoder.encode(destinatarios.get(x), "UTF-8");
-						String campos = "descricao="+descricao+"&destinatario="+d+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef;
-						Log.i(LOG, campos);
+						String campos = "descricao="+descricao+"&destinatario="+d+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef+"&dtLanc="+dtLanc+"&dtBaixa="+dtBaixa;
+						Log.i(LOG, "campos enviados="+campos);
+						Log.i(LOG, "campos enviados="+campos);
 						insereServidor(url, campos);	
 						
 						Log.i(LOG, cdTarefa+" inserido no servidor");
@@ -521,13 +520,16 @@ public class ServiceTarefas extends Service{
 					responsavel = URLEncoder.encode(responsavel, "UTF-8");
 					status = MyString.tString(conectTarefa.select("CDSTATUS"));	
 					cdRef = MyString.tString(conectTarefa.select("CDREFERENCIA"));	
-							
+					String dtLanc = (MyString.tString(conectTarefa.select("DTLANCAMENTO"))).replaceAll("\\/", ".");
+					String dtBaixa = (MyString.tString(conectTarefa.select("DTBAIXA"))).replaceAll("\\/", ".");
+
 					destinatarios = getNmDestinatarios(dest);
 					
 					for(int x=0; x<destinatarios.size(); x++){
 						String d = URLEncoder.encode(destinatarios.get(x), "UTF-8");
-						String campos = "descricao="+descricao+"&destinatario="+d+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef;
-						Log.i(LOG, campos);
+						String campos = "descricao="+descricao+"&destinatario="+d+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef+"&dtLanc="+dtLanc+"&dtBaixa="+dtBaixa;
+						Log.i(LOG, "");
+						Log.i(LOG, "campos a ser inseridos="+campos);
 						insereServidor(url, campos);	
 						
 						Log.i(LOG, cdTarefa+" inserido no servidor");
