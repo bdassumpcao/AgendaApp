@@ -74,7 +74,7 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
 				AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
 				alarme.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), 120000, p);
 			}
-			
+	
         	boolean alarmeAtivo2 = (PendingIntent.getBroadcast(this, 0, new Intent("SINCRONIZACAO_TAREFA"), PendingIntent.FLAG_NO_CREATE) == null);
 			
 			if(alarmeAtivo2){
@@ -168,9 +168,8 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
 	            	else{  
 	            		Intent intent = new Intent(Principal.this, Splash.class);
 	            		Intent intentt2 = new Intent(Principal.this, Splash2.class);
-	                	//startActivity(intent);
-	                	//startActivity(intentt2);
-	            		startService();
+	                	startActivity(intent);
+	                	startActivity(intentt2);
 	            	}
 
 	                mWeekView.goToToday(); 
@@ -410,8 +409,8 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
     
     
 	 public  void startService(){
-//			Intent intent = new Intent("SERVICO_AGENDA");
-//			startService(intent);
+			Intent intent = new Intent("SERVICO_AGENDA");
+			startService(intent);
 			
 			startService(new Intent("SERVICO_TAREFA"));
 	 }

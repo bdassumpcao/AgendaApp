@@ -52,19 +52,15 @@ public class ServiceTarefas extends Service{
 		
 		if(!pendencia){
 			pendencia = true;
-
 				try{
 					conectTarefa = new ConectaLocal(this, "TAREFA");
 					conectUser = new ConectaLocal(this, "USUARIO");
 					conectLogTarefa = new ConectaLocal(this, "LOGTAREFA");
 					monitor();
 				}catch(Exception e){
-					Log.i(LOG, "erro no monitor\n"+e);
+					Log.i(LOG, "erro no monitor TAREFA\n"+e);
 				}
-		}
-		
-		onDestroy();
-		
+		}		
 		return(START_STICKY);
 	}
 	
@@ -81,35 +77,57 @@ public class ServiceTarefas extends Service{
 			url = conexao.pegaLink();
 			Log.i(LOG, "link:\n"+url);
 			
-			//----------------------------------
+			//----------------------------------			
+			listaThread.add(new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					Log.i(LOG,"entrou updateServidor() TAREFA");
+					try {
+						updateServidor(url);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Log.i(LOG,"saiu updateServidor() TAREFA");
+					Log.i(LOG, "");
+					try {
+						this.finalize();
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}));
 			
-//			listaThread.add(new Thread(new Runnable() {
-//				
-//				@Override
-//				public void run() {
-//					Log.i(LOG,"entrou deleteServidor()");
-//					try {
-//						deleteServidor(url);
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//					Log.i(LOG,"saiu deleteServidor()");
-//					Log.i(LOG, "");
-//					try {
-//						this.finalize();
-//					} catch (Throwable e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}
-//			}));
+			//----------------------------------			
+			listaThread.add(new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					Log.i(LOG,"entrou deleteServidor() TAREFA");
+					try {
+						deleteServidor(url);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Log.i(LOG,"saiu deleteServidor() TAREFA");
+					Log.i(LOG, "");
+					try {
+						this.finalize();
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}));
 			//---------------------------------------------
 			listaThread.add(new Thread(new Runnable() {
 				
 				@Override
 				public void run() {
-					Log.i(LOG,"entrou selectCelular()");
+					Log.i(LOG,"entrou selectCelular() TAREFA");
 					try {
 						selectCelular(url);
 					} catch (UnsupportedEncodingException e) {
@@ -119,7 +137,7 @@ public class ServiceTarefas extends Service{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					Log.i(LOG,"saiu selectCelular()");
+					Log.i(LOG,"saiu selectCelular() TAREFA");
 					Log.i(LOG, "");
 					try {
 						this.finalize();
@@ -136,19 +154,15 @@ public class ServiceTarefas extends Service{
 				public void run() {
 					conectTarefa.setClausula("");
 					conectTarefa.delete();
-					String[] a = MyString.tStringArray(conectTarefa.select(" NMDESCRICAO "));
-					if(a.length>0)
-						Log.i(LOG, "NMDESCRICAO:"+a[0]);
-					
 					Log.i(LOG,"Apagou dados da tarefa");
-					Log.i(LOG,"entrou selectServidor()");
+					Log.i(LOG,"entrou selectServidor() TAREFA");
 					try {						
 						selectServidor(url);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					Log.i(LOG,"saiu selectServidor()");
+					Log.i(LOG,"saiu selectServidor() TAREFA");
 					Log.i(LOG, "");
 					try {
 						this.finalize();
@@ -158,7 +172,7 @@ public class ServiceTarefas extends Service{
 					}
 				}
 			}));
-			
+			//----------------------------------------------
 			
 			for(Thread t: listaThread){
 				if(!t.isAlive()){
@@ -171,192 +185,106 @@ public class ServiceTarefas extends Service{
 				
 			}
 			listaThread.clear();
-
-
 		}
 		else{
 			Log.i(LOG, "Não Conectado");
 		}
+		onDestroy();
 		Log.i(LOG, "saiu monitor() TAREFA");
 	}
 	
 	
-//	public void updateServidor(String url) throws InterruptedException, UnsupportedEncodingException{	
-//		String cdU = userAtivo();
-//		String[] cdE;				
-//
-//		conectLogAgenda.setOrder("");
-//		conectLogAgenda.setClausula(" WHERE OPERACAO='U' ");
-//		cdE = MyString.tStringArray(conectLogAgenda.select(" CDEVENTOEXT "));
-////		String  cdEvento;
-//		String desc, lc, obs, dt, hI, hF, st;
-//		
-//		if(cdE.length!=0){
-//		for(int j=0; j<cdE.length; j++){
-//			if(!cdE[j].equals("null")){
-//			Log.i(LOG, "cdE[j]"+cdE[j]);		
-//			conectAgenda.setOrder("");
-//			conectAgenda.setClausula(" WHERE CDEVENTOEXT="+cdE[j]);	
-//			
-////			cdEvento = MainActivity.tString(conectAgenda.select("CDEVENTO"));
-//			desc = MyString.tString(conectAgenda.select("DESCRICAO"));
-//			desc = URLEncoder.encode(desc, "UTF-8");
-//			lc = MyString.tString(conectAgenda.select("LOCAL"));
-//			lc = URLEncoder.encode(lc, "UTF-8");
-//			obs = MyString.tString(conectAgenda.select("OBSERVACAO"));
-//			obs = URLEncoder.encode(obs, "UTF-8");
-//			dt = MyString.tString(conectAgenda.select("DATA"));
-//			dt = dt.replace( "\\" , ""); 
-//			hI = MyString.tString(conectAgenda.select("HORAINICIO"));
-//			String aux = hI.substring(0, 2) +":";
-//			aux += hI.substring(2, 4);
-//			hI = aux;
-//			hF = MyString.tString(conectAgenda.select("HORAFIM"));
-//			aux = hF.substring(0, 2) +":";
-//			aux += hF.substring(2, 4);
-//			hF = aux;
-//			st = MyString.tString(conectAgenda.select("STATUS"));					
-//			
-//			String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=u&cdU="+cdU+"&cdE="+cdE[j]+"&desc="+desc+"&obs="+obs+"&st="+st+"&dt="+dt+"&hI="+hI+"&hF="+hF+"&lc="+lc;
-//			ResponseHandler<String> handler = new BasicResponseHandler();
-//			HttpClient client = new DefaultHttpClient();
-//			HttpGet httpGet = new HttpGet("http://"+url+dados);	
-//			Log.i(LOG,"http://"+url+dados);
-//			ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);			
-//			
-//			exec.start();
-//			
-//			do{
-////				Log.i(LOG,"sleep");
-//				Thread.sleep(1000);
-//			}
-//			while(exec.respServer.equals(""));
-//			
-//			if(!exec.respServer.equals("$")){
-//				Log.i(LOG, "respServer == "+exec.respServer);
-//			}
-//			else{
-//				conectLogAgenda.setOrder("");
-//				conectLogAgenda.setClausula(" WHERE CDEVENTOEXT="+cdE[j]);
-//				conectLogAgenda.delete();
-//				Log.i(LOG, cdE[j]+" alterado no servidor");
-//			}
-//			}
-//		}
-//		}
-//		
-//	}
+	public void updateServidor(String url) throws InterruptedException{	
+		String cdU = userAtivo();
+		String[] cdT, cdResp, cdRef;
+		String cdStatus, dtBaixa;
+		String dados = "";
+		String respServer = "";
+
+		conectLogTarefa.setOrder("");
+		conectLogTarefa.setClausula(" WHERE DSOPERACAO='U' ");
+		cdT = MyString.tStringArray(conectLogTarefa.select(" CDTAREFA "));
+		cdResp = MyString.tStringArray(conectLogTarefa.select(" CDRESPONSAVEL "));
+		cdRef = MyString.tStringArray(conectLogTarefa.select(" CDREFERENCIA "));
+				
+		for(int j=0; j<cdT.length; j++){
+			Log.i(LOG, "cdT[j]"+cdT[j]);
+			cdResp[j] = MyString.tiraEspaço(cdResp[j]);
+			cdRef[j] = MyString.tiraEspaço(cdRef[j]);
+			
+			conectTarefa.setClausula(" WHERE CDTAREFA="+cdT[j]);
+			cdStatus = MyString.tString(conectTarefa.select(" CDSTATUS "));
+			dtBaixa = (MyString.tString4(conectTarefa.select("DTBAIXA"))).replace('/' , '.');
+			if(dtBaixa.equals("null"))
+				dtBaixa = "";
+			
+			if(userAtivo().equals(cdResp[j])){
+				dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=ur&cdResp="+cdResp[j]+
+						"&cdRef="+cdRef[j]+"&cdStatus="+cdStatus+"&dtBaixa="+dtBaixa;			
+			}
+			
+			if(!userAtivo().equals(cdResp[j])){
+				dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=ud&cdResp="+cdResp[j]+
+						"&cdRef="+cdRef[j]+"&cdDest="+userAtivo()+"&cdStatus="+cdStatus+"&dtBaixa="+dtBaixa;
+			}
+			
+			respServer = webservice(url, dados);
+			respServer = respServer.substring(0, respServer.indexOf("#"));
+			Log.i(LOG, "respServer == "+respServer);
+			if(respServer.equals("")){
+				conectLogTarefa.setClausula(" WHERE DSOPERACAO='U' AND CDTAREFA="+cdT[j]);
+				conectLogTarefa.delete();
+				Log.i(LOG, cdT[j]+"atualizado do servidor");	
+			}					
+		}				
+	}
 	
 	public void deleteServidor(String url) throws InterruptedException {	
 		String cdU = userAtivo();
-		String[] cdT;				
+		String[] cdT, cdResp, cdRef, cdDest;
+		String dados = "";
+		String respServer = "";
 
 		conectLogTarefa.setOrder("");
 		conectLogTarefa.setClausula(" WHERE DSOPERACAO='D' ");
 		cdT = MyString.tStringArray(conectLogTarefa.select(" CDTAREFA "));
-		String cdResp="", cdDest="", cdRef="";
-		
+		cdResp = MyString.tStringArray(conectLogTarefa.select(" CDRESPONSAVEL "));
+		cdRef = MyString.tStringArray(conectLogTarefa.select(" CDREFERENCIA "));
+		cdDest = MyString.tStringArray(conectLogTarefa.select(" CDDESTINATARIO "));
 				
-		if(cdT.length!=0){
 		for(int j=0; j<cdT.length; j++){
-			Log.i(LOG, "cdE[j]"+cdT[j]);
-			if(!cdT[j].equals("")){
-				Log.i(LOG, "!cdT[j].equals('')");
-				
-				if(j == cdT.length-1){	
-					conectTarefa.setClausula(" WHERE CDTAREFA='"+cdT[j]+"'");
-					Log.i(LOG, "1 WHERE CDTAREFA='"+cdT[j]+"'");
-					cdResp += MyString.tString(conectLogTarefa.select(" CDRESPONSAVEL "));
-					cdDest += MyString.tString(conectLogTarefa.select(" CDDESTINATARIO "));
-					cdRef +=  MyString.tString(conectLogTarefa.select(" CDREFERENCIA "));
-					Log.i(LOG, "1 AAAAAA:'"+cdResp+"','"+cdDest+"','"+cdRef+"'");
-				}
-				else{					
-					conectTarefa.setClausula(" WHERE CDTAREFA='"+cdT[j]+"'");
-					Log.i(LOG, "2 WHERE CDTAREFA='"+cdT[j]+"'");
-					cdResp += MyString.tString(conectLogTarefa.select(" CDRESPONSAVEL "))+"-";
-					cdDest += MyString.tString(conectLogTarefa.select(" CDDESTINATARIO "))+"-";
-					cdRef += MyString.tString(conectLogTarefa.select(" CDREFERENCIA "))+"-";
-					Log.i(LOG, "2 AAAAAA:'"+cdResp+"','"+cdDest+"','"+cdRef+"'");
-				}
-			}
-		}
-		
-		
-		for(int i=0; i<cdT.length; i++){
-			conectLogTarefa.setClausula(" WHERE CDTAREFA="+cdT[i]);
-			String ref = MyString.tString(conectLogTarefa.select(" CDREFERENCIA "));
-			String op = MyString.tString(conectLogTarefa.select(" DSOPERACAO "));
-			Log.i(LOG, cdT[i]+","+ref+","+op);
-		}
-
-			String dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=d&cdU="+cdU+"&cdRef="+cdRef+"&cdResp="+cdResp+"&cdDest="+cdDest;
-			ResponseHandler<String> handler = new BasicResponseHandler();
-			HttpClient client = new DefaultHttpClient();
-			HttpGet httpGet = new HttpGet("http://"+url+dados);
-			Log.i(LOG,"http://"+url+dados);
-			ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
+			Log.i(LOG, "cdT[j]"+cdT[j]);
+			cdResp[j] = MyString.tiraEspaço(cdResp[j]);
+			cdRef[j] = MyString.tiraEspaço(cdRef[j]);
+			cdDest[j] = MyString.tiraEspaço(cdDest[j]);
 			
-			//exec.start();
-			
-			do{
-//				Log.i(LOG,"sleep");
-				Thread.sleep(1000);
+			if(userAtivo().equals(cdResp[j])){
+				dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=dr&cdResp="+cdResp[j]+"&cdRef="+cdRef[j];			
 			}
-			while(exec.respServer.equals(""));
 			
-			if(!exec.respServer.equals("$")){
-				Log.i(LOG, "respServer == "+exec.respServer);
+			if(!userAtivo().equals(cdResp[j])){
+				Log.i(LOG, "!userAtivo().equals(cdResp[j])");
+				dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=dd&cdResp="
+				+cdResp[j]+"&cdRef="+cdRef[j]+"&cdDest="+cdDest[j];
 			}
-			else{
-				conectLogTarefa.setOrder("");
-				conectLogTarefa.setClausula(" WHERE DSOPERACAO='D' ");
+			
+			respServer = webservice(url, dados);
+			respServer = respServer.substring(0, respServer.indexOf("#"));
+			Log.i(LOG, "respServer == "+respServer);
+			if(respServer.equals("")){
+				conectLogTarefa.setClausula(" WHERE DSOPERACAO='D' AND CDTAREFA="+cdT[j]);
 				conectLogTarefa.delete();
-				Log.i(LOG, cdT+" excluido no servidor!");
-			}
-		}
-		
+				Log.i(LOG, cdT[j]+"deletado do servidor");	
+			}					
+		}		
 	}
 	
-	
-//	public void deleteCelular(String url) throws InterruptedException{	
-//		String cdU = userAtivo();	
-//
-//		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sd&cdU="+cdU;
-//		ResponseHandler<String> handler = new BasicResponseHandler();
-//		HttpClient client = new DefaultHttpClient();
-//		HttpGet httpGet = new HttpGet("http://"+url+dados);
-//		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
-//			
-//		exec.start();
-//			
-//		do{
-////			Log.i(LOG,"sleep");
-//			Thread.sleep(1000);
-//		}
-//		while(exec.respServer.equals(""));
-//		String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
-//
-//		if(aux.equals("")){
-//			Log.i(LOG, "respServer == "+aux);
-//		}
-//		else{
-//			String[] campos = MyString.tStringArray(aux);
-//			for(int i=0 ;i<campos.length ;i++){		
-//					conectAgenda.setOrder("");
-//					conectAgenda.setClausula(" WHERE CDEVENTOEXT="+campos[i]);
-//					conectAgenda.delete();
-//					Log.i(LOG, campos[i]+" excluido no celular");
-//			}			
-//		}
-//	}	
-//	
-	
-//	/**
-//	 * 
-//	 * @param url
-//	 * @throws InterruptedException
-//	 */
+
+	/**
+	 * 
+	 * @param url
+	 * @throws InterruptedException
+	 */
 	public void selectServidor(String url) throws InterruptedException{	
 		String cdU = userAtivo();
 		String cdRef = pegaUltimo(" CDREFERENCIA ", cdU);
@@ -376,43 +304,6 @@ public class ServiceTarefas extends Service{
 		Log.i(LOG, "respServer == "+respServer);
 		if(!respServer.equals(""))
 			insereCelular(respServer);
-
-		
-//		if(!cdRef.equals("-1")){
-//			Log.i(LOG, " cdRef != '-1' ");
-//			conectUser.setClausula(" WHERE STATUS=0 ");
-//			String[] usuarios = MyString.tStringArray(conectUser.select(" CDUSUARIO "));
-//			
-////			dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdResp="+i+"&cdRef="+ref+"&cdU="+cdU;
-//			
-//			String cdResp = "";
-//			String r = "";
-//			for(int i=0; i<usuarios.length;i++){
-//				usuarios[i] = MyString.normalize(MyString.tiraEspaço(usuarios[i]));
-//				String ref = pegaUltimo(" CDREFERENCIA ", usuarios[i]);
-//				if(ref.equals("-1"))
-//					ref = "0";
-//				if(i==(usuarios.length-1)){
-//					cdResp += usuarios[i];
-//					r += ref;
-//				}
-//				else{
-//					cdResp += usuarios[i]+"-";
-//					r += ref+"-";
-//				}
-//			}
-			
-//			dados += "/webservice/processo.php?flag=2&chave=l33cou&operacao=su&cdU="+cdU+"&cdResp="+cdResp+"&cdRef="+r;
-//			
-//			respServer = webservice(url, dados);	
-//			respServer = respServer.substring(0, respServer.indexOf("#"));
-//			if(!respServer.equals("")){
-//				insereCelular(respServer);
-//				Log.i(LOG, "respServer == "+respServer);
-//			}
-			
-//		}
-
 	}
 	
 	public void insereCelular(String respServer){
@@ -425,7 +316,7 @@ public class ServiceTarefas extends Service{
 					conectTarefa.insert(i);
 					Log.i(LOG, i+" |inserido no celular");
 				}
-				geraNotificacaoNovaTarefa();
+//				geraNotificacaoNovaTarefa();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -463,42 +354,36 @@ public class ServiceTarefas extends Service{
 				
 				String  cdTarefa, descricao, dest, responsavel, status, cdRef, dtLanc, dtBaixa;
 				conectTarefa.setOrder("");
-				conectTarefa.setClausula("");
+				conectTarefa.setClausula(" WHERE CDRESPONSAVEL='"+userAtivo()+"'");
 				String[] cdE = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
 				for(int i=0; i<cdE.length; i++){
 					Log.i(LOG, cdE[i]);
 					conectTarefa.setClausula(" WHERE CDTAREFA="+cdE[i]);
 					
-					cdTarefa = MyString.tString(conectTarefa.select("CDTAREFA"));
+					cdTarefa = cdE[i];
 					descricao = MyString.tString(conectTarefa.select("NMDESCRICAO"));
 					descricao = URLEncoder.encode(descricao, "UTF-8");
 					dest = MyString.tString(conectTarefa.select("CDDESTINATARIO"));
+					dest = URLEncoder.encode(dest, "UTF-8");
 					responsavel = MyString.tString(conectTarefa.select("CDRESPONSAVEL"));
 					responsavel = URLEncoder.encode(responsavel, "UTF-8");
 					status = MyString.tString(conectTarefa.select("CDSTATUS"));	
 					cdRef = MyString.tString(conectTarefa.select("CDREFERENCIA"));					
-					dtLanc = (MyString.tString(conectTarefa.select("DTLANCAMENTO"))).replaceAll("\\/", ".");
-					dtBaixa = (MyString.tString(conectTarefa.select("DTBAIXA"))).replaceAll("\\/", ".");
-					
-					destinatarios = getNmDestinatarios(dest);
-					
-					for(int x=0; x<destinatarios.size(); x++){
-						String d = URLEncoder.encode(destinatarios.get(x), "UTF-8");
-						String campos = "descricao="+descricao+"&destinatario="+d+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef+"&dtLanc="+dtLanc+"&dtBaixa="+dtBaixa;
-						Log.i(LOG, "campos enviados="+campos);
-						Log.i(LOG, "campos enviados="+campos);
-						insereServidor(url, campos);	
-						
-						Log.i(LOG, cdTarefa+" inserido no servidor");
-					}
-														
+					dtLanc = (MyString.tString4(conectTarefa.select("DTLANCAMENTO"))).replace('/' , '.');
+					dtBaixa = (MyString.tString4(conectTarefa.select("DTBAIXA"))).replace('/' , '.');
+					if(dtBaixa.equals("null"))
+						dtBaixa = "";					
+
+					String campos = "descricao="+descricao+"&destinatario="+dest+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef+"&dtLanc="+dtLanc+"&dtBaixa="+dtBaixa;
+					Log.i(LOG, "campos enviados="+campos);
+					Log.i(LOG, "campos enviados="+campos);
+					insereServidor(url, campos);							
+					Log.i(LOG, cdTarefa+" inserido no servidor");														
 				}
 			}
-
 		}
 		//Seleciona apenas tarefas que ainda não foram adicionadas no servidor
-		else if(!respServer.equals("")){
-		
+		else if(!respServer.equals("")){	
 			
 			int ultRefServ = 0;
 			try {
@@ -508,9 +393,10 @@ public class ServiceTarefas extends Service{
 			} 
 			Log.i(LOG, "ultrefServ:"+ultRefServ+"");
 			int ultRefCel = Integer.parseInt(pegaUltimo(" CDREFERENCIA ", cdU));
+			Log.i(LOG, "ultrefCel:"+ultRefCel+"");
 			if(ultRefCel != -1)
 			if(ultRefCel>ultRefServ){
-				String  cdTarefa, descricao, dest, responsavel, status, cdRef;
+				String  cdTarefa, descricao, dest, responsavel, status, cdRef, dtLanc, dtBaixa;;
 				conectTarefa.setOrder("");
 				conectTarefa.setClausula(" WHERE CDREFERENCIA>"+ultRefServ+" AND CDRESPONSAVEL='"+userAtivo()+"'");
 				String[] cdE = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
@@ -518,34 +404,28 @@ public class ServiceTarefas extends Service{
 					Log.i(LOG, cdE[i]);
 					conectTarefa.setClausula(" WHERE CDTAREFA="+cdE[i]);
 										
-					cdTarefa = MyString.tString(conectTarefa.select("CDTAREFA"));
+					cdTarefa = cdE[i];
 					descricao = MyString.tString(conectTarefa.select("NMDESCRICAO"));
 					descricao = URLEncoder.encode(descricao, "UTF-8");
 					dest = MyString.tString(conectTarefa.select("CDDESTINATARIO"));
+					dest = URLEncoder.encode(dest, "UTF-8");
 					responsavel = MyString.tString(conectTarefa.select("CDRESPONSAVEL"));
 					responsavel = URLEncoder.encode(responsavel, "UTF-8");
 					status = MyString.tString(conectTarefa.select("CDSTATUS"));	
 					cdRef = MyString.tString(conectTarefa.select("CDREFERENCIA"));	
-					String dtLanc = (MyString.tString(conectTarefa.select("DTLANCAMENTO")));
-					String dtBaixa = (MyString.tString(conectTarefa.select("DTBAIXA")));
+					dtLanc = (MyString.tString4(conectTarefa.select("DTLANCAMENTO"))).replace('/' , '.');
+					dtBaixa = (MyString.tString4(conectTarefa.select("DTBAIXA"))).replace('/' , '.');
+					if(dtBaixa.equals("null"))
+						dtBaixa = "";
 
-					destinatarios = getNmDestinatarios(dest);
-					
-					for(int x=0; x<destinatarios.size(); x++){
-						String d = URLEncoder.encode(destinatarios.get(x), "UTF-8");
-						String campos = "descricao="+descricao+"&destinatario="+d+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef+"&dtLanc="+dtLanc+"&dtBaixa="+dtBaixa;
-						Log.i(LOG, "");
-						Log.i(LOG, "campos a ser inseridos="+campos);
-						insereServidor(url, campos);	
-						
-						Log.i(LOG, cdTarefa+" inserido no servidor");
-					}
-					
+					String campos = "descricao="+descricao+"&destinatario="+dest+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef+"&dtLanc="+dtLanc+"&dtBaixa="+dtBaixa;
+					Log.i(LOG, "");
+					Log.i(LOG, "campos a ser inseridos="+campos);
+					insereServidor(url, campos);	
+					Log.i(LOG, cdTarefa+" inserido no servidor");
 				}
-			}
-			
-		}
-		
+			}			
+		}		
 	}
 	
 
@@ -587,54 +467,7 @@ public class ServiceTarefas extends Service{
 		
 	}
 	
-//	public void updateCelular(String url) throws InterruptedException{	
-//		String cdU = userAtivo();
-//		
-//		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sa&cdU="+cdU;
-//		ResponseHandler<String> handler = new BasicResponseHandler();
-//		HttpClient client = new DefaultHttpClient();
-//		HttpGet httpGet = new HttpGet("http://"+url+dados);
-//		Log.i(LOG,"http://"+url+dados);
-//		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
-//		
-//		exec.start();
-//		
-//		do{
-////			Log.i(LOG,"sleep");
-//			Thread.sleep(1000);
-//		}
-//		while(exec.respServer.equals(""));
-//		
-//		String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
-//		
-//		if(aux.equals("")){
-//			Log.i(LOG, "respServer == "+aux);
-//		}
-//		else{
-//			String[] campos = MyString.montaUpdateAgenda(aux);
-//			cod = MyString.getCod();
-//			
-//			int j=0;
-//			boolean notificacao = false;
-//			for(String i : campos){		
-//				Log.i(LOG, "campos:"+i);
-//				if(i.contains("STATUS='1'") & !notificacao){
-//					notificacao = true;
-//					geraNotificacaoEventosBaixados();
-//				}
-//				conectAgenda.setOrder("");
-//				conectAgenda.setClausula(" WHERE CDEVENTO="+cod[j]);
-//				conectAgenda.update(i);
-//				Log.i(LOG, cod[j]+" atualizado no celular");
-//				j++;
-//			}
-//			
-//		}
-//		
-//	}
-
 	/**
-	 * 
 	 * @param url
 	 * @param dados
 	 * @return exec.respServer
@@ -650,24 +483,20 @@ public class ServiceTarefas extends Service{
 		exec.start();
 		
 		do{
-//			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
 		return exec.respServer;
 	}
 	
-	
 	public void geraNotificacaoNovaTarefa(){
 		gerarNotificacao(getApplicationContext(), new Intent(getBaseContext(),Tarefas.class), "Novas Tarefas Adicionadas", "Tarefas", "Voce tem novas tarefas.");
 	}
 	
-	
 	public void geraNotificacaoTarefaBaixada(){
 		gerarNotificacao(getApplicationContext(), new Intent(getBaseContext(),Tarefas.class), "Novos eventos baixados", "Eventos", "Eventos foram baixados em sua agenda");
 	}
-	
-	
+
 	public void gerarNotificacao(Context context, Intent intent, CharSequence ticker, CharSequence titulo, CharSequence descricao){
 		NotificationManager nm1 = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		PendingIntent p1 = PendingIntent.getActivity(context, 0, intent, 0);
@@ -692,7 +521,6 @@ public class ServiceTarefas extends Service{
 		}
 		catch(Exception e){}
 	}
-	
 	
 	public List<String> getNmDestinatarios(String string){
 		List<String> lista = new ArrayList<String>();
@@ -728,9 +556,7 @@ public class ServiceTarefas extends Service{
 		return lista;
 	}
 	
-	
 	public String pegaUltimo(String campo, String cdU){
-//		Log.i(LOG, "pegaUltimo()");
 		conectTarefa.setClausula(" WHERE CDRESPONSAVEL='"+cdU+"'");	
 		String[] aux = MyString.tStringArray(conectTarefa.select(campo));
 		
@@ -739,7 +565,6 @@ public class ServiceTarefas extends Service{
 		else
 			return "-1";
 	}
-
 	
 	public String userAtivo(){
 		Log.i(LOG, "userAtivo()");
@@ -747,7 +572,6 @@ public class ServiceTarefas extends Service{
 		conectUser.setOrder(" ORDER BY CDUSUARIO ");
 		return MyString.tString(conectUser.select(" CDUSUARIO "));
 	}
-	
 	
 	public void updateCodServidor(String cdRef, String cdE) throws InterruptedException{
 		Log.i(LOG, "updateCodServidor()");
@@ -763,30 +587,25 @@ public class ServiceTarefas extends Service{
 		exec.start();
 		
 		do{
-//			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
 	}
 	
-	
 	@Override
-	public void onDestroy(){
-		pendencia =  false;
+	public void onDestroy(){		
 		super.onDestroy();
+		pendencia =  false;
 		Log.i(LOG,"onDestroy() TAREFA");
 	}
-	
-	
+		
 	public boolean getPendencia(){
 		return this.pendencia;
 	}
 	
-		
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

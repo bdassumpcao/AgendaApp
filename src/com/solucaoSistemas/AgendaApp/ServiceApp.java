@@ -52,12 +52,12 @@ public class ServiceApp extends Service {
 	public void onCreate(){
 		super.onCreate();
 		listaThread = new ArrayList<Thread>();
-		Log.i(LOG, "onCreate()");
+		Log.i(LOG, "onCreate() AGENDA");
 	}
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
-		Log.i(LOG, "onStartCommand()");
+		Log.i(LOG, "onStartCommand() AGENDA");
 		
 		
 		if(!pendencia){
@@ -70,7 +70,7 @@ public class ServiceApp extends Service {
 					conectLogAgenda = new ConectaLocal(getApplicationContext(), "LOGAGENDA");
 					monitor();
 				}catch(Exception e){
-					Log.i(LOG, "erro no monitor\n"+e);
+					Log.i(LOG, "erro no monitor AGENDA\n"+e);
 				}
 		}
 		
@@ -83,7 +83,7 @@ public class ServiceApp extends Service {
 	public void onDestroy(){
 		pendencia = ativo = false;
 		super.onDestroy();
-		Log.i(LOG,"onDestroy()");
+		Log.i(LOG,"onDestroy() AGENDA");
 	}
 	
 	public boolean getPendencia(){
@@ -98,7 +98,7 @@ public class ServiceApp extends Service {
 	 * @throws UnsupportedEncodingException 
 	 * */
 	public void  monitor() throws InterruptedException, UnsupportedEncodingException{
-		Log.i(LOG, "entrou monitor()");
+		Log.i(LOG, "entrou monitor() AGENDA");
 		Conexao conexao = new Conexao(this);
 		
 		if(conexao.isConected()){
@@ -111,13 +111,13 @@ public class ServiceApp extends Service {
 				
 				@Override
 				public void run() {
-					Log.i(LOG,"entrou deleteServidor()");
+					Log.i(LOG,"entrou deleteServidor() AGENDA");
 					try {
 						deleteServidor(url);
 					} catch (InterruptedException e) {
 						Log.i(LOG, ""+e);
 					}
-					Log.i(LOG,"saiu deleteServidor()");
+					Log.i(LOG,"saiu deleteServidor() AGENDA");
 					Log.i(LOG, "");
 					try {
 						this.finalize();
@@ -132,7 +132,7 @@ public class ServiceApp extends Service {
 								
 				@Override
 				public void run() {
-					Log.i(LOG,"entrou updateServidor()");
+					Log.i(LOG,"entrou updateServidor() AGENDA");
 					try {
 						updateServidor(url);
 					} catch (UnsupportedEncodingException e) {
@@ -140,7 +140,7 @@ public class ServiceApp extends Service {
 					} catch (InterruptedException e) {
 						Log.i(LOG, ""+e);
 					}
-					Log.i(LOG,"saiu updateServidor()");
+					Log.i(LOG,"saiu updateServidor() AGENDA");
 					Log.i(LOG, "");
 					try {
 						this.finalize();
@@ -154,7 +154,7 @@ public class ServiceApp extends Service {
 				
 				@Override
 				public void run() {
-					Log.i(LOG,"entrou selectCelular()");
+					Log.i(LOG,"entrou selectCelular() AGENDA");
 					try {
 						selectCelular(url);
 					} catch (UnsupportedEncodingException e) {
@@ -162,7 +162,7 @@ public class ServiceApp extends Service {
 					} catch (InterruptedException e) {
 						Log.i(LOG, ""+e);
 					}
-					Log.i(LOG,"saiu selectCelular()");
+					Log.i(LOG,"saiu selectCelular() AGENDA");
 					Log.i(LOG, "");
 					try {
 						this.finalize();
@@ -177,15 +177,15 @@ public class ServiceApp extends Service {
 				@Override
 				public void run() {
 					conectAgenda.delete();
-					Log.i(LOG,"Apagou dados da agenda");
+					Log.i(LOG,"Apagou dados da AGENDA");
 					
-					Log.i(LOG,"entrou selectServidor()");
+					Log.i(LOG,"entrou selectServidor() AGENDA");
 					try {
 						selectServidor(url);
 					} catch (InterruptedException e) {
 						Log.i(LOG, ""+e);
 					}
-					Log.i(LOG,"saiu selectServidor()");
+					Log.i(LOG,"saiu selectServidor() AGENDA");
 					Log.i(LOG, "");
 					try {
 						this.finalize();
@@ -212,7 +212,7 @@ public class ServiceApp extends Service {
 		else{
 			Log.i(LOG, "Não Conectado");
 		}
-		Log.i(LOG, "saiu monitor()");
+		Log.i(LOG, "saiu monitor() AGENDA");
 	}
 	
 	public void geraNotificacaoNovoEvento(){

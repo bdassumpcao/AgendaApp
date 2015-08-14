@@ -246,6 +246,32 @@ public  class MyString {
 		return resul;
 	}
 	
+	/**retira todos os caracteres que a consulta sqlite retorna, incluindo \, e retorna em uma string só*/
+	public static String tString4(Object string){
+		
+		String resul = string.toString();
+		char[] aux = new char[resul.length()];
+		
+		for(int i = 0; i < resul.length(); i++){
+			aux[i] = resul.charAt(i);
+		}
+		
+		resul = "";
+		
+		for(int i = 0; i < aux.length; i++){
+			
+			if(aux[i] == '\\' || aux[i] == '$' || aux[i] == ']' || aux[i] == '[' || aux[i] == '}' || aux[i] == '{' || aux[i] == '"' || aux[i] == ',' || aux[i] == ':'){
+				
+			}
+			else{
+				resul += aux[i];
+			}
+		}
+		
+		
+		return resul;
+	}
+	
 	public static String[] montaInsertUsuario(String resultGet){
 		int x = 0;
 		int c = 0;

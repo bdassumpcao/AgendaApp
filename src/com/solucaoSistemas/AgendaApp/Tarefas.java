@@ -46,9 +46,7 @@ public class Tarefas extends Activity{
 			this.lst_tarefas = (ListView)findViewById(R.id.lst_tarefas);
 			this.lst_tarefas.setLongClickable(true);
 			this.lst_tarefas.setItemsCanFocus(true);
-			registerForContextMenu(this.lst_tarefas);
-			
-			
+			registerForContextMenu(this.lst_tarefas);		
 			
 			lst_tarefas.setOnTouchListener(new ListView.OnTouchListener() {
 		        @Override
@@ -72,13 +70,9 @@ public class Tarefas extends Activity{
 		        }
 		    });
 			
-
 			lsvTarefasAdapter = new TarefasAdapter(this, R.layout.listview_tarefas, TAREFAS);
-	        lst_tarefas.setAdapter(lsvTarefasAdapter);
-	        
-	 }
-	 
-	 
+	        lst_tarefas.setAdapter(lsvTarefasAdapter);  
+	 }	 
 	 
 	 @Override
 	 public boolean onCreateOptionsMenu(Menu menu) {
@@ -88,36 +82,34 @@ public class Tarefas extends Activity{
 	 
 	 @Override
 	 public boolean onOptionsItemSelected(MenuItem item) {
-	        int id = item.getItemId();
+		 int id = item.getItemId();
 
-	        switch (id){
-	    		case R.id.action_novaTarefa:
-		    		Intent intent = new Intent(Tarefas.this, InsereTarefa.class);
-		    		Tarefas.this.startActivity(intent);
-		    		return true;		    		
-	    		case R.id.action_eventos:
-		    		Intent intent2 = new Intent(Tarefas.this, Principal.class);
-		    		Tarefas.this.startActivity(intent2);
-		    		Tarefas.this.finish();
-		    		return true;	
-	        }
-		            return super.onOptionsItemSelected(item);
+	     switch (id){
+	     	case R.id.action_novaTarefa:
+	     		Intent intent = new Intent(Tarefas.this, InsereTarefa.class);
+		    	Tarefas.this.startActivity(intent);
+		    	return true;		    		
+	    	case R.id.action_eventos:
+		    	Intent intent2 = new Intent(Tarefas.this, Principal.class);
+		    	Tarefas.this.startActivity(intent2);
+		    	Tarefas.this.finish();
+		    	return true;	
+	     }
+		 return super.onOptionsItemSelected(item);
 	 }
 	 
 	public void showToast(String texto){		
 		Toast.makeText(this, texto, Toast.LENGTH_LONG).show();
 	}
 		
-	 public boolean onKeyDown(int keyCode, KeyEvent event) {
-		    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    		Tarefas.this.startActivity(new Intent(Tarefas.this, Principal.class));
-	    		Tarefas.this.finish();
-		        return true;
-		    }
-		    return super.onKeyDown(keyCode, event);
-		}
-	 
-	 
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if (keyCode == KeyEvent.KEYCODE_BACK) {
+	   		Tarefas.this.startActivity(new Intent(Tarefas.this, Principal.class));
+	   		Tarefas.this.finish();
+	        return true;
+	    }
+	    return super.onKeyDown(keyCode, event);
+	} 
 }
 
 

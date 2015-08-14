@@ -53,22 +53,6 @@ public class Configuracoes extends Activity {
 				public void onClick(View v) {
 					if(sincronizar.isChecked()){
 						conectConfig.update("SINCRONIZAR=1");
-						boolean alarmeAtivo = (PendingIntent.getBroadcast(Configuracoes.this, 0, new Intent("SINCRONIZACAO_AGENDA"), PendingIntent.FLAG_NO_CREATE) == null);
-						
-						if(alarmeAtivo){
-							Log.i("teste", "Novo alarme");
-							
-							Intent intent = new Intent("SINCRONIZACAO_AGENDA");
-							PendingIntent p = PendingIntent.getBroadcast(Configuracoes.this, 0, intent, 0);
-							
-							Calendar c = Calendar.getInstance();
-							c.setTimeInMillis(System.currentTimeMillis());
-							c.add(Calendar.SECOND, 3);
-							
-							AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
-							alarme.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), 120000, p);
-						}
-					
 					}
 					else if(!sincronizar.isChecked()){
 						conectConfig.update("SINCRONIZAR=0");
@@ -90,8 +74,8 @@ public class Configuracoes extends Activity {
 	  }
 	  
 	  public  void startService(){
-			Intent intent = new Intent("SERVICO_AGENDA");
-			startService(intent);
+//			Intent intent = new Intent("SERVICO_AGENDA");
+//			startService(intent);
 			
 			startService(new Intent("SERVICO_TAREFA"));
 		}
@@ -107,6 +91,10 @@ public class Configuracoes extends Activity {
 			PendingIntent p1 = PendingIntent.getBroadcast(Configuracoes.this, 0, intent1, 0);			
 			AlarmManager alarme1 = (AlarmManager) getSystemService(ALARM_SERVICE);
 			alarme1.cancel(p1);
+			
+			stopService(new Intent("SERVICO_AGENDA"));
+			
+			stopService(new Intent("SERVICO_TAREFA"));
 		}
 	  
 	  @Override

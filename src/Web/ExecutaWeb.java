@@ -32,10 +32,10 @@ public class  ExecutaWeb extends Thread{
 			Log.i(LOG, "run:"+respServer);
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
-			Log.i(LOG, "Erro"+e);
+			Log.i(LOG, "Erro:"+e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			Log.i(LOG, "Erro"+e);
+			Log.i(LOG, "Erro:"+e);
 		}
 	}
 

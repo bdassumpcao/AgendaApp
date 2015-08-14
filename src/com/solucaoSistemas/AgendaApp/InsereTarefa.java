@@ -125,7 +125,6 @@ public class InsereTarefa extends Activity{
 		            } else {
 		                check.setChecked(false);
 		            } 
-	           
 		            
 		            return v;
 	            }
@@ -134,7 +133,6 @@ public class InsereTarefa extends Activity{
 		            CheckBox cb = (CheckBox) v.findViewById(R.id.check_usuario);
 		            
 		            for(int i=0;i<selecionados.size();i++){
-		            	Log.i(LOG, "sel: "+selecionados.get(i));
 		            }
 		            
 		            if (cb.isChecked()) {
@@ -146,10 +144,7 @@ public class InsereTarefa extends Activity{
 		            		selecionados.remove(usuario);
 		            	}
 		            }	
-		            
-		            for(int i=0;i<selecionados.size();i++){
-		            	Log.i(LOG, "sel1: "+selecionados.get(i));
-		            }
+
 		            notifyDataSetChanged();
 				}
 				
@@ -193,11 +188,14 @@ public class InsereTarefa extends Activity{
 		    		
 		    		String cdDestinatario = "";
 		    		int referencia = (pegaUltimaRef()+1);
-		    		conectTarefa.insert("null,'"+edt_desc.getText().toString()+"','A',"+usuarioAtivo+","+usuarioAtivo+","+referencia+",'"+actualData+"',null");		    		
-		    		for(int i=0; i<selecionados.size() ; i++){
-		    			cdDestinatario = getCodUsuario(selecionados.get(i));
-		    		//	Log.i("teste","conectTarefa="+edt_desc.getText().toString());
-		    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"','A',"+cdDestinatario+","+usuarioAtivo+","+referencia+",'"+actualData+"',null");
+		    		if(selecionados.size() == 0)
+		    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"','A','',"+usuarioAtivo+","+referencia+",'"+actualData+"',null");		    		
+		    		else{
+			    		for(int i=0; i<selecionados.size() ; i++){
+			    			cdDestinatario = getCodUsuario(selecionados.get(i));
+			    		//	Log.i("teste","conectTarefa="+edt_desc.getText().toString());
+			    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"','A',"+cdDestinatario+","+usuarioAtivo+","+referencia+",'"+actualData+"',null");
+			    		}
 		    		}
 
 		    		return true;		    			

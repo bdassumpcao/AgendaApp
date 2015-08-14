@@ -44,6 +44,8 @@ public class Splash extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.i(LOG, "SPLASH AGENDA");
+		
 		listaThread = new ArrayList<Thread>();
 		conectAgenda = new ConectaLocal(this, "AGENDA");
 		conectUser = new ConectaLocal(this, "USUARIO");
@@ -60,8 +62,10 @@ public class Splash extends Activity {
 				} catch (UnsupportedEncodingException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					Splash.this.finish();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 				Splash.this.finish();
@@ -73,7 +77,7 @@ public class Splash extends Activity {
 	
 	
 	public void  monitor() throws InterruptedException, UnsupportedEncodingException{
-		Log.i(LOG, "entrou monitor()");
+		Log.i(LOG, "entrou monitor() AGENDA");
 		Conexao conexao = new Conexao(this);
 		
 		if(conexao.isConected()){
@@ -86,13 +90,13 @@ public class Splash extends Activity {
 				
 				@Override
 				public void run() {
-					Log.i(LOG,"entrou deleteServidor()");
+					Log.i(LOG,"entrou deleteServidor() AGENDA");
 					try {
 						deleteServidor(url);
 					} catch (InterruptedException e) {
 						Log.i(LOG, ""+e);
 					}
-					Log.i(LOG,"saiu deleteServidor()");
+					Log.i(LOG,"saiu deleteServidor() AGENDA");
 					Log.i(LOG, "");
 					try {
 						this.finalize();
@@ -107,7 +111,7 @@ public class Splash extends Activity {
 								
 				@Override
 				public void run() {
-					Log.i(LOG,"entrou updateServidor()");
+					Log.i(LOG,"entrou updateServidor() AGENDA");
 					try {
 						updateServidor(url);
 					} catch (UnsupportedEncodingException e) {
@@ -115,7 +119,7 @@ public class Splash extends Activity {
 					} catch (InterruptedException e) {
 						Log.i(LOG, ""+e);
 					}
-					Log.i(LOG,"saiu updateServidor()");
+					Log.i(LOG,"saiu updateServidor() AGENDA");
 					Log.i(LOG, "");
 					try {
 						this.finalize();
@@ -129,7 +133,7 @@ public class Splash extends Activity {
 				
 				@Override
 				public void run() {
-					Log.i(LOG,"entrou selectCelular()");
+					Log.i(LOG,"entrou selectCelular() AGENDA");
 					try {
 						selectCelular(url);
 					} catch (UnsupportedEncodingException e) {
@@ -137,7 +141,7 @@ public class Splash extends Activity {
 					} catch (InterruptedException e) {
 						Log.i(LOG, ""+e);
 					}
-					Log.i(LOG,"saiu selectCelular()");
+					Log.i(LOG,"saiu selectCelular() AGENDA");
 					Log.i(LOG, "");
 					try {
 						this.finalize();
@@ -152,15 +156,15 @@ public class Splash extends Activity {
 				@Override
 				public void run() {
 					conectAgenda.delete();
-					Log.i(LOG,"Apagou dados da agenda");
+					Log.i(LOG,"Apagou dados da AGENDA");
 					
-					Log.i(LOG,"entrou selectServidor()");
+					Log.i(LOG,"entrou selectServidor() AGENDA");
 					try {
 						selectServidor(url);
 					} catch (InterruptedException e) {
 						Log.i(LOG, ""+e);
 					}
-					Log.i(LOG,"saiu selectServidor()");
+					Log.i(LOG,"saiu selectServidor() AGENDA");
 					Log.i(LOG, "");
 					try {
 						this.finalize();
@@ -187,7 +191,7 @@ public class Splash extends Activity {
 		else{
 			Log.i(LOG, "Não Conectado");
 		}
-		Log.i(LOG, "saiu monitor()");
+		Log.i(LOG, "saiu monitor() AGENDA");
 	}
 	
 	public void geraNotificacaoNovoEvento(){

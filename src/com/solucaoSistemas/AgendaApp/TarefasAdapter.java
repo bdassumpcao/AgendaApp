@@ -45,7 +45,6 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	     conectUser = new ConectaLocal(mContext, "USUARIO"); 
 	     conectTarefa = new ConectaLocal(mContext, "TAREFA");
 	     conectLogTarefa= new ConectaLocal(mContext, "LOGTAREFA");
-	     selecionados.clear();
     }
 
 	@Override
@@ -81,11 +80,10 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	        final String cdTarefa = TAREFAS.get(position);
 	        conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 	        final String resp = MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")));
-	        //SELECT CDDESTINATARIO FROM TAREFA WHERE (SELECT CDREFERENCIA FROM TAREFA WHERE CDTAREFA=1)
-	
+	        final String referencia = MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDREFERENCIA ")));
 	        
 	        conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" "
-	        		+ "AND CDREFERENCIA=(SELECT CDREFERENCIA FROM TAREFA WHERE CDTAREFA="+cdTarefa+")");
+	        		+ "AND CDREFERENCIA="+referencia);
 	        String[] dest = MyString.tStringArray(conectTarefa.select(" CDDESTINATARIO "));
 	        String[] cd = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
 	        
@@ -103,32 +101,33 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	        			TAREFAS.remove(MyString.tiraEspaço(cd[j])); 
 	        			tamanho--;
 	        			notifyDataSetChanged();
-	        		}
-	        		
-	        	}
-	        	
+	        		}	        		
+	        	}	        	
 	        }
 
 	        // Recuperando o checkbox
 	        final CheckBox check = (CheckBox) v.findViewById(R.id.check_tarefa);
+	        
 	
 	        conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 	        String descricao = MyString.tString(conectTarefa.select(" NMDESCRICAO "));
 	        String responsavel = getNmUsuario(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")));
-	//        String destinatarios = getNmDestinatarios(MyString.tString3(conectTarefa.select(" CDDESTINATARIO ")));
+//	        final String referencia = getNmUsuario(MyString.tString(conectTarefa.select(" CDREFERENCIA ")));
 	        String status = MyString.tString(conectTarefa.select(" CDSTATUS "));
 	        String dataLanc = (MyString.tString(conectTarefa.select(" DTLANCAMENTO "))).replace("\\", "");
 	        String dataConc = (MyString.tString(conectTarefa.select(" DTBAIXA "))).replace("\\", "");
 	
-	        if(status.equals("B")) {
-	            check.setChecked(true);
-	            selecionados.add(cdTarefa);
-	        } else {
-	            check.setChecked(false);
-	            selecionados.remove(cdTarefa);
+	        Log.i(LOG, "add ou remove dos selecionados");
+	        if(status.equals("B")) {	            
+	            addSelecionados(cdTarefa);
+	        } 
+	        else {	            
+	            removeSelecionados(cdTarefa);
 	        }
 	        
-	
+	        Log.i(LOG, "selecionados()");
+	        selecionados(check, cdTarefa);
+	        
 	        TextView txtv_Descricao = (TextView) v.findViewById(R.id.txtv_Descricao);
 	        TextView txtv_nmResponsavel = (TextView) v.findViewById(R.id.txtv_nmResponsavel);
 	        TextView txtv_nmDestinatario = (TextView) v.findViewById(R.id.txtv_nmDestinatarios);
@@ -167,7 +166,6 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	            }
 	        });
 	        
-	        
 	        check.setOnClickListener(new View.OnClickListener() {
 	            @Override
 	            public void onClick(View v) {
@@ -181,29 +179,32 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 		    		data.getTime();
 		    		
 		    		final String actualData = dateFormat.format(dataAtual);
-		    		
+	                conectLogTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa+" AND CDRESPONSAVEL="+resp+" AND CDREFERENCIA="+referencia);
+	                String  aux = MyString.tString(conectLogTarefa.select(" COUNT(CDTAREFA) "));
+	                int count = Integer.parseInt(aux); 
 		            if (cb.isChecked()) {	 	  
 		            	Log.i(LOG, "cb.isChecked"+cdTarefa);
-		                selecionados.add(cdTarefa);
+		                addSelecionados(cdTarefa);
 		                conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 		                conectTarefa.update(" CDSTATUS='B' ");
-		                conectTarefa.update(" DTBAIXA='"+actualData+"'");
+		                conectTarefa.update(" DTBAIXA='"+actualData+"'");		                
+		                if(count==0)
+		                	conectLogTarefa.insert(cdTarefa+","+referencia+",'',"+resp+","+"'U'");	
 		                Log.i(LOG, actualData);
-		            } else if (!cb.isChecked()) {
+		            } else{
 		            	Log.i(LOG, "!cb.isChecked"+cdTarefa);
-		                selecionados.remove(cdTarefa);
+		                removeSelecionados(cdTarefa);
 		                conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 		                conectTarefa.update(" CDSTATUS='A' ");
-		                conectTarefa.update("  DTBAIXA="+"null");		               
-		            }
-		            selecionados(check, cdTarefa);
-		            notifyDataSetChanged();
+		                conectTarefa.update("  DTBAIXA="+"null");	
+		                if(count==0)
+		                	conectLogTarefa.insert(cdTarefa+","+referencia+",'',"+resp+","+"'U'");	
+		            }	   
+		           notifyDataSetChanged();
 	            }
 	        });
 
-	        selecionados(check, cdTarefa);
-	        
-        
+	        	               
         }
 		return v;
         
@@ -219,6 +220,16 @@ public class TarefasAdapter extends ArrayAdapter<String>{
         }
 	}
 	
+	public void addSelecionados(String cdTarefa){
+		selecionados.add(cdTarefa);
+		notifyDataSetChanged();
+	}
+	
+	public void removeSelecionados(String cdTarefa){
+		selecionados.remove(cdTarefa);
+		notifyDataSetChanged();
+	}
+	
 	public void deletar(String cd, String resp, int position){
 		conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" AND "
 				+ "CDREFERENCIA=(SELECT CDREFERENCIA FROM TAREFA WHERE CDTAREFA="+cd+")");
@@ -229,6 +240,8 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 			conectTarefa.setClausula(" WHERE CDTAREFA='"+cdT[0]+"'");
 			String ref = MyString.tString(conectTarefa.select(" CDREFERENCIA "));
 			String dest = MyString.tString(conectTarefa.select(" CDDESTINATARIO "));
+			if(dest.equals(""))
+				dest = "null";
 			conectLogTarefa.insert(cdT[0]+","+ref+","+dest+","+resp+","+"'D'");		
 		}		
 		
@@ -247,8 +260,11 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	 }
 	
 	public String getNmUsuario(String cd){
-		conectUser.setClausula(" WHERE CDUSUARIO="+cd);
-		String nmusuario = MyString.tString(conectUser.select(" NMUSUARIO "));
+		String nmusuario = "";
+		if(!cd.equals("")){
+			conectUser.setClausula(" WHERE CDUSUARIO="+cd);
+			nmusuario = MyString.tString(conectUser.select(" NMUSUARIO "));
+		}
 		return nmusuario;	
 	}
 	
