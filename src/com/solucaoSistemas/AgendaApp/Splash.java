@@ -84,7 +84,7 @@ public class Splash extends Activity {
 			final String url = conexao.pegaLink();
 			Log.i(LOG, "link:\n"+url);
 			
-			num = Integer.parseInt(pegaUltimo("CDEVENTOEXT", userAtivo()));
+//			num = Integer.parseInt(pegaUltimo("CDEVENTOEXT", userAtivo()));
 			
 			listaThread.add(new Thread(new Runnable() {
 				
@@ -360,9 +360,9 @@ public class Splash extends Activity {
 					
 					j++;
 				}
-				if(num < (Integer.parseInt(pegaUltimo("CDEVENTOEXT", userAtivo())))){
-					geraNotificacaoNovoEvento();
-				}
+//				if(num < (Integer.parseInt(pegaUltimo("CDEVENTOEXT", userAtivo())))){
+//					geraNotificacaoNovoEvento();
+//				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.i(LOG, e+"");

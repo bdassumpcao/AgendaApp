@@ -25,7 +25,7 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	private int mInflater;
 //	public String[] TAREFAS;
 	private List<String> TAREFAS = new ArrayList<String>();
-	private List<String> selecionados = new ArrayList<String>();
+	boolean[] checkBoxState;
 	private ConectaLocal conectUser;
 	private ConectaLocal conectTarefa;
 	private ConectaLocal conectLogTarefa;
@@ -40,11 +40,11 @@ public class TarefasAdapter extends ArrayAdapter<String>{
          this.TAREFAS = lista;
          this.tamanho = lista.size();
          
-         Log.i(LOG, "TarefasAdapter()");
-         
 	     conectUser = new ConectaLocal(mContext, "USUARIO"); 
 	     conectTarefa = new ConectaLocal(mContext, "TAREFA");
 	     conectLogTarefa= new ConectaLocal(mContext, "LOGTAREFA");
+	     
+	     checkBoxState=new boolean[lista.size()];
     }
 
 	@Override
@@ -76,7 +76,7 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	        	        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	            v = (View) inflater.inflate(mInflater, null);
 	        }
-
+	        
 	        final String cdTarefa = TAREFAS.get(position);
 	        conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 	        final String resp = MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")));
@@ -105,10 +105,6 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	        	}	        	
 	        }
 
-	        // Recuperando o checkbox
-	        final CheckBox check = (CheckBox) v.findViewById(R.id.check_tarefa);
-	        
-	
 	        conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 	        String descricao = MyString.tString(conectTarefa.select(" NMDESCRICAO "));
 	        String responsavel = getNmUsuario(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")));
@@ -117,16 +113,17 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	        String dataLanc = (MyString.tString(conectTarefa.select(" DTLANCAMENTO "))).replace("\\", "");
 	        String dataConc = (MyString.tString(conectTarefa.select(" DTBAIXA "))).replace("\\", "");
 	
-	        Log.i(LOG, "add ou remove dos selecionados");
-	        if(status.equals("B")) {	            
-	            addSelecionados(cdTarefa);
+	        // Recuperando o checkbox
+	        final CheckBox check = (CheckBox) v.findViewById(R.id.check_tarefa);
+	        check.setChecked(checkBoxState[position]);
+	        
+	        if(status.equals("B")) {	
+	        	checkBoxState[position] = true;
 	        } 
-	        else {	            
-	            removeSelecionados(cdTarefa);
+	        else {	  
+	        	checkBoxState[position] = false;
 	        }
 	        
-	        Log.i(LOG, "selecionados()");
-	        selecionados(check, cdTarefa);
 	        
 	        TextView txtv_Descricao = (TextView) v.findViewById(R.id.txtv_Descricao);
 	        TextView txtv_nmResponsavel = (TextView) v.findViewById(R.id.txtv_nmResponsavel);
@@ -183,17 +180,14 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	                String  aux = MyString.tString(conectLogTarefa.select(" COUNT(CDTAREFA) "));
 	                int count = Integer.parseInt(aux); 
 		            if (cb.isChecked()) {	 	  
-		            	Log.i(LOG, "cb.isChecked"+cdTarefa);
-		                addSelecionados(cdTarefa);
+		            	checkBoxState[position] = true;
 		                conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 		                conectTarefa.update(" CDSTATUS='B' ");
 		                conectTarefa.update(" DTBAIXA='"+actualData+"'");		                
 		                if(count==0)
 		                	conectLogTarefa.insert(cdTarefa+","+referencia+",'',"+resp+","+"'U'");	
-		                Log.i(LOG, actualData);
 		            } else{
-		            	Log.i(LOG, "!cb.isChecked"+cdTarefa);
-		                removeSelecionados(cdTarefa);
+		            	checkBoxState[position] = false;
 		                conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 		                conectTarefa.update(" CDSTATUS='A' ");
 		                conectTarefa.update("  DTBAIXA="+"null");	
@@ -210,25 +204,6 @@ public class TarefasAdapter extends ArrayAdapter<String>{
         
     }
 	
-	public void selecionados(CheckBox check, String cdTarefa){
-        if(selecionados.contains(cdTarefa)) {
-        	Log.i(LOG, "selecionados"+cdTarefa);
-            check.setChecked(true);
-        } else {
-        	Log.i(LOG, "!selecionados"+cdTarefa);
-            check.setChecked(false);
-        }
-	}
-	
-	public void addSelecionados(String cdTarefa){
-		selecionados.add(cdTarefa);
-		notifyDataSetChanged();
-	}
-	
-	public void removeSelecionados(String cdTarefa){
-		selecionados.remove(cdTarefa);
-		notifyDataSetChanged();
-	}
 	
 	public void deletar(String cd, String resp, int position){
 		conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" AND "
