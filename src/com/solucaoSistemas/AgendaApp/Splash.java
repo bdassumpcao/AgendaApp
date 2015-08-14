@@ -84,7 +84,9 @@ public class Splash extends Activity {
 			final String url = conexao.pegaLink();
 			Log.i(LOG, "link:\n"+url);
 			
-//			num = Integer.parseInt(pegaUltimo("CDEVENTOEXT", userAtivo()));
+			String aux = pegaUltimo("CDEVENTOEXT", userAtivo());
+			if(!aux.equals("null"));
+				num = Integer.parseInt(pegaUltimo("CDEVENTOEXT", userAtivo()));
 			
 			listaThread.add(new Thread(new Runnable() {
 				
