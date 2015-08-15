@@ -77,6 +77,8 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	            v = (View) inflater.inflate(mInflater, null);
 	        }
 	        
+	        final  View v1 = v;
+	        
 	        final String cdTarefa = TAREFAS.get(position);
 	        conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 	        final String resp = MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")));
@@ -115,7 +117,8 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	
 	        // Recuperando o checkbox
 	        final CheckBox check = (CheckBox) v.findViewById(R.id.check_tarefa);
-	        check.setChecked(checkBoxState[position]);
+	        check.setChecked(checkBoxState[position]);	     
+	        
 	        
 	        if(status.equals("B")) {	
 	        	checkBoxState[position] = true;
@@ -123,7 +126,6 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	        else {	  
 	        	checkBoxState[position] = false;
 	        }
-	        
 	        
 	        TextView txtv_Descricao = (TextView) v.findViewById(R.id.txtv_Descricao);
 	        TextView txtv_nmResponsavel = (TextView) v.findViewById(R.id.txtv_nmResponsavel);
@@ -165,8 +167,8 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	        
 	        check.setOnClickListener(new View.OnClickListener() {
 	            @Override
-	            public void onClick(View v) {
-		            CheckBox cb = (CheckBox) v.findViewById(R.id.check_tarefa);	
+	            public void onClick(View view) {
+		            CheckBox cb = (CheckBox) view.findViewById(R.id.check_tarefa);	
 		            
 		    		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		    		Date data = new Date();
@@ -181,14 +183,16 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	                int count = Integer.parseInt(aux); 
 		            if (cb.isChecked()) {	 	  
 		            	checkBoxState[position] = true;
-		                conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
+		            	conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" "
+		    	        		+ "AND CDREFERENCIA="+referencia);
 		                conectTarefa.update(" CDSTATUS='B' ");
 		                conectTarefa.update(" DTBAIXA='"+actualData+"'");		                
 		                if(count==0)
 		                	conectLogTarefa.insert(cdTarefa+","+referencia+",'',"+resp+","+"'U'");	
 		            } else{
 		            	checkBoxState[position] = false;
-		                conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
+		            	conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" "
+		    	        		+ "AND CDREFERENCIA="+referencia);
 		                conectTarefa.update(" CDSTATUS='A' ");
 		                conectTarefa.update("  DTBAIXA="+"null");	
 		                if(count==0)
@@ -196,14 +200,10 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 		            }	   
 		           notifyDataSetChanged();
 	            }
-	        });
-
-	        	               
+	        });              
         }
 		return v;
-        
-    }
-	
+    }	
 	
 	public void deletar(String cd, String resp, int position){
 		conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" AND "

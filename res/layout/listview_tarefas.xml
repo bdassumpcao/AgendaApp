@@ -6,14 +6,15 @@
      android:orientation="vertical"
      android:paddingLeft="5dp"
      android:paddingRight="5dp"
-     android:paddingStart="5dp" >
+     android:paddingStart="5dp">
         
         <LinearLayout
+            android:id="@+id/layout_lvTarefas"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" 
-            android:baselineAligned="false">
-            
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="vertical"
+            android:background="@layout/corner"  >
                 
                 <TableRow
 				    android:id="@+id/tableRow2"
@@ -51,7 +52,6 @@
 				        android:layout_height="wrap_content"
 				        android:layout_gravity="center_vertical"
 				        android:gravity="start"
-				        android:textColor="@color/azul"
 				        android:textSize="17sp" />
  
 				 </TableRow>   

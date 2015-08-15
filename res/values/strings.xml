@@ -8,6 +8,9 @@
     <string name="dtConc">Data Concl.: </string>
     <string name="dtLanc">Data Lanç.: </string>
     <string name="para">Para: </string>
+    <string name="todos">Todos</string>
+    <string name="concluidos">Concluidos</string>
+    <string name="pendentes">Pendentes</string>
     <string name="responsavel">Responsavel:  </string>       
     <string name="action_removerTarefa">REMOVER TAREFA</string>
     <string name="action_eventos">EVENTOS</string>

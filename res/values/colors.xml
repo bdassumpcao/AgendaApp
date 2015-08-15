@@ -10,4 +10,21 @@
     <color name="azul">#5F9EA0</color>
     <color name="prata">#f0f8ff</color>
     <color name="cinzaclaro">#EEEEEE</color>   
+    <color name="blue">#0000FF</color>
+	<color name="blue2">#ff1c5fab</color>
+	<color name="royalBlue">#4169E1</color>
+	<color name="skyBlue">#87CEEB</color>
+	<color name="LightSkyBlue">#87CEFA</color>
+	<color name="LightBlue">#ADD8E6</color>
+	<color name="deepSkyBlue">#00BFFF</color>
+	<color name="LightSteelBlue">#B0C4DE</color>
+	<color name="LightSlateGray">#778899</color>
+	<color name="Layout">#E0EEEE</color>
+	<color name="PRATA">#f0f8ff</color>
+	<color name="red">#FF0000</color>
+	<color name="tomato">#FF6347</color>
+	<color name="DarkRed">#8B0000</color>
+	<color name="FireBrick">#B22222</color>
+	<color name="LightSalmon">#FFA07A</color>
+	<color name="LightGrey">#D3D3D3</color>
 </resources>

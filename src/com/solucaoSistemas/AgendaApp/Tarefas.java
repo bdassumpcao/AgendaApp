@@ -13,12 +13,15 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Toast;
 
 public class Tarefas extends Activity{
 	private ConectaLocal conectTarefa;
 	public List<String> TAREFAS = new ArrayList<String>();
 	public  ListView lst_tarefas;
+	public RadioGroup radioGroupSituacao;
 //	private List<String> selecionados = new ArrayList<String>();
 	private static  String LOG = "teste";
 	public TarefasAdapter lsvTarefasAdapter;
@@ -31,21 +34,18 @@ public class Tarefas extends Activity{
 			getActionBar().setDisplayShowHomeEnabled(false);
 //			getActionBar().hide();
 	        
-	        conectTarefa = new ConectaLocal(getApplicationContext(), "TAREFA");
-	        
-			conectTarefa.setOrder(" ORDER BY CDTAREFA");
-			
-			conectTarefa.setClausula("");
-			
+	        conectTarefa = new ConectaLocal(getApplicationContext(), "TAREFA");	        
+			conectTarefa.setOrder(" ORDER BY CDTAREFA");			
+			conectTarefa.setClausula("");			
 			String[] aux = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
 	         for(String array : aux){
 	        	 TAREFAS.add(MyString.tiraEspaço(array));
 	         }
 				         
+	        this.radioGroupSituacao = (RadioGroup)findViewById(R.id.radioGroupSituacao);
 			this.lst_tarefas = (ListView)findViewById(R.id.lst_tarefas);
-			this.lst_tarefas.setLongClickable(true);
-			this.lst_tarefas.setItemsCanFocus(true);
-			registerForContextMenu(this.lst_tarefas);		
+			this.lst_tarefas.setItemsCanFocus(true);	
+			
 			
 			lst_tarefas.setOnTouchListener(new ListView.OnTouchListener() {
 		        @Override
@@ -71,6 +71,44 @@ public class Tarefas extends Activity{
 			
 			lsvTarefasAdapter = new TarefasAdapter(this, R.layout.listview_tarefas, TAREFAS);
 	        lst_tarefas.setAdapter(lsvTarefasAdapter);  
+	        
+	        
+	        radioGroupSituacao.setOnCheckedChangeListener(new OnCheckedChangeListener()
+	        {
+	            @Override
+	            public void onCheckedChanged(RadioGroup group, int checkedId)
+	            {
+	            	lsvTarefasAdapter.notifyDataSetInvalidated();
+	            	TAREFAS.clear();
+	    			conectTarefa.setOrder(" ORDER BY CDTAREFA");			
+	                switch(checkedId)
+	                {
+	                case R.id.radio0:
+		    			conectTarefa.setClausula("");			
+		    			String[] aux = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
+		    	         for(String array : aux){
+		    	        	 TAREFAS.add(MyString.tiraEspaço(array));
+		    	         }
+	                    break;
+	                case R.id.radio1:
+		    			conectTarefa.setClausula(" WHERE CDSTATUS='B'");			
+		    			String[] aux1 = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
+		    	         for(String array : aux1){
+		    	        	 TAREFAS.add(MyString.tiraEspaço(array));
+		    	         }
+	                    break;
+	                case R.id.radio2:
+		    			conectTarefa.setClausula(" WHERE CDSTATUS='A'");			
+		    			String[] aux2 = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
+		    	         for(String array : aux2){
+		    	        	 TAREFAS.add(MyString.tiraEspaço(array));
+		    	         }
+	                    break;
+	                }
+	    			lsvTarefasAdapter = new TarefasAdapter(Tarefas.this, R.layout.listview_tarefas, TAREFAS);
+	    	        lst_tarefas.setAdapter(lsvTarefasAdapter); 
+	            }
+	        });
 	 }	 
 	 
 	 @Override
