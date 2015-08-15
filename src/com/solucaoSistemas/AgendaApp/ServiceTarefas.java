@@ -195,7 +195,6 @@ public class ServiceTarefas extends Service{
 	
 	
 	public void updateServidor(String url) throws InterruptedException{	
-		String cdU = userAtivo();
 		String[] cdT, cdResp, cdRef;
 		String cdStatus, dtBaixa;
 		String dados = "";
@@ -240,7 +239,6 @@ public class ServiceTarefas extends Service{
 	}
 	
 	public void deleteServidor(String url) throws InterruptedException {	
-		String cdU = userAtivo();
 		String[] cdT, cdResp, cdRef, cdDest;
 		String dados = "";
 		String respServer = "";
@@ -287,7 +285,6 @@ public class ServiceTarefas extends Service{
 	 */
 	public void selectServidor(String url) throws InterruptedException{	
 		String cdU = userAtivo();
-		String cdRef = pegaUltimo(" CDREFERENCIA ", cdU);
 		String dados = "";
 		String respServer = "";
 		
@@ -330,10 +327,8 @@ public class ServiceTarefas extends Service{
 	 * @throws InterruptedException
 	 * @throws UnsupportedEncodingException
 	 */
-	@SuppressWarnings("deprecation")
 	public void selectCelular(String url) throws InterruptedException, UnsupportedEncodingException{	
 		String cdU = userAtivo();
-		List<String> destinatarios = new ArrayList<String>();
 		String respServer;
 		
 		String dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sc&cdU="+cdU;
@@ -526,17 +521,12 @@ public class ServiceTarefas extends Service{
 		List<String> lista = new ArrayList<String>();
 		String nm = "";
 		char[] aux = new char[string.length()];
-		int x = 0;
 	
 		for(int i = 0; i < string.length(); i++){
 			aux[i] = string.charAt(i);
 			if(aux[i] == ','){
-				x++;
 			}
 		}
-		
-		int j = 0;
-		String[] re = new String[x+1];
 		
 		for(int i = 0; i < aux.length; i++){
 			if(aux[i] == ','){

@@ -22,7 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class InsereTarefa extends Activity{		
@@ -95,12 +94,10 @@ public class InsereTarefa extends Activity{
 			            LayoutInflater inflater = getLayoutInflater();
 			            v = (View) inflater.inflate(R.layout.listview_usuarios, null);
 		            }	      
-		                
-		            TextView txv = (TextView) v.findViewById(R.id.txtv_nmUsuario);
-			        txv.setText(usuario.trim());
-		                
+		                		                
 		            // Recuperando o checkbox
 		            final CheckBox check = (CheckBox) v.findViewById(R.id.check_usuario);
+		            check.setText(usuario.trim());
 	 	 
 		            
 	                /** Definindo uma ação ao clicar no checkbox.
@@ -111,14 +108,7 @@ public class InsereTarefa extends Activity{
 				            selecionados(view, usuario);	
 		            	}
 		            });
-		            
-		            final View v1 = v;		            
-		            v.setOnClickListener(new View.OnClickListener() {
-			            @Override
-			            public void onClick(View v) {
-				            selecionados(v, usuario);
-		            	}
-		            });
+
 		            
 		            if(selecionados.contains(usuario)) {
 		                check.setChecked(true);

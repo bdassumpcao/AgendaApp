@@ -9,7 +9,7 @@ public class BroadcastApp extends BroadcastReceiver {
 	private static  String LOG = "teste";
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.i("teste", "BroadcastApp onReceive()");
+		Log.i(LOG, "BroadcastApp onReceive()");
 		intent = new Intent("SERVICO_AGENDA");
 		context.startService(intent);
 	}

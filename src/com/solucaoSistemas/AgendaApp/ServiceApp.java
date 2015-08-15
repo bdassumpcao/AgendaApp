@@ -527,7 +527,6 @@ public class ServiceApp extends Service {
 	}
 	
 	@Deprecated
-	@SuppressWarnings("deprecation")
 	public void updateCelular(String url) throws InterruptedException{	
 		String cdU = userAtivo();
 		

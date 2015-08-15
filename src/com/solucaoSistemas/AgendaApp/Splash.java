@@ -508,7 +508,6 @@ public class Splash extends Activity {
 	}
 	
 	@Deprecated
-	@SuppressWarnings("deprecation")
 	public void updateCelular(String url) throws InterruptedException{	
 		String cdU = userAtivo();
 		

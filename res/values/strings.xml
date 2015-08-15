@@ -4,6 +4,11 @@
 
     <string name="app_name">AGENDA</string>
     <string name="editar">EDITAR</string>
+    <string name="concluido">Concluido</string>
+    <string name="dtConc">Data Concl.: </string>
+    <string name="dtLanc">Data Lanç.: </string>
+    <string name="para">Para: </string>
+    <string name="responsavel">Responsavel:  </string>       
     <string name="action_removerTarefa">REMOVER TAREFA</string>
     <string name="action_eventos">EVENTOS</string>
     <string name="action_novoEvento">NOVO EVENTO</string>
