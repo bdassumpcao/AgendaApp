@@ -7,5 +7,12 @@
           android:showAsAction="always" 
           android:visible="true" 
           android:enabled="true"></item>
+        
+        <item android:id="@+id/action_AtualizarContatos"
+          android:title="@string/action_atualizar"
+          android:icon="@android:drawable/ic_popup_sync"
+          android:showAsAction="always" 
+          android:visible="true" 
+          android:enabled="true"></item>
 
 </menu>

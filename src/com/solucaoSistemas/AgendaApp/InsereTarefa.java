@@ -5,7 +5,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import Utilitarios.MyString;
+import Web.Conexao;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -28,7 +36,7 @@ public class InsereTarefa extends Activity{
 	private ConectaLocal conectUser;
 	private ConectaLocal conectTarefa;
 	private String[] USUARIOS;
-	private String usuarioAtivo;
+	private String usuarioAtivo, descricao;
 	private static  String LOG = "teste";
 	private EditText edt_desc;
 	private ListView lst_usuarios;
@@ -188,7 +196,72 @@ public class InsereTarefa extends Activity{
 			    		}
 		    		}
 
-		    		return true;		    			
+		    		return true;
+	    		case R.id.action_AtualizarContatos:
+	    			
+					Conexao conexao = new Conexao(this);
+					String url = "";
+					
+					if(conexao.isConected()){
+						url = conexao.pegaLink();
+						Log.i(LOG, "link:\n"+url);				
+						
+						String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=user";
+						ResponseHandler<String> handler = new BasicResponseHandler();
+						HttpClient client = new DefaultHttpClient();
+						HttpGet httpGet = new HttpGet("http://"+url+dados);
+						Log.i(LOG,"http://"+url+dados);
+						Web.ExecutaWeb exec = new Web.ExecutaWeb(handler, client, httpGet);
+						
+						exec.start();
+						
+						do{
+		//					Log.i(LOG,"sleep");
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						while(exec.respServer.equals(""));	
+						if(exec.respServer.contains("Erro")){
+							Log.i(LOG, "respServer == "+exec.respServer);
+							showToast("Erro: \nServidor não responde.");	
+							return false;
+						}
+						String aux = exec.respServer.substring(0, exec.respServer.indexOf("#"));
+		
+						if(aux.equals("")){
+							Log.i(LOG, "respServer == "+aux);
+						}
+						else{	
+							String[] campos = MyString.montaInsertUsuario(aux);			
+							
+							
+							conectUser.setClausula("");
+							conectUser.delete();
+							
+							for(String i : campos){
+								conectUser.insert(i);
+							}
+							
+							conectUser.setClausula(" WHERE CDUSUARIO="+usuarioAtivo);
+							conectUser.update(" STATUS=1 ");
+							
+						}						
+						
+						Intent i = getIntent();
+						this.finish();
+						startActivity(i);
+					}
+					else{
+						Log.i(LOG, "Sem Conexão");
+						showToast("Sem Conexão");
+						return false;
+					}					
+	    			
+	    			return true;
 	        }
 		            return super.onOptionsItemSelected(item);
 	 }

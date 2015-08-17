@@ -28,6 +28,7 @@
     <string name="action_cancelar">Cancelar</string>
     <string name="action_Deletar">Deletar</string>
     <string name="Suser">Selecione o usuário</string>
+    <string name="senha">Senha</string>
     <string name="BAvancar">Avançar</string>
     <string name="btVolta">Voltar</string>
     <string name="btSalvar">Salvar</string>

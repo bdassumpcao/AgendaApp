@@ -6,38 +6,33 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import com.solucaoSistemas.AgendaApp.ConectaLocal;
-import com.solucaoSistemas.AgendaApp.R;
-
 import Utilitarios.MyString;
 import Web.Conexao;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
- 
  
 /**
  * @author BRUNO
  *
  */
-
-
-
 @SuppressLint("NewApi")
 public class MainActivity extends Activity {
 	Button bAvanca, opcoes;
 	ConectaLocal conectUser;
 	Spinner spinnerUsuario;	
+	EditText edt_senha;
 	private static  String LOG = "teste";
 	
     @Override
@@ -55,8 +50,7 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
-    }
-    
+    }   
     
 	public void telaInicial() throws InterruptedException{	    	    
 		setContentView(R.layout.activity_login);
@@ -64,8 +58,7 @@ public class MainActivity extends Activity {
 		if(login(true).equals("")){
 			conectUser.setClausula(" ORDER BY CDUSUARIO ");
 			if(MyString.tString(conectUser.select(" * ")).equals("")){					
-				installShortCut();
-				
+				installShortCut();				
 				
 				Conexao conexao = new Conexao(this);
 				String url = "";
@@ -120,6 +113,7 @@ public class MainActivity extends Activity {
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, s);
 			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			
+			edt_senha = (EditText) findViewById(R.id.edt_senha);
 			spinnerUsuario = (Spinner) findViewById(R.id.spinnerUsuario);
 			spinnerUsuario.setAdapter(adapter);
 			
@@ -129,21 +123,21 @@ public class MainActivity extends Activity {
 				
 				@Override
 				public void onClick(View v){
-					String user = spinnerUsuario.getSelectedItem().toString();
-					
-					conectUser.setClausula(" WHERE NMUSUARIO='"+MyString.tiraEspaço(user)+"' ");
-					conectUser.update(" STATUS=1 ");
-					telaPrincipal();
+					if(edt_senha.getText().toString().equals("skt4080")){
+						String user = spinnerUsuario.getSelectedItem().toString();									
+						conectUser.setClausula(" WHERE NMUSUARIO='"+MyString.tiraEspaço(user)+"' ");
+						conectUser.update(" STATUS=1 ");
+						telaPrincipal();
+					}
+					else{
+						edt_senha.setError("Senha incorreta!");
+					}
 				}
-			});	
-					
-
-			
+			});									
 		}
 		else{
 			telaPrincipal();
-		}
-		
+		}		
 	}
 	
 	

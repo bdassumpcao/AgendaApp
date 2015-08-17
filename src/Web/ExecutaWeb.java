@@ -26,16 +26,19 @@ public class  ExecutaWeb extends Thread{
 	}
 	
 	@Override
-	public void run(){
+	public void run(){		
+		
 		try {
 			respServer = client.execute(httpGet, handler);	
 			Log.i(LOG, "run:"+respServer);
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			Log.i(LOG, "Erro:"+e);
+			respServer = "Erro";
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			Log.i(LOG, "Erro:"+e);
+			respServer = "Erro";
 		}
 	}
 
