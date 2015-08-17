@@ -84,9 +84,9 @@ public class Splash extends Activity {
 			final String url = conexao.pegaLink();
 			Log.i(LOG, "link:\n"+url);
 			
-			String aux = pegaUltimo("CDEVENTOEXT", userAtivo());
-			if(!aux.equals("null"));
-				num = Integer.parseInt(pegaUltimo("CDEVENTOEXT", userAtivo()));
+//			String aux = pegaUltimo("CDEVENTOEXT", userAtivo());
+//			if(!aux.equals("null"));
+//				num = Integer.parseInt(pegaUltimo("CDEVENTOEXT", userAtivo()));
 			
 			listaThread.add(new Thread(new Runnable() {
 				
@@ -157,6 +157,7 @@ public class Splash extends Activity {
 				
 				@Override
 				public void run() {
+					conectAgenda.setClausula("");
 					conectAgenda.delete();
 					Log.i(LOG,"Apagou dados da AGENDA");
 					
