@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.ProgressBar;
 
 public class Splash extends Activity {
 	public boolean pendencia = false;
@@ -41,6 +42,7 @@ public class Splash extends Activity {
 	private static  String LOG = "teste";
 	static Conexao conexao;
 	int num;
+	ProgressBar progress;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,8 @@ public class Splash extends Activity {
 		conectLogAgenda = new ConectaLocal(getApplicationContext(), "LOGAGENDA");
 		this.setFinishOnTouchOutside(false);
 		setContentView(R.layout.activity_splash);
+		progress = (ProgressBar)findViewById(R.id.progressBar1);
+		progress.setMax(100);
 		
 		Thread t = new Thread(new Runnable() {
 			
@@ -62,6 +66,8 @@ public class Splash extends Activity {
 			public void run() {
 				try {
 					monitor();
+            		Intent intentt2 = new Intent(Splash.this, Splash2.class);
+					startActivity(intentt2);
 				} catch (UnsupportedEncodingException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -190,6 +196,8 @@ public class Splash extends Activity {
 				}
 			}));
 			
+			int tam = 100/listaThread.size();
+			
 			for(Thread t: listaThread){
 				if(!t.isAlive()){
 					t.start();
@@ -198,6 +206,7 @@ public class Splash extends Activity {
 				while (t.isAlive()) {
 					Thread.sleep(1000);
 				}
+				progress.incrementProgressBy(tam);
 			}			
 			listaThread.clear();
 		}

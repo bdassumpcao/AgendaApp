@@ -167,9 +167,7 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
 	            		showToast("Sem Conexão");
 	            	else{  
 	            		Intent intent = new Intent(Principal.this, Splash.class);
-	            		Intent intentt2 = new Intent(Principal.this, Splash2.class);
 	                	startActivity(intent);
-	                	startActivity(intentt2);
 	            	}
 
 	                mWeekView.goToToday(); 

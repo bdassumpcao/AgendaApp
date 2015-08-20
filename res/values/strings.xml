@@ -45,8 +45,8 @@
     <string name="action_day_view">Visualizar por dia</string>
     <string name="action_three_day_view">Visualizar 3 dias</string>
     <string name="action_week_view">Visualizar por semana</string>
-    <string name="title_activity_splash">Atualizando</string>
+    <string name="title_activity_splash">Atualizando Agenda</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_splash2">Atualizando</string>
+    <string name="title_activity_splash2">Atualizando Tarefas</string>
 
 </resources>

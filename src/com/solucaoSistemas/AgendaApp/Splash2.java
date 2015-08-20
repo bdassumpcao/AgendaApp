@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.ProgressBar;
 
 public class Splash2 extends Activity {
 	private static  String LOG = "teste";
@@ -36,6 +37,7 @@ public class Splash2 extends Activity {
 	ConectaLocal conectUser;
 	ConectaLocal conectLogTarefa;
 	ArrayList<Thread> listaThread;
+	ProgressBar progress;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,9 @@ public class Splash2 extends Activity {
 		listaThread = new ArrayList<Thread>();
 		
 		setContentView(R.layout.activity_splash2);
+		
+		progress = (ProgressBar)findViewById(R.id.progressBar2);
+		progress.setMax(100);
 		
 		Thread t = new Thread(new Runnable() {
 			
@@ -194,6 +199,8 @@ public class Splash2 extends Activity {
 			}));
 			//----------------------------------------------
 			
+			int tam = 100/listaThread.size();
+			
 			for(Thread t: listaThread){
 				if(!t.isAlive()){
 					t.start();
@@ -202,7 +209,7 @@ public class Splash2 extends Activity {
 				while (t.isAlive()) {
 					Thread.sleep(1000);
 				}
-				
+				progress.incrementProgressBy(tam);
 			}
 			listaThread.clear();
 		}
