@@ -105,7 +105,8 @@ public class InsereEvento extends Activity{
 	   etHoraFim = (EditText)findViewById(R.id.campoHoraFim);
 	   campoHoraFim = etHoraFim.getText().toString();
 	   
-	   comando = ""+cdevento+",null,"+cdusuario+",'"+campoDescricao+"','"+campoLocal+"','"+campoObservacao+"','"+campoData+"','"+campoHoraInicio+"','"+campoHoraFim+"',"+status+" ";
+	   int cdEventoExt = (pegaUltimo(" CDEVENTOEXT ")+1);
+	   comando = ""+cdevento+","+cdEventoExt+","+cdusuario+",'"+campoDescricao+"','"+campoLocal+"','"+campoObservacao+"','"+campoData+"','"+campoHoraInicio+"','"+campoHoraFim+"',"+status+" ";
 	   
 	   if(validateNotNull(etDescricao,"Preencha a descrição!")){
 		   if(validateNotNullDate(etData, "Preencha a data!")){
@@ -262,6 +263,13 @@ public class InsereEvento extends Activity{
 		 	return false;
 	}
    
+	public int pegaUltimo(String campo){
+		conectEvento.setClausula("");
+		if(MyString.tString(conectEvento.select(" MAX("+campo+") ")).equals("null"))
+			return 0;
+		else return Integer.parseInt(MyString.tString(conectEvento.select(" MAX("+campo+") ")));
+	}
+	
 	public void showToast(String texto){		
 		Toast.makeText(this, texto, Toast.LENGTH_SHORT).show();
 	}

@@ -96,6 +96,9 @@ public class Splash2 extends Activity {
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					Log.i(LOG,"saiu updateServidor() TAREFA");
 					Log.i(LOG, "");
@@ -117,6 +120,9 @@ public class Splash2 extends Activity {
 					try {
 						deleteServidor(url);
 					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (Throwable e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -144,6 +150,9 @@ public class Splash2 extends Activity {
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					Log.i(LOG,"saiu selectCelular() TAREFA");
 					Log.i(LOG, "");
@@ -167,6 +176,9 @@ public class Splash2 extends Activity {
 					try {						
 						selectServidor(url);
 					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (Throwable e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -201,7 +213,7 @@ public class Splash2 extends Activity {
 	}
 	
 	
-	public void updateServidor(String url) throws InterruptedException{	
+	public void updateServidor(String url) throws Throwable{	
 		String[] cdT, cdResp, cdRef;
 		String cdStatus, dtBaixa;
 		String dados = "";
@@ -245,7 +257,7 @@ public class Splash2 extends Activity {
 		}				
 	}
 	
-	public void deleteServidor(String url) throws InterruptedException {
+	public void deleteServidor(String url) throws Throwable {
 		String[] cdT, cdResp, cdRef, cdDest;
 		String dados = "";
 		String respServer = "";
@@ -288,9 +300,9 @@ public class Splash2 extends Activity {
 	/**
 	 * 
 	 * @param url
-	 * @throws InterruptedException
+	 * @throws Throwable 
 	 */
-	public void selectServidor(String url) throws InterruptedException{	
+	public void selectServidor(String url) throws Throwable{	
 		String cdU = userAtivo();
 		String dados = "";
 		String respServer = "";
@@ -318,7 +330,7 @@ public class Splash2 extends Activity {
 				
 				for(String i : campos){
 					conectTarefa.insert(i);
-					Log.i(LOG, i+" |inserido no celular");
+					Log.i(LOG, i+" |inserido na TAREFA");
 				}
 //				geraNotificacaoNovaTarefa();
 			} catch (Exception e) {
@@ -331,10 +343,9 @@ public class Splash2 extends Activity {
 	/**
 	 * Seleciona as tarefas do celular que serão inseridas no servidor
 	 * @param url
-	 * @throws InterruptedException
-	 * @throws UnsupportedEncodingException
+	 * @throws Throwable 
 	 */
-	public void selectCelular(String url) throws InterruptedException, UnsupportedEncodingException{	
+	public void selectCelular(String url) throws Throwable{	
 		String cdU = userAtivo();
 		String respServer;
 		
@@ -436,9 +447,9 @@ public class Splash2 extends Activity {
 	 * @param url
 	 * @param campos
 	 * @return cdExt
-	 * @throws InterruptedException
+	 * @throws Throwable 
 	 */
-	public String insereServidor(String url, String campos) throws InterruptedException{	
+	public String insereServidor(String url, String campos) throws Throwable{	
 		Log.i(LOG, "entrou insereServidor()");
 		String cdRef= "";
 		String dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=i&"+campos;
@@ -455,6 +466,10 @@ public class Splash2 extends Activity {
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
+		if(!exec.conectado){
+			this.finalize();
+			Splash2.this.finish();
+		}
 		
 		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("$"));
 		respServer = MyString.normalize(respServer);
@@ -473,9 +488,9 @@ public class Splash2 extends Activity {
 	 * @param url
 	 * @param dados
 	 * @return exec.respServer
-	 * @throws InterruptedException
+	 * @throws Throwable 
 	 */
-	public String webservice(String url, String dados) throws InterruptedException{
+	public String webservice(String url, String dados) throws Throwable{
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://"+url+dados);
@@ -488,6 +503,10 @@ public class Splash2 extends Activity {
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
+		if(!exec.conectado){
+			this.finalize();
+			Splash2.this.finish();
+		}
 		return exec.respServer;
 	}
 	

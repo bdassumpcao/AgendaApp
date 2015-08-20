@@ -53,6 +53,7 @@ public class Conexao {
 			}
 			reader.close();
 			String out = output.toString();
+			Log.i("pingOut", out);
 			if(out.contains("100%")){
 				return false;
 			}
@@ -76,6 +77,14 @@ public class Conexao {
 			if(isWifi()){
 				if(isLocal(url)){
 					urlAcesso = "192.168.1.200:5420";
+				}
+				else if(!isLocal(url)){
+					if(isLocal(url)){
+						urlAcesso = "192.168.1.200:5420";
+					}
+					else{
+						urlAcesso = "solucaosistemas.dyndns-ip.com:5420";
+					}
 				}
 				else{
 					urlAcesso = "solucaosistemas.dyndns-ip.com:5420";

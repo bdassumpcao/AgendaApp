@@ -82,11 +82,8 @@ public class Splash extends Activity {
 		
 		if(conexao.isConected()){
 			final String url = conexao.pegaLink();
-			Log.i(LOG, "link:\n"+url);
 			
-//			String aux = pegaUltimo("CDEVENTOEXT", userAtivo());
-//			if(!aux.equals("null"));
-//				num = Integer.parseInt(pegaUltimo("CDEVENTOEXT", userAtivo()));
+			Log.i(LOG, "link:\n"+url);
 			
 			listaThread.add(new Thread(new Runnable() {
 				
@@ -97,6 +94,9 @@ public class Splash extends Activity {
 						deleteServidor(url);
 					} catch (InterruptedException e) {
 						Log.i(LOG, ""+e);
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					Log.i(LOG,"saiu deleteServidor() AGENDA");
 					Log.i(LOG, "");
@@ -120,6 +120,9 @@ public class Splash extends Activity {
 						Log.i(LOG, ""+e);
 					} catch (InterruptedException e) {
 						Log.i(LOG, ""+e);
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					Log.i(LOG,"saiu updateServidor() AGENDA");
 					Log.i(LOG, "");
@@ -142,6 +145,9 @@ public class Splash extends Activity {
 						Log.i(LOG, ""+e);
 					} catch (InterruptedException e) {
 						Log.i(LOG, ""+e);
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					Log.i(LOG,"saiu selectCelular() AGENDA");
 					Log.i(LOG, "");
@@ -166,6 +172,9 @@ public class Splash extends Activity {
 						selectServidor(url);
 					} catch (InterruptedException e) {
 						Log.i(LOG, ""+e);
+					} catch (Throwable e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					Log.i(LOG,"saiu selectServidor() AGENDA");
 					Log.i(LOG, "");
@@ -186,8 +195,7 @@ public class Splash extends Activity {
 				while (t.isAlive()) {
 					Thread.sleep(1000);
 				}
-			}
-			
+			}			
 			listaThread.clear();
 		}
 
@@ -206,24 +214,24 @@ public class Splash extends Activity {
 		gerarNotificacao(getApplicationContext(), new Intent(getBaseContext(),Principal.class), "Eventos Alterados", "Eventos", "Eventos foram alterados em sua agenda");
 	}
 	
-	public void updateServidor(String url) throws InterruptedException, UnsupportedEncodingException{	
+	public void updateServidor(String url) throws Throwable{	
 		String cdU = userAtivo();
 		String[] cdE;				
 
 		conectLogAgenda.setOrder("");
 		conectLogAgenda.setClausula(" WHERE OPERACAO='U' ");
-		cdE = MyString.tStringArray(conectLogAgenda.select(" CDEVENTOEXT "));
+		cdE = MyString.tStringArray(conectLogAgenda.select(" CDEVENTO "));
 //		String  cdEvento;
-		String desc, lc, obs, dt, hI, hF, st;
+		String cdEventoExt, desc, lc, obs, dt, hI, hF, st;
 		
 		if(cdE.length!=0){
 			for(int j=0; j<cdE.length; j++){
 				if(!cdE[j].equals("null")){
 				Log.i(LOG, "cdE[j]"+cdE[j]);		
 				conectAgenda.setOrder("");
-				conectAgenda.setClausula(" WHERE CDEVENTOEXT="+cdE[j]);	
+				conectAgenda.setClausula(" WHERE CDEVENTO="+cdE[j]);	
 				
-	//			cdEvento = MainActivity.tString(conectAgenda.select("CDEVENTO"));
+				cdEventoExt = MyString.tiraEspaço(MyString.tString(conectAgenda.select("CDEVENTOEXT")));
 				desc = MyString.tiraEspaço(MyString.tString(conectAgenda.select("DESCRICAO")));
 				desc = URLEncoder.encode(desc, "UTF-8");
 				lc = MyString.tiraEspaço(MyString.tString(conectAgenda.select("LOCAL")));
@@ -242,7 +250,7 @@ public class Splash extends Activity {
 				hF = aux;
 				st = MyString.tiraEspaço(MyString.tString(conectAgenda.select("STATUS")));					
 				
-				String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=u&cdU="+cdU+"&cdE="+cdE[j]+"&desc="+desc+"&obs="+obs+"&st="+st+"&dt="+dt+"&hI="+hI+"&hF="+hF+"&lc="+lc;
+				String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=u&cdU="+cdU+"&cdExt="+cdEventoExt+"&desc="+desc+"&obs="+obs+"&st="+st+"&dt="+dt+"&hI="+hI+"&hF="+hF+"&lc="+lc;
 				String respServer = webservice(url, dados);
 				respServer = respServer.substring(0, respServer.indexOf("$"));
 				
@@ -252,7 +260,7 @@ public class Splash extends Activity {
 				}
 				else{
 					conectLogAgenda.setOrder("");
-					conectLogAgenda.setClausula(" WHERE CDEVENTOEXT="+cdE[j]);
+					conectLogAgenda.setClausula(" WHERE CDEVENTO="+cdE[j]);
 					conectLogAgenda.delete();
 					Log.i(LOG, cdE[j]+" alterado no servidor");
 				}
@@ -262,7 +270,7 @@ public class Splash extends Activity {
 		
 	}
 	
-	public void deleteServidor(String url) throws InterruptedException{	
+	public void deleteServidor(String url) throws Throwable{	
 		String cdU = userAtivo();
 		String[] cdE;				
 
@@ -282,7 +290,7 @@ public class Splash extends Activity {
 			}
 		}
 
-			String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=d&cdU="+cdU+"&cdE="+cdExt;
+			String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=d&cdU="+cdU+"&cdExt="+cdExt;
 			String respServer = webservice(url, dados);
 			respServer = respServer.substring(0, respServer.indexOf("$"));
 			respServer = MyString.normalize(respServer);
@@ -301,7 +309,7 @@ public class Splash extends Activity {
 	}
 	
 	@Deprecated
-	public void deleteCelular(String url) throws InterruptedException{	
+	public void deleteCelular(String url) throws Throwable{	
 		String cdU = userAtivo();	
 
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sd&cdU="+cdU;
@@ -315,67 +323,16 @@ public class Splash extends Activity {
 		else{
 			String[] campos = MyString.tStringArray(respServer);
 			for(int i=0 ;i<campos.length ;i++){		
-					conectAgenda.setOrder("");
-					conectAgenda.setClausula(" WHERE CDEVENTOEXT="+campos[i]);
-					conectAgenda.delete();
-					Log.i(LOG, campos[i]+" excluido no celular");
+				conectAgenda.setOrder("");
+				conectAgenda.setClausula(" WHERE CDEVENTOEXT="+campos[i]);
+				conectAgenda.delete();
+				Log.i(LOG, campos[i]+" excluido no celular");
 			}			
 		}
 	}	
 	
-	//http://192.168.1.200:5420/webservice/processo.php?flag=3&chave=l33cou&operacao=i&cdU=1&cdExt=1&descricao=het&obs=teste&status=a&data=10/05/15&horaI=15:06&horaF=20:00&local=teste
-	public void selectServidor(String url) throws InterruptedException{	
-		String cdU = userAtivo();
-//		String cdExt = pegaUltimo(" CDEVENTOEXT ", cdU);
-//		cdExt = MyString.normalize(cdExt);
-//		Log.i(LOG, "cdExt:'"+cdExt+"'");
-		String dados = "";
-//		if(cdExt.equals("-1")){
-			dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sall&cdU="+cdU;
-//		}
-//		
-//		if(!cdExt.equals("-1")){
-//			dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=su&cdU="+cdU+"&cdE="+cdExt;
-//		}
-
-		
-		String respServer = webservice(url, dados);
-		respServer = respServer.substring(0, respServer.indexOf("#"));
-//		respServer = normalize(respServer);
-		
-		if(MyString.normalize(respServer).equals("")){
-			Log.i(LOG, "respServer == "+MyString.normalize(respServer));
-		}
-		else{
-			try {
-				String[] campos = MyString.montaInsertAgenda(respServer);
-				cod = MyString.getCod();
-				
-				int j = 0;
-				for(String i : campos){
-					Log.i(LOG, "i:"+i);
-					conectAgenda.insert(i);
-					conectAgenda.setClausula(" WHERE CDEVENTOEXT='"+cod[j]+"'");
-					Log.i(LOG, " WHERE CDEVENTOEXT="+cod[j]);
-					Log.i(LOG, MyString.tString(conectAgenda.select(" CDEVENTO "))+" inserido no celular");
-					Log.i(LOG, "updateCodServidor:"+MyString.tString(conectAgenda.select(" CDEVENTO ")));
-					updateCodServidor(MyString.tString(conectAgenda.select(" CDEVENTO ")), cod[j]);
-					
-					j++;
-				}
-//				if(num < (Integer.parseInt(pegaUltimo("CDEVENTOEXT", userAtivo())))){
-//					geraNotificacaoNovoEvento();
-//				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				Log.i(LOG, e+"");
-			}
-		}
-		
-	}
-	
 	@SuppressWarnings("deprecation")
-	public void selectCelular(String url) throws InterruptedException, UnsupportedEncodingException{	
+	public void selectCelular(String url) throws Throwable{
 		String cdU = userAtivo();
 		
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sc&cdU="+cdU;
@@ -391,7 +348,13 @@ public class Splash extends Activity {
 			Thread.sleep(1000);
 		}
 		while(MyString.normalize(exec.respServer).equals(""));
-		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("$"));
+		
+		if(!exec.conectado){
+			this.finalize();
+			Splash.this.finish();
+		}
+		
+		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("#"));
 		respServer = MyString.normalize(respServer);
 		Log.i(LOG, "respServer:'"+respServer+"'");
 		
@@ -403,7 +366,7 @@ public class Splash extends Activity {
 			
 			//se for igual a menos um não executa o restante pois não tem eventos para inserir
 			if(ultimoCdCelular!=-1){
-				String  cdEvento, desc, lc, obs, dt, hI, hF, st;
+				String  cdEventoExt, desc, lc, obs, dt, hI, hF, st;
 				conectAgenda.setOrder("");
 				conectAgenda.setClausula("");
 				String[] cdE = MyString.tStringArray(conectAgenda.select(" CDEVENTO "));
@@ -411,7 +374,7 @@ public class Splash extends Activity {
 					Log.i(LOG, cdE[i]);
 					conectAgenda.setClausula(" WHERE CDEVENTO="+cdE[i]);
 					
-					cdEvento = MyString.tString(conectAgenda.select("CDEVENTO"));
+					cdEventoExt = MyString.tString(conectAgenda.select("CDEVENTOEXT"));
 					desc = MyString.tString(conectAgenda.select("DESCRICAO"));
 					desc = URLEncoder.encode(desc, "UTF-8");
 					lc = MyString.tString(conectAgenda.select("LOCAL"));
@@ -430,32 +393,30 @@ public class Splash extends Activity {
 					hF = aux;
 					st = MyString.tString(conectAgenda.select("STATUS"));	
 					
-					String campos = "cdU="+cdU+"&cdExt="+cdEvento+"&descricao="+desc+"&obs="+obs+"&status="+st+
+					String campos = "cdU="+cdU+"&cdExt="+cdEventoExt+"&descricao="+desc+"&obs="+obs+"&status="+st+
 							"&data="+dt+"&horaI="+hI+"&horaF="+hF+"&local="+lc;
 					Log.i(LOG, campos);
 					
-					String cdExt = insereServidor(url, campos);
-					Log.i(LOG, cdEvento+" inserido no servidor");
-					conectAgenda.update(" CDEVENTOEXT="+cdExt);
-					
+					insereServidor(url, campos);
+					Log.i(LOG, cdEventoExt+" inserido no servidor");
+//					conectAgenda.update(" CDEVENTOEXT="+cdExt);					
 				}
 			}
-
 		}
 		else if(!respServer.equals("")){
 			int codigoServidor = Integer.parseInt(respServer);
-			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTO ", cdU));
+			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTOEXT ", cdU));
 			if(ultimoCdCelular != -1)
 			if(ultimoCdCelular>codigoServidor){
-				String  cdEvento, desc, lc, obs, dt, hI, hF, st;
+				String  cdEventoExt, desc, lc, obs, dt, hI, hF, st;
 				conectAgenda.setOrder("");
-				conectAgenda.setClausula(" WHERE CDEVENTO>"+codigoServidor);
+				conectAgenda.setClausula(" WHERE CDEVENTOEXT>"+codigoServidor);
 				String[] cdE = MyString.tStringArray(conectAgenda.select(" CDEVENTO "));
 				for(int i=0; i<cdE.length; i++){
 					Log.i(LOG, cdE[i]);
 					conectAgenda.setClausula(" WHERE CDEVENTO="+cdE[i]);
 					
-					cdEvento = MyString.tString(conectAgenda.select("CDEVENTO"));
+					cdEventoExt = MyString.tString(conectAgenda.select("CDEVENTOEXT"));
 					desc = MyString.tString(conectAgenda.select("DESCRICAO"));
 					desc = URLEncoder.encode(desc);
 					lc = MyString.tString(conectAgenda.select("LOCAL"));
@@ -474,22 +435,19 @@ public class Splash extends Activity {
 					hF = aux;
 					st = MyString.tString(conectAgenda.select("STATUS"));	
 					
-					String campos = "cdU="+cdU+"&cdExt="+cdEvento+"&descricao="+desc+"&obs="+obs+"&status="+st+
+					String campos = "cdU="+cdU+"&cdExt="+cdEventoExt+"&descricao="+desc+"&obs="+obs+"&status="+st+
 							"&data="+dt+"&horaI="+hI+"&horaF="+hF+"&local="+lc;
 					Log.i(LOG, campos);
 					
-					String cdExt = insereServidor(url, campos);
-					Log.i(LOG, cdEvento+" inserido no servidor");
-					conectAgenda.update(" CDEVENTOEXT="+cdExt);
-					
+					insereServidor(url, campos);
+					Log.i(LOG, cdEventoExt+" inserido no servidor");
+//					conectAgenda.update(" CDEVENTOEXT="+cdExt);					
 				}
-			}
-			
-		}
-		
+			}			
+		}		
 	}
 	
-	public String insereServidor(String url, String campos) throws InterruptedException{	
+	public String insereServidor(String url, String campos) throws Throwable{	
 		Log.i(LOG, "entrou insereServidor()");
 		String cdExt = "";
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=i&"+campos;
@@ -504,12 +462,56 @@ public class Splash extends Activity {
 		else{
 			cdExt = respServer;
 		}
-		return cdExt;
+		return cdExt;		
+	}
+	
+	//http://192.168.1.200:5420/webservice/processo.php?flag=3&chave=l33cou&operacao=i&cdU=1&cdExt=1&descricao=het&obs=teste&status=a&data=10/05/15&horaI=15:06&horaF=20:00&local=teste
+	public void selectServidor(String url) throws Throwable{	
+		String cdU = userAtivo();
+		String dados = "";
+		dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sall&cdU="+cdU;
 		
+		String respServer = webservice(url, dados);
+		respServer = respServer.substring(0, respServer.indexOf("#"));
+		
+		if(MyString.normalize(respServer).equals("")){
+			Log.i(LOG, "respServer == "+MyString.normalize(respServer));
+		}
+		else{
+			try {
+				String aux = (pegaUltimo(" CDEVENTOEXT ", cdU)+1);
+				int cdEventoExt = 1;
+				if(!aux.equals("-1"))
+					cdEventoExt = Integer.parseInt(aux);
+				Log.i(LOG, "cdEventoExt:"+cdEventoExt);
+				String[] campos = MyString.montaInsertAgenda(respServer, cdEventoExt);
+				cod = MyString.getCod();
+				
+				int j = 0;
+				for(String i : campos){
+					Log.i(LOG, "i:"+i);
+					conectAgenda.insert(i);
+					Log.i(LOG, i+" |inserido na AGENDA");
+					conectAgenda.setClausula(" WHERE CDEVENTOEXT='"+cod[j]+"'");
+					if(!cod[j].equals("0")){
+						String dt = MyString.tString(conectAgenda.select("DATA"));
+						dt = dt.replace( "\\" , ""); 
+						String hI = MyString.tString(conectAgenda.select("HORAINICIO"));
+						String aux2 = hI.substring(0, 2) +":";
+						aux2 += hI.substring(2, 4);
+						updateCodServidor(dt, hI, cdU, cod[j]);
+					}					
+					j++;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.i(LOG, e+"");
+			}
+		}		
 	}
 	
 	@Deprecated
-	public void updateCelular(String url) throws InterruptedException{	
+	public void updateCelular(String url) throws Throwable{	
 		String cdU = userAtivo();
 		
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sa&cdU="+cdU;
@@ -548,9 +550,9 @@ public class Splash extends Activity {
 	 * @param url
 	 * @param dados
 	 * @return exec.respServer
-	 * @throws InterruptedException
+	 * @throws Throwable 
 	 */
-	public String webservice(String url, String dados) throws InterruptedException{
+	public String webservice(String url, String dados) throws Throwable{
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://"+url+dados);
@@ -564,6 +566,12 @@ public class Splash extends Activity {
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
+		
+		if(!exec.conectado){
+			this.finalize();
+			Splash.this.finish();
+		}
+		
 		return exec.respServer;
 	}
 	
@@ -584,17 +592,14 @@ public class Splash extends Activity {
 		return MyString.tString(conectUser.select(" CDUSUARIO "));
 	}
 	
-	public void insertServidor(String cdExt, String url){
-		
-	}
 	
-	public void updateCodServidor(String cdExt, String cdE) throws InterruptedException{
+	public void updateCodServidor(String data, String horaInicio, String cdU, String cdExt) throws InterruptedException{
 		Log.i(LOG, "updateCodServidor()");
 		Conexao conexao = new Conexao(this);
 		String url = conexao.pegaLink();
-		cdE = MyString.normalize(cdE);
-		Log.i(LOG, "cdE:"+cdE);
-		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=uc&cdE="+cdExt+"&cdExt="+cdE;
+		cdExt = MyString.normalize(cdExt);
+		Log.i(LOG, "cdExt:"+cdExt);
+		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=uc&data="+data+"&horaInicio="+horaInicio+"&cdU="+cdU+"&cdExt="+cdExt;
 		
 		
 		ResponseHandler<String> handler = new BasicResponseHandler();
@@ -610,6 +615,10 @@ public class Splash extends Activity {
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
+		
+		if(!exec.conectado){
+			Splash.this.finish();
+		}
 	}
 
 	public void gerarNotificacao(Context context, Intent intent, CharSequence ticker, CharSequence titulo, CharSequence descricao){

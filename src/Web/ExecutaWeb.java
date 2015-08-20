@@ -16,6 +16,7 @@ public class  ExecutaWeb extends Thread{
 	HttpGet httpGet;
 	String url;
 	public String respServer;
+	public Boolean conectado;
 	
 	public ExecutaWeb(ResponseHandler<String> handler, HttpClient client,			
 		HttpGet httpGet) {
@@ -23,25 +24,28 @@ public class  ExecutaWeb extends Thread{
 		this.client = client;
 		this.httpGet = httpGet;
 		this.respServer = "";
+		this.conectado = true;
 	}
 	
 	@Override
-	public void run(){		
-		
+	public void run(){	
 		try {
 			respServer = client.execute(httpGet, handler);	
 			Log.i(LOG, "run:"+respServer);
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			Log.i(LOG, "Erro:"+e);
+			conectado = false;
 			respServer = "Erro";
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			Log.i(LOG, "Erro:"+e);
+			conectado = false;
 			respServer = "Erro";
 		}
 	}
 
+	
 	public String getRespServer(){
 		return respServer;
 	}

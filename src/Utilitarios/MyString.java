@@ -2,8 +2,12 @@ package Utilitarios;
 
 import android.util.Log;
 
+import com.solucaoSistemas.AgendaApp.ConectaLocal;
+import com.solucaoSistemas.AgendaApp.Splash;
+
 public  class MyString {
 	private static  String LOG = "teste";
+	static int cdEventoExt = 0;
 	static String[] cod;
 	/** Para a normalização dos caracteres de 32 a 255, primeiro caracter */  
 	public static final char[] FIRST_CHAR =  
@@ -315,9 +319,11 @@ public  class MyString {
 	return re;
 	}
 
-	public static String[] montaInsertAgenda(String resultGet){
+	public static String[] montaInsertAgenda(String resultGet, int cd){
 		int x = 0;
 		int c = 0;
+		cdEventoExt = cd;
+		Log.i(LOG, "MONTAINSERTAGENDA:"+cdEventoExt);
 		
 		char[] aux = new char[resultGet.length()];
 		String nm = "'";
@@ -449,8 +455,15 @@ public  class MyString {
 		
 	private static String ordena(String[] array, int j){
 		String retorno = "";
-		cod[j] = array[0].replace("'" , "");
-		retorno += "null,"+array[0]+","+array[1]+","+array[2]+","+array[9]+","+array[3]+","+array[4]+","+array[5]+","+array[6]+","+array[7];
+		cod[j] = "0";
+		if(array[8].equals("")){
+			cdEventoExt += 1;
+			array[8] = cdEventoExt+"";
+			cod[j] = cdEventoExt+"";
+		}
+		else
+		Log.i(LOG, "cdEventoExt=:"+cdEventoExt);
+		retorno += "null,"+array[8]+","+array[1]+","+array[2]+","+array[9]+","+array[3]+","+array[4]+","+array[5]+","+array[6]+","+array[7];
 		return retorno;
 	}
 	
@@ -475,5 +488,5 @@ public  class MyString {
 	public static String[] getCod(){
 		return cod;
 	}
-
+	
 }
