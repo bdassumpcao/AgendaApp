@@ -6,7 +6,6 @@
     android:orientation="vertical" >
 
 
-
     <CheckBox
         android:id="@+id/sincronizar"
         android:layout_width="wrap_content"

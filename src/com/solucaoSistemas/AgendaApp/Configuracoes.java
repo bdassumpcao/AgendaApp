@@ -4,21 +4,28 @@ package com.solucaoSistemas.AgendaApp;
 import Utilitarios.MyString;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 
 public class Configuracoes extends Activity {
 	  ConectaLocal conectConfig;
 	  String data;
+	  private String senha = "";
 	  
-	  public void onCreate(Bundle icicle) {
-		    super.onCreate(icicle);
+	  public void onCreate(Bundle savedInstanceState) {
+		    super.onCreate(savedInstanceState);
 		    setContentView(R.layout.activity_configuracoes);
 		    
 			getActionBar().setDisplayShowHomeEnabled(false);
@@ -70,9 +77,55 @@ public class Configuracoes extends Activity {
 		    
 	  }
 	  
+	  @Override
+	  public boolean onCreateOptionsMenu(Menu menu) {
+	      getMenuInflater().inflate(R.menu.config, menu);
+	      return true;
+	  }
+	  
+	    @Override
+	    public boolean onOptionsItemSelected(MenuItem item) {
+	        int id = item.getItemId();
+
+	        switch (id){
+	    		case R.id.action_sql:	    			
+	    			
+	    			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    			builder.setTitle("Senha");
+
+	    			final EditText edt_senha = new EditText(this);
+	    			// Specify the type of edt_senha expected; this, for example, sets the edt_senha as a password, and will mask the text
+	    			edt_senha.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+	    			builder.setView(edt_senha);
+
+	    			// Set up the buttons
+	    			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
+	    			    @Override
+	    			    public void onClick(DialogInterface dialog, int which) {
+	    			        senha = edt_senha.getText().toString();
+	    			        if(senha.equals("123")){
+	    			        	startActivity(new Intent(Configuracoes.this, Sql.class));
+	    			        }
+	    			        else
+	    			        	edt_senha.setError("Senha incorreta!");
+	    			    }
+	    			});
+	    			builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	    			    @Override
+	    			    public void onClick(DialogInterface dialog, int which) {
+	    			        dialog.cancel();
+	    			    }
+	    			});
+
+	    			builder.show();
+	    			return true;
+	        }
+	    	return super.onOptionsItemSelected(item);
+	    }
+	  
 	  public  void startService(){
-//			Intent intent = new Intent("SERVICO_AGENDA");
-//			startService(intent);
+			Intent intent = new Intent("SERVICO_AGENDA");
+			startService(intent);
 			
 			startService(new Intent("SERVICO_TAREFA"));
 		}

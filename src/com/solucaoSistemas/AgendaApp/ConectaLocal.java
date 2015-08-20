@@ -30,6 +30,9 @@ public class ConectaLocal {
 		setTabela(tabela);
 	}
 
+	public void executa(String sql){
+		 db.execSQL(sql);
+	}
 	
 	public Object select(String campos){
 		List<Object> result = new ArrayList<Object>();
@@ -81,15 +84,16 @@ public class ConectaLocal {
 		return operation;
 	}
 	
-	public ArrayList<String> selectRelatorio(String campos){
+	public ArrayList<String> selectRelatorio(String sql, int numColuna){
 		ArrayList<String> result = new ArrayList<String>();
 		
-		Cursor cursor = db.rawQuery("SELECT "+ campos +" FROM "+ tabela +" "+ clausula + order, null);
+		Cursor cursor = db.rawQuery(sql, null);
+		
 		
 		cursor.moveToFirst();
 		while(!cursor.isAfterLast()){
 		
-				for(int i = 0; i < 6; i++){
+				for(int i = 0; i < numColuna; i++){
 					result.add(cursor.getString(i));
 				}
 			

@@ -11,7 +11,8 @@
     <string name="todos">Todos</string>
     <string name="concluidos">Concluidos</string>
     <string name="pendentes">Pendentes</string>
-    <string name="responsavel">Responsavel:  </string>       
+    <string name="responsavel">Responsavel:  </string>   
+    <string name="action_sql">SQL</string>    
     <string name="action_removerTarefa">REMOVER TAREFA</string>
     <string name="action_eventos">EVENTOS</string>
     <string name="action_novoEvento">NOVO EVENTO</string>
@@ -32,6 +33,7 @@
     <string name="BAvancar">Avançar</string>
     <string name="btVolta">Voltar</string>
     <string name="btSalvar">Salvar</string>
+    <string name="btExecutar">Executar</string>
     <string name="sincronizar">Sincronização de dados</string>
     <string name="baixados">Mostrar eventos baixados</string>
     <string name="cdEvento">Cod.:</string>

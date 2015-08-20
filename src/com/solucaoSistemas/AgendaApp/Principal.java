@@ -424,5 +424,12 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
     public void showToast(String texto){		
 		Toast.makeText(this, texto, Toast.LENGTH_SHORT).show();
 	}
+    
+    @Override
+    protected void onResume(){
+    	super.onResume();
+        mWeekView.goToToday(); 
+        mWeekView.goToHour(horaExpediente);    	
+    }
       
 }

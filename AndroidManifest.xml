@@ -54,6 +54,10 @@
             android:label="@string/action_configuracoesM" >
         </activity>
         <activity
+            android:name=".Sql"
+            android:label="@string/action_configuracoesM">
+        </activity>
+        <activity
             android:name=".Tarefas"
             android:label="@string/action_tarefas" >
         </activity>
