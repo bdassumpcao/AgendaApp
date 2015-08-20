@@ -319,11 +319,9 @@ public  class MyString {
 	return re;
 	}
 
-	public static String[] montaInsertAgenda(String resultGet, int cd){
+	public static String[] montaInsertAgenda(String resultGet){
 		int x = 0;
 		int c = 0;
-		cdEventoExt = cd;
-		Log.i(LOG, "MONTAINSERTAGENDA:"+cdEventoExt);
 		
 		char[] aux = new char[resultGet.length()];
 		String nm = "'";
@@ -455,14 +453,7 @@ public  class MyString {
 		
 	private static String ordena(String[] array, int j){
 		String retorno = "";
-		cod[j] = "0";
-		if(array[8].equals("")){
-			cdEventoExt += 1;
-			array[8] = cdEventoExt+"";
-			cod[j] = cdEventoExt+"";
-		}
-		else
-		Log.i(LOG, "cdEventoExt=:"+cdEventoExt);
+		
 		retorno += "null,"+array[8]+","+array[1]+","+array[2]+","+array[9]+","+array[3]+","+array[4]+","+array[5]+","+array[6]+","+array[7];
 		return retorno;
 	}

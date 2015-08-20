@@ -1,7 +1,6 @@
 /**@author maxissuel*/
 package com.solucaoSistemas.AgendaApp;
 
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -28,18 +27,20 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.KeyEvent;
 
 public class ServiceApp extends Service {
 	public boolean pendencia = false;
 	public boolean exec = true;
 	final public boolean statusServico = true;
-	ConectaLocal conectAgenda;
+	static ConectaLocal conectAgenda;
 	ConectaLocal conectUser;
 	ConectaLocal conectLogAgenda;
 	ArrayList<Thread> listaThread;
 	static String[] cod;
 	static boolean ativo = false;
 	private static  String LOG = "teste";
+	static Conexao conexao;
 	int num;
 	
 	@Override
@@ -51,6 +52,7 @@ public class ServiceApp extends Service {
 	@Override
 	public void onCreate(){
 		super.onCreate();
+		conexao = new Conexao(this);
 		listaThread = new ArrayList<Thread>();
 		Log.i(LOG, "onCreate() AGENDA");
 	}
@@ -58,8 +60,7 @@ public class ServiceApp extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
 		Log.i(LOG, "onStartCommand() AGENDA");
-		
-		
+				
 		if(!pendencia){
 			pendencia = true;
 			ativo = true;
@@ -349,159 +350,118 @@ public class ServiceApp extends Service {
 				Log.i(LOG, campos[i]+" excluido no celular");
 			}			
 		}
-	}
+	}	
 	
-	//http://192.168.1.200:5420/webservice/processo.php?flag=3&chave=l33cou&operacao=i&cdU=1&cdExt=1&descricao=het&obs=teste&status=a&data=10/05/15&horaI=15:06&horaF=20:00&local=teste
-		public void selectServidor(String url) throws Throwable{	
-			String cdU = userAtivo();
-			String dados = "";
-			dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sall&cdU="+cdU;
+	@SuppressWarnings("deprecation")
+	public void selectCelular(String url) throws Throwable{
+		String cdU = userAtivo();
+		
+		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sc&cdU="+cdU;
+		ResponseHandler<String> handler = new BasicResponseHandler();
+		HttpClient client = new DefaultHttpClient();
+		HttpGet httpGet = new HttpGet("http://"+url+dados);
+		Log.i(LOG,"http://"+url+dados);
+		ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
+		
+		exec.start();
+		do{
+//			Log.i(LOG,"sleep");
+			Thread.sleep(1000);
+		}
+		while(MyString.normalize(exec.respServer).equals(""));
+				
+		String respServer = exec.respServer.substring(0, exec.respServer.indexOf("#"));
+		respServer = MyString.normalize(respServer);
+		Log.i(LOG, "respServer:'"+respServer+"'");
+		
+		if(respServer.equals("")){
+			Log.i(LOG, "respServer == "+respServer);
 			
-			String respServer = webservice(url, dados);
-			respServer = respServer.substring(0, respServer.indexOf("#"));
+			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTO ", cdU));
+			Log.i(LOG, "ultimoCdCelular"+ultimoCdCelular);			
 			
-			if(MyString.normalize(respServer).equals("")){
-				Log.i(LOG, "respServer == "+MyString.normalize(respServer));
-			}
-			else{
-				try {
-					String aux = (pegaUltimo(" CDEVENTOEXT ", cdU)+1);
-					int cdEventoExt = 1;
-					if(!aux.equals("-1"))
-						cdEventoExt = Integer.parseInt(aux);
-					String[] campos = MyString.montaInsertAgenda(respServer, cdEventoExt);
-					cod = MyString.getCod();
+			//se for igual a menos um não executa o restante pois não tem eventos para inserir
+			if(ultimoCdCelular!=-1){
+				String  cdEventoExt, desc, lc, obs, dt, hI, hF, st;
+				conectAgenda.setOrder("");
+				conectAgenda.setClausula("");
+				String[] cdE = MyString.tStringArray(conectAgenda.select(" CDEVENTO "));
+				for(int i=0; i<cdE.length; i++){
+					Log.i(LOG, cdE[i]);
+					conectAgenda.setClausula(" WHERE CDEVENTO="+cdE[i]);
 					
-					int j = 0;
-					for(String i : campos){
-						Log.i(LOG, "i:"+i);
-						conectAgenda.insert(i);
-						Log.i(LOG, i+" |inserido na AGENDA");
-//						conectAgenda.setClausula(" WHERE CDEVENTOEXT='"+cod[j]+"'");
-//						Log.i(LOG, " WHERE CDEVENTOEXT="+cod[j]);
-//						Log.i(LOG, MyString.tString(conectAgenda.select(" CDEVENTO "))+" inserido no celular");
-//						Log.i(LOG, "updateCodServidor:"+MyString.tString(conectAgenda.select(" CDEVENTO ")));
-//						updateCodServidor(MyString.tString(conectAgenda.select(" CDEVENTO ")), cod[j]);
-//						
-//						j++;
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					Log.i(LOG, e+"");
+					cdEventoExt = MyString.tString(conectAgenda.select("CDEVENTOEXT"));
+					desc = MyString.tString(conectAgenda.select("DESCRICAO"));
+					desc = URLEncoder.encode(desc, "UTF-8");
+					lc = MyString.tString(conectAgenda.select("LOCAL"));
+					lc = URLEncoder.encode(lc, "UTF-8");
+					obs = MyString.tString(conectAgenda.select("OBSERVACAO"));
+					obs = URLEncoder.encode(obs, "UTF-8");
+					dt = MyString.tString(conectAgenda.select("DATA"));
+					dt = dt.replace( "\\" , ""); 
+					hI = MyString.tString(conectAgenda.select("HORAINICIO"));
+					String aux = hI.substring(0, 2) +":";
+					aux += hI.substring(2, 4);
+					hI = aux;
+					hF = MyString.tString(conectAgenda.select("HORAFIM"));
+					aux = hF.substring(0, 2) +":";
+					aux += hF.substring(2, 4);
+					hF = aux;
+					st = MyString.tString(conectAgenda.select("STATUS"));	
+					
+					String campos = "cdU="+cdU+"&cdExt="+cdEventoExt+"&descricao="+desc+"&obs="+obs+"&status="+st+
+							"&data="+dt+"&horaI="+hI+"&horaF="+hF+"&local="+lc;
+					Log.i(LOG, campos);
+					
+					insereServidor(url, campos);
+					Log.i(LOG, cdEventoExt+" inserido no servidor");
+//					conectAgenda.update(" CDEVENTOEXT="+cdExt);					
 				}
-			}	
+			}
 		}
-	
-		@SuppressWarnings("deprecation")
-		public void selectCelular(String url) throws Throwable{
-			String cdU = userAtivo();
-			
-			String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sc&cdU="+cdU;
-			ResponseHandler<String> handler = new BasicResponseHandler();
-			HttpClient client = new DefaultHttpClient();
-			HttpGet httpGet = new HttpGet("http://"+url+dados);
-			Log.i(LOG,"http://"+url+dados);
-			ExecutaWeb exec = new ExecutaWeb(handler, client, httpGet);
-			
-			exec.start();
-			do{
-//				Log.i(LOG,"sleep");
-				Thread.sleep(1000);
-			}
-			while(MyString.normalize(exec.respServer).equals(""));
-						
-			String respServer = exec.respServer.substring(0, exec.respServer.indexOf("#"));
-			respServer = MyString.normalize(respServer);
-			Log.i(LOG, "respServer:'"+respServer+"'");
-			
-			if(respServer.equals("")){
-				Log.i(LOG, "respServer == "+respServer);
-				
-				int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTO ", cdU));
-				Log.i(LOG, "ultimoCdCelular"+ultimoCdCelular);			
-				
-				//se for igual a menos um não executa o restante pois não tem eventos para inserir
-				if(ultimoCdCelular!=-1){
-					String  cdEventoExt, desc, lc, obs, dt, hI, hF, st;
-					conectAgenda.setOrder("");
-					conectAgenda.setClausula("");
-					String[] cdE = MyString.tStringArray(conectAgenda.select(" CDEVENTO "));
-					for(int i=0; i<cdE.length; i++){
-						Log.i(LOG, cdE[i]);
-						conectAgenda.setClausula(" WHERE CDEVENTO="+cdE[i]);
-						
-						cdEventoExt = MyString.tString(conectAgenda.select("CDEVENTOEXT"));
-						desc = MyString.tString(conectAgenda.select("DESCRICAO"));
-						desc = URLEncoder.encode(desc, "UTF-8");
-						lc = MyString.tString(conectAgenda.select("LOCAL"));
-						lc = URLEncoder.encode(lc, "UTF-8");
-						obs = MyString.tString(conectAgenda.select("OBSERVACAO"));
-						obs = URLEncoder.encode(obs, "UTF-8");
-						dt = MyString.tString(conectAgenda.select("DATA"));
-						dt = dt.replace( "\\" , ""); 
-						hI = MyString.tString(conectAgenda.select("HORAINICIO"));
-						String aux = hI.substring(0, 2) +":";
-						aux += hI.substring(2, 4);
-						hI = aux;
-						hF = MyString.tString(conectAgenda.select("HORAFIM"));
-						aux = hF.substring(0, 2) +":";
-						aux += hF.substring(2, 4);
-						hF = aux;
-						st = MyString.tString(conectAgenda.select("STATUS"));	
-						
-						String campos = "cdU="+cdU+"&cdExt="+cdEventoExt+"&descricao="+desc+"&obs="+obs+"&status="+st+
-								"&data="+dt+"&horaI="+hI+"&horaF="+hF+"&local="+lc;
-						Log.i(LOG, campos);
-						
-						insereServidor(url, campos);
-						Log.i(LOG, cdEventoExt+" inserido no servidor");
-//						conectAgenda.update(" CDEVENTOEXT="+cdExt);					
-					}
+		else if(!respServer.equals("")){
+			int codigoServidor = Integer.parseInt(respServer);
+			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTOEXT ", cdU));
+			if(ultimoCdCelular != -1)
+			if(ultimoCdCelular>codigoServidor){
+				String  cdEventoExt, desc, lc, obs, dt, hI, hF, st;
+				conectAgenda.setOrder("");
+				conectAgenda.setClausula(" WHERE CDEVENTOEXT>"+codigoServidor);
+				String[] cdE = MyString.tStringArray(conectAgenda.select(" CDEVENTO "));
+				for(int i=0; i<cdE.length; i++){
+					Log.i(LOG, cdE[i]);
+					conectAgenda.setClausula(" WHERE CDEVENTO="+cdE[i]);
+					
+					cdEventoExt = MyString.tString(conectAgenda.select("CDEVENTOEXT"));
+					desc = MyString.tString(conectAgenda.select("DESCRICAO"));
+					desc = URLEncoder.encode(desc);
+					lc = MyString.tString(conectAgenda.select("LOCAL"));
+					lc = URLEncoder.encode(lc);
+					obs = MyString.tString(conectAgenda.select("OBSERVACAO"));
+					obs = URLEncoder.encode(obs);
+					dt = MyString.tString(conectAgenda.select("DATA"));
+					dt = dt.replace( "\\" , ""); 
+					hI = MyString.tString(conectAgenda.select("HORAINICIO"));
+					String aux = hI.substring(0, 2) +":";
+					aux += hI.substring(2, 4);
+					hI = aux;
+					hF = MyString.tString(conectAgenda.select("HORAFIM"));
+					aux = hF.substring(0, 2) +":";
+					aux += hF.substring(2, 4);
+					hF = aux;
+					st = MyString.tString(conectAgenda.select("STATUS"));	
+					
+					String campos = "cdU="+cdU+"&cdExt="+cdEventoExt+"&descricao="+desc+"&obs="+obs+"&status="+st+
+							"&data="+dt+"&horaI="+hI+"&horaF="+hF+"&local="+lc;
+					Log.i(LOG, campos);
+					
+					insereServidor(url, campos);
+					Log.i(LOG, cdEventoExt+" inserido no servidor");
+//					conectAgenda.update(" CDEVENTOEXT="+cdExt);					
 				}
-			}
-			else if(!respServer.equals("")){
-				int codigoServidor = Integer.parseInt(respServer);
-				int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTOEXT ", cdU));
-				if(ultimoCdCelular != -1)
-				if(ultimoCdCelular>codigoServidor){
-					String  cdEventoExt, desc, lc, obs, dt, hI, hF, st;
-					conectAgenda.setOrder("");
-					conectAgenda.setClausula(" WHERE CDEVENTOEXT>"+codigoServidor);
-					String[] cdE = MyString.tStringArray(conectAgenda.select(" CDEVENTO "));
-					for(int i=0; i<cdE.length; i++){
-						Log.i(LOG, cdE[i]);
-						conectAgenda.setClausula(" WHERE CDEVENTO="+cdE[i]);
-						
-						cdEventoExt = MyString.tString(conectAgenda.select("CDEVENTOEXT"));
-						desc = MyString.tString(conectAgenda.select("DESCRICAO"));
-						desc = URLEncoder.encode(desc);
-						lc = MyString.tString(conectAgenda.select("LOCAL"));
-						lc = URLEncoder.encode(lc);
-						obs = MyString.tString(conectAgenda.select("OBSERVACAO"));
-						obs = URLEncoder.encode(obs);
-						dt = MyString.tString(conectAgenda.select("DATA"));
-						dt = dt.replace( "\\" , ""); 
-						hI = MyString.tString(conectAgenda.select("HORAINICIO"));
-						String aux = hI.substring(0, 2) +":";
-						aux += hI.substring(2, 4);
-						hI = aux;
-						hF = MyString.tString(conectAgenda.select("HORAFIM"));
-						aux = hF.substring(0, 2) +":";
-						aux += hF.substring(2, 4);
-						hF = aux;
-						st = MyString.tString(conectAgenda.select("STATUS"));	
-						
-						String campos = "cdU="+cdU+"&cdExt="+cdEventoExt+"&descricao="+desc+"&obs="+obs+"&status="+st+
-								"&data="+dt+"&horaI="+hI+"&horaF="+hF+"&local="+lc;
-						Log.i(LOG, campos);
-						
-						insereServidor(url, campos);
-						Log.i(LOG, cdEventoExt+" inserido no servidor");
-//						conectAgenda.update(" CDEVENTOEXT="+cdExt);
-					}
-				}				
 			}			
-		}
+		}		
+	}
 	
 	public String insereServidor(String url, String campos) throws Throwable{	
 		Log.i(LOG, "entrou insereServidor()");
@@ -521,8 +481,32 @@ public class ServiceApp extends Service {
 		return cdExt;		
 	}
 	
+	//http://192.168.1.200:5420/webservice/processo.php?flag=3&chave=l33cou&operacao=i&cdU=1&cdExt=1&descricao=het&obs=teste&status=a&data=10/05/15&horaI=15:06&horaF=20:00&local=teste
+	public void selectServidor(String url) throws Throwable{	
+		String cdU = userAtivo();
+		String dados = "";
+		dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sall&cdU="+cdU;
+		
+		String respServer = webservice(url, dados);
+		respServer = respServer.substring(0, respServer.indexOf("#"));
+		
+		if(MyString.normalize(respServer).equals("")){
+			Log.i(LOG, "respServer == "+MyString.normalize(respServer));
+		}
+		else{
+			try {
+				
+				montaInsertAgenda(respServer, cdU);				
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.i(LOG, e+"");
+			}
+		}		
+	}
+	
 	@Deprecated
-	public void updateCelular(String url) throws InterruptedException{	
+	public void updateCelular(String url) throws Throwable{	
 		String cdU = userAtivo();
 		
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sa&cdU="+cdU;
@@ -550,8 +534,10 @@ public class ServiceApp extends Service {
 				conectAgenda.update(i);
 				Log.i(LOG, cod[j]+" atualizado no celular");
 				j++;
-			}			
-		}		
+			}
+			
+		}
+		
 	}
 	
 	/**
@@ -559,9 +545,9 @@ public class ServiceApp extends Service {
 	 * @param url
 	 * @param dados
 	 * @return exec.respServer
-	 * @throws InterruptedException
+	 * @throws Throwable 
 	 */
-	public String webservice(String url, String dados) throws InterruptedException{
+	public String webservice(String url, String dados) throws Throwable{
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://"+url+dados);
@@ -575,6 +561,7 @@ public class ServiceApp extends Service {
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
+		
 		return exec.respServer;
 	}
 	
@@ -587,6 +574,12 @@ public class ServiceApp extends Service {
 		else
 			return "-1";
 	}
+	
+	public static int pegaUltimoCdExt(){
+		if(MyString.tString(conectAgenda.select(" MAX(CDEVENTOEXT) ")).equals("null"))
+			return 0;
+		else return Integer.parseInt(MyString.tString(conectAgenda.select(" MAX(CDEVENTOEXT) ")));
+	}
 
 	public String userAtivo(){
 		Log.i(LOG, "userAtivo()");
@@ -595,18 +588,14 @@ public class ServiceApp extends Service {
 		return MyString.tString(conectUser.select(" CDUSUARIO "));
 	}
 	
-	public void insertServidor(String cdExt, String url){
-		
-	}
 	
-	public void updateCodServidor(String cdExt, String cdE) throws InterruptedException{
+	public static void updateCodServidor(String data, String horaInicio, String cdU, String cdExt) throws InterruptedException{
 		Log.i(LOG, "updateCodServidor()");
-		Conexao conexao = new Conexao(this);
-		String url = conexao.pegaLink();
-		cdE = MyString.normalize(cdE);
-		Log.i(LOG, "cdE:"+cdE);
-		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=uc&cdE="+cdExt+"&cdExt="+cdE;
 		
+		String url = conexao.pegaLink();
+		cdExt = MyString.normalize(cdExt);
+		Log.i(LOG, "cdExt:"+cdExt);
+		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=uc&data="+data+"&horaInicio="+horaInicio+"&cdU="+cdU+"&cdExt="+cdExt;
 		
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
@@ -648,7 +637,81 @@ public class ServiceApp extends Service {
 		catch(Exception e){}
 	}
 	
-
+	public static String[] montaInsertAgenda(String resultGet,String  cdU){
+		int x = 0;
+		int c = 0;
+		
+		char[] aux = new char[resultGet.length()];
+		String nm = "'";
 	
- 
+		for(int i = 0; i < resultGet.length(); i++){
+			aux[i] = resultGet.charAt(i);
+			if(aux[i] == '$'){
+				x++;
+			}
+		}
+	
+		int j = 0;
+		cod = new String[x];
+		String[] re = new String[x];
+		String [] r = new String[11];
+		
+		for(int i = 0; i < aux.length; i++){
+			if(aux[i] == '§'){
+				nm += "'";
+				r[c] = nm;
+				nm = "'";
+				c++;
+			}
+			else if(aux[i] == '$'){
+				nm += "'";
+				r[c] = nm;
+				nm = "'";
+				c = 0;
+				re[j] = ordena(r, j, cdU);
+				j++;
+			}
+			else{
+				nm += aux[i];
+			}
+		}
+		
+		return re;
+	}
+	
+	
+	private static String ordena(String[] array, int j, String cdU){
+		String campos = "";
+//		cod[j] = "0";
+		int cdEventoExt = 0;
+		Log.i(LOG, "ARRAY[8]='"+array[8]+"'");
+		if(array[8].equals("''")){
+			cdEventoExt = (pegaUltimoCdExt()+1);
+			Log.i(LOG, "!!!!!cdeventoExt:"+cdEventoExt);
+			array[8] = cdEventoExt+"";
+//			cod[j] = cdEventoExt+"";
+		}
+		Log.i(LOG, "cdEventoExt=:"+cdEventoExt);
+		campos += "null,"+array[8]+","+array[1]+","+array[2]+","+array[9]+","+array[3]+","+array[4]+","+array[5]+","+array[6]+","+array[7];
+			
+		conectAgenda.insert(campos);
+		Log.i(LOG, campos+" |inserido na AGENDA");
+
+		if(cdEventoExt != 0){
+			conectAgenda.setClausula(" WHERE CDEVENTOEXT='"+array[8]+"'");
+			String dt = MyString.tString(conectAgenda.select("DATA"));
+			dt = dt.replace( "\\" , ""); 
+			String aux2 = MyString.tString(conectAgenda.select("HORAINICIO"));
+			String hI = aux2.substring(0, 2) +":";
+			hI += aux2.substring(2, 4);
+			try {
+				updateCodServidor(dt, hI, cdU, array[8]);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}	
+			
+		return campos;
+	} 
 }

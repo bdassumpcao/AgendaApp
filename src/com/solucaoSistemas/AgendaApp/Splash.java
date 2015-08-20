@@ -32,19 +32,22 @@ public class Splash extends Activity {
 	public boolean pendencia = false;
 	public boolean exec = true;
 	final public boolean statusServico = true;
-	ConectaLocal conectAgenda;
+	static ConectaLocal conectAgenda;
 	ConectaLocal conectUser;
 	ConectaLocal conectLogAgenda;
 	ArrayList<Thread> listaThread;
 	static String[] cod;
 	static boolean ativo = false;
 	private static  String LOG = "teste";
+	static Conexao conexao;
 	int num;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.i(LOG, "SPLASH AGENDA");
+		
+		conexao = new Conexao(this);
 		
 		listaThread = new ArrayList<Thread>();
 		conectAgenda = new ConectaLocal(this, "AGENDA");
@@ -479,30 +482,9 @@ public class Splash extends Activity {
 		}
 		else{
 			try {
-				String aux = (pegaUltimo(" CDEVENTOEXT ", cdU)+1);
-				int cdEventoExt = 1;
-				if(!aux.equals("-1"))
-					cdEventoExt = Integer.parseInt(aux);
-				Log.i(LOG, "cdEventoExt:"+cdEventoExt);
-				String[] campos = MyString.montaInsertAgenda(respServer, cdEventoExt);
-				cod = MyString.getCod();
 				
-				int j = 0;
-				for(String i : campos){
-					Log.i(LOG, "i:"+i);
-					conectAgenda.insert(i);
-					Log.i(LOG, i+" |inserido na AGENDA");
-					conectAgenda.setClausula(" WHERE CDEVENTOEXT='"+cod[j]+"'");
-					if(!cod[j].equals("0")){
-						String dt = MyString.tString(conectAgenda.select("DATA"));
-						dt = dt.replace( "\\" , ""); 
-						String hI = MyString.tString(conectAgenda.select("HORAINICIO"));
-						String aux2 = hI.substring(0, 2) +":";
-						aux2 += hI.substring(2, 4);
-						updateCodServidor(dt, hI, cdU, cod[j]);
-					}					
-					j++;
-				}
+				montaInsertAgenda(respServer, cdU);				
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.i(LOG, e+"");
@@ -584,6 +566,12 @@ public class Splash extends Activity {
 		else
 			return "-1";
 	}
+	
+	public static int pegaUltimoCdExt(){
+		if(MyString.tString(conectAgenda.select(" MAX(CDEVENTOEXT) ")).equals("null"))
+			return 0;
+		else return Integer.parseInt(MyString.tString(conectAgenda.select(" MAX(CDEVENTOEXT) ")));
+	}
 
 	public String userAtivo(){
 		Log.i(LOG, "userAtivo()");
@@ -593,14 +581,13 @@ public class Splash extends Activity {
 	}
 	
 	
-	public void updateCodServidor(String data, String horaInicio, String cdU, String cdExt) throws InterruptedException{
+	public static void updateCodServidor(String data, String horaInicio, String cdU, String cdExt) throws InterruptedException{
 		Log.i(LOG, "updateCodServidor()");
-		Conexao conexao = new Conexao(this);
+		
 		String url = conexao.pegaLink();
 		cdExt = MyString.normalize(cdExt);
 		Log.i(LOG, "cdExt:"+cdExt);
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=uc&data="+data+"&horaInicio="+horaInicio+"&cdU="+cdU+"&cdExt="+cdExt;
-		
 		
 		ResponseHandler<String> handler = new BasicResponseHandler();
 		HttpClient client = new DefaultHttpClient();
@@ -615,10 +602,6 @@ public class Splash extends Activity {
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
-		
-		if(!exec.conectado){
-			Splash.this.finish();
-		}
 	}
 
 	public void gerarNotificacao(Context context, Intent intent, CharSequence ticker, CharSequence titulo, CharSequence descricao){
@@ -645,6 +628,85 @@ public class Splash extends Activity {
 		}
 		catch(Exception e){}
 	}
+	
+	public static String[] montaInsertAgenda(String resultGet,String  cdU){
+		int x = 0;
+		int c = 0;
+		
+		char[] aux = new char[resultGet.length()];
+		String nm = "'";
+	
+		for(int i = 0; i < resultGet.length(); i++){
+			aux[i] = resultGet.charAt(i);
+			if(aux[i] == '$'){
+				x++;
+			}
+		}
+	
+		int j = 0;
+		cod = new String[x];
+		String[] re = new String[x];
+		String [] r = new String[11];
+		
+		for(int i = 0; i < aux.length; i++){
+			if(aux[i] == '§'){
+				nm += "'";
+				r[c] = nm;
+				nm = "'";
+				c++;
+			}
+			else if(aux[i] == '$'){
+				nm += "'";
+				r[c] = nm;
+				nm = "'";
+				c = 0;
+				re[j] = ordena(r, j, cdU);
+				j++;
+			}
+			else{
+				nm += aux[i];
+			}
+		}
+		
+		return re;
+	}
+	
+	
+	private static String ordena(String[] array, int j, String cdU){
+		String campos = "";
+//		cod[j] = "0";
+		int cdEventoExt = 0;
+		Log.i(LOG, "ARRAY[8]='"+array[8]+"'");
+		if(array[8].equals("''")){
+			cdEventoExt = (pegaUltimoCdExt()+1);
+			Log.i(LOG, "!!!!!cdeventoExt:"+cdEventoExt);
+			array[8] = cdEventoExt+"";
+//			cod[j] = cdEventoExt+"";
+		}
+		Log.i(LOG, "cdEventoExt=:"+cdEventoExt);
+		campos += "null,"+array[8]+","+array[1]+","+array[2]+","+array[9]+","+array[3]+","+array[4]+","+array[5]+","+array[6]+","+array[7];
+			
+		conectAgenda.insert(campos);
+		Log.i(LOG, campos+" |inserido na AGENDA");
+
+		if(cdEventoExt != 0){
+			conectAgenda.setClausula(" WHERE CDEVENTOEXT='"+array[8]+"'");
+			String dt = MyString.tString(conectAgenda.select("DATA"));
+			dt = dt.replace( "\\" , ""); 
+			String aux2 = MyString.tString(conectAgenda.select("HORAINICIO"));
+			String hI = aux2.substring(0, 2) +":";
+			hI += aux2.substring(2, 4);
+			try {
+				updateCodServidor(dt, hI, cdU, array[8]);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}	
+			
+		return campos;
+	}
+	
 	
 	  @Override
 	    public boolean onKeyDown(int keyCode, KeyEvent event) {
