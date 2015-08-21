@@ -30,7 +30,6 @@ import android.util.Log;
 
 public class ServiceTarefas extends Service{
 	private static  String LOG = "teste";
-	private static String[] cod;
 	public boolean pendencia = false;
 	ConectaLocal conectTarefa;
 	ConectaLocal conectUser;

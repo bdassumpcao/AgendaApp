@@ -2,9 +2,6 @@ package Utilitarios;
 
 import android.util.Log;
 
-import com.solucaoSistemas.AgendaApp.ConectaLocal;
-import com.solucaoSistemas.AgendaApp.Splash;
-
 public  class MyString {
 	private static  String LOG = "teste";
 	static int cdEventoExt = 0;

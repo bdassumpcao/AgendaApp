@@ -27,7 +27,6 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.KeyEvent;
 
 public class ServiceApp extends Service {
 	public boolean pendencia = false;

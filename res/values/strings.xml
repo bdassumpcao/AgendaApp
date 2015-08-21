@@ -9,6 +9,9 @@
     <string name="dtLanc">Data Lanç.: </string>
     <string name="para">Para: </string>
     <string name="todos">Todos</string>
+    <string name="updateDelete">UPDATE/DELETE</string>
+    <string name="selectAgenda">SELECT AGENDA</string>
+    <string name="selectTarefa">SELECT TAREFA</string>
     <string name="concluidos">Concluidos</string>
     <string name="pendentes">Pendentes</string>
     <string name="responsavel">Responsavel:  </string>   

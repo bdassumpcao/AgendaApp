@@ -36,7 +36,7 @@ public class InsereTarefa extends Activity{
 	private ConectaLocal conectUser;
 	private ConectaLocal conectTarefa;
 	private String[] USUARIOS;
-	private String usuarioAtivo, descricao;
+	private String usuarioAtivo;
 	private static  String LOG = "teste";
 	private EditText edt_desc;
 	private ListView lst_usuarios;

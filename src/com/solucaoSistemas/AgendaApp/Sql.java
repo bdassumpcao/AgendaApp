@@ -15,6 +15,7 @@ public class Sql extends Activity {
 	  EditText edt_sql;
 	  RadioButton selectAgenda;
 	  RadioButton selectTarefa;
+	  RadioButton updateDelete;
 	  TextView result;
 	  
 	  public void onCreate(Bundle savedInstanceState) {
@@ -23,6 +24,7 @@ public class Sql extends Activity {
 		    
 		    conectBanco = new ConectaLocal(this, "");
 		    edt_sql = (EditText)findViewById(R.id.edt_sql);
+		    updateDelete = (RadioButton)findViewById(R.id.updateDelete);
 		    selectAgenda = (RadioButton)findViewById(R.id.selectAgenda);
 		    selectTarefa = (RadioButton)findViewById(R.id.selectTarefa);
 		    result = (TextView) findViewById(R.id.result);
@@ -30,18 +32,20 @@ public class Sql extends Activity {
 	  
 	  public void executarSql(View view){
 		  String sql = edt_sql.getText().toString();
-		  if(selectAgenda.isChecked()){
-			  String aux = MyString.tString(conectBanco.selectRelatorio(sql, 10));
-			  result.setText(aux);
-		  }
-		  else if(selectTarefa.isChecked()){
-			  String aux = MyString.tString(conectBanco.selectRelatorio(sql, 8));
-			  result.setText(aux);
-		  }
-		  else{
-			  String aux = MyString.tString(conectBanco.executa(edt_sql.getText().toString()));
-			  aux
-			  showToast(sql);
+		  if(!sql.equals("")){
+			  if(selectAgenda.isChecked()){
+				  String aux = MyString.tString(conectBanco.selectRelatorio(sql, 10));
+				  result.setText(aux);
+			  }
+			  else if(selectTarefa.isChecked()){
+				  String aux = MyString.tString(conectBanco.selectRelatorio(sql, 8));
+				  result.setText(aux);
+			  }
+			  else{
+				  conectBanco.executa(edt_sql.getText().toString());
+				  result.setText(sql);
+				  showToast(sql);
+			  }
 		  }
 	  }
 	  

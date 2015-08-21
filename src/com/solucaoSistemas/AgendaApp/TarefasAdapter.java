@@ -77,8 +77,6 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	            v = (View) inflater.inflate(mInflater, null);
 	        }
 	        
-	        final  View v1 = v;
-	        
 	        final String cdTarefa = TAREFAS.get(position);
 	        conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 	        final String resp = MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")));

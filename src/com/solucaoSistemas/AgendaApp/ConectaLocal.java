@@ -97,7 +97,7 @@ public class ConectaLocal {
 					result.add(cursor.getString(i));
 				}
 			
-			result.add("-----------------\n");
+			result.add("\n-----------------\n");
 			cursor.moveToNext();
 		}
 		
