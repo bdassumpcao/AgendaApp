@@ -221,7 +221,7 @@ public class Splash2 extends Activity {
 	
 	
 	public void updateServidor(String url) throws Throwable{	
-		String[] cdT, cdResp, cdRef;
+		String[] cdT, cdResp, cdRef, cdRefExt;
 		String cdStatus, dtBaixa;
 		String dados = "";
 		String respServer = "";
@@ -231,11 +231,13 @@ public class Splash2 extends Activity {
 		cdT = MyString.tStringArray(conectLogTarefa.select(" CDTAREFA "));
 		cdResp = MyString.tStringArray(conectLogTarefa.select(" CDRESPONSAVEL "));
 		cdRef = MyString.tStringArray(conectLogTarefa.select(" CDREFERENCIA "));
+		cdRefExt = MyString.tStringArray(conectLogTarefa.select(" CDREFERENCIAEXT "));
 				
 		for(int j=0; j<cdT.length; j++){
 			cdResp[j] = MyString.tiraEspaço(cdResp[j]);
 			cdRef[j] = MyString.tiraEspaço(cdRef[j]);
-			
+			cdRefExt[j] = MyString.tiraEspaço(cdRefExt[j]);
+						
 			conectTarefa.setClausula(" WHERE CDTAREFA="+cdT[j]);
 			cdStatus = MyString.tString(conectTarefa.select(" CDSTATUS "));
 			dtBaixa = (MyString.tString4(conectTarefa.select("DTBAIXA"))).replace('/' , '.');
@@ -244,12 +246,12 @@ public class Splash2 extends Activity {
 			
 			if(userAtivo().equals(cdResp[j])){
 				dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=ur&cdResp="+cdResp[j]+
-						"&cdRef="+cdRef[j]+"&cdStatus="+cdStatus+"&dtBaixa="+dtBaixa;			
+						"&cdRef="+cdRefExt[j]+"&cdStatus="+cdStatus+"&dtBaixa="+dtBaixa;			
 			}
 			
 			if(!userAtivo().equals(cdResp[j])){
 				dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=ud&cdResp="+cdResp[j]+
-						"&cdRef="+cdRef[j]+"&cdDest="+userAtivo()+"&cdStatus="+cdStatus+"&dtBaixa="+dtBaixa;
+						"&cdRef="+cdRefExt[j]+"&cdDest="+userAtivo()+"&cdStatus="+cdStatus+"&dtBaixa="+dtBaixa;
 			}
 			
 			respServer = webservice(url, dados);
@@ -264,7 +266,7 @@ public class Splash2 extends Activity {
 	}
 	
 	public void deleteServidor(String url) throws Throwable {
-		String[] cdT, cdResp, cdRef, cdDest;
+		String[] cdT, cdResp, cdRef,cdRefExt, cdDest;
 		String dados = "";
 		String respServer = "";
 
@@ -274,19 +276,21 @@ public class Splash2 extends Activity {
 		cdResp = MyString.tStringArray(conectLogTarefa.select(" CDRESPONSAVEL "));
 		cdRef = MyString.tStringArray(conectLogTarefa.select(" CDREFERENCIA "));
 		cdDest = MyString.tStringArray(conectLogTarefa.select(" CDDESTINATARIO "));
+		cdRefExt = MyString.tStringArray(conectLogTarefa.select(" CDREFERENCIAEXT "));
 				
 		for(int j=0; j<cdT.length; j++){
 			cdResp[j] = MyString.tiraEspaço(cdResp[j]);
 			cdRef[j] = MyString.tiraEspaço(cdRef[j]);
 			cdDest[j] = MyString.tiraEspaço(cdDest[j]);
+			cdRefExt[j] = MyString.tiraEspaço(cdRefExt[j]);
 			
 			if(userAtivo().equals(cdResp[j])){
-				dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=dr&cdResp="+cdResp[j]+"&cdRef="+cdRef[j];			
+				dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=dr&cdResp="+cdResp[j]+"&cdRef="+cdRefExt[j];			
 			}
 			
 			if(!userAtivo().equals(cdResp[j])){
 				dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=dd&cdResp="
-				+cdResp[j]+"&cdRef="+cdRef[j]+"&cdDest="+cdDest[j];
+				+cdResp[j]+"&cdRef="+cdRefExt[j]+"&cdDest="+cdDest[j];
 			}
 			
 			respServer = webservice(url, dados);
@@ -349,93 +353,38 @@ public class Splash2 extends Activity {
 	 */
 	public void selectCelular(String url) throws Throwable{	
 		String cdU = userAtivo();
+		String[] cdTarefa;
 		String respServer;
-		
-		String dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sc&cdU="+cdU;
-		respServer = webservice(url, dados);
-		
-		respServer = respServer.substring(0, respServer.indexOf("$"));
-		respServer = MyString.normalize(respServer);
-		Log.i(LOG, "respServer:"+respServer+"");
-		
-		
-		//Se webservice retornar "" então selecionamos todas as tarefas do celular para inserir
-		if(respServer.equals("")){			
-			String ultRef = pegaUltimo(" CDREFERENCIA ", cdU);		
 			
-			//Se ultimoCdCelular for igual a -1 não executa o restante pois não tem tarefas para inserir
-			if(!ultRef.equals("-1")){
-				
-				String  cdTarefa, descricao, dest, responsavel, status, cdRef, dtLanc, dtBaixa;
-				conectTarefa.setOrder("");
-				conectTarefa.setClausula(" WHERE CDRESPONSAVEL='"+userAtivo()+"'");
-				String[] cdE = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
-				for(int i=0; i<cdE.length; i++){
-					conectTarefa.setClausula(" WHERE CDTAREFA="+cdE[i]);
-					
-					cdTarefa = cdE[i];
-					descricao = MyString.tString(conectTarefa.select("NMDESCRICAO"));
-					descricao = URLEncoder.encode(descricao, "UTF-8");
-					dest = MyString.tString(conectTarefa.select("CDDESTINATARIO"));
-					dest = URLEncoder.encode(dest, "UTF-8");
-					responsavel = MyString.tString(conectTarefa.select("CDRESPONSAVEL"));
-					responsavel = URLEncoder.encode(responsavel, "UTF-8");
-					status = MyString.tString(conectTarefa.select("CDSTATUS"));	
-					cdRef = MyString.tString(conectTarefa.select("CDREFERENCIA"));					
-					dtLanc = (MyString.tString4(conectTarefa.select("DTLANCAMENTO"))).replace('/' , '.');
-					dtBaixa = (MyString.tString4(conectTarefa.select("DTBAIXA"))).replace('/' , '.');
-					if(dtBaixa.equals("null"))
-						dtBaixa = "";					
+		
+		conectTarefa.setClausula(" WHERE CDREFERENCIAEXT IS NULL ");
+		cdTarefa = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
+		for(int j=0; j<cdTarefa.length; j++){
+			String descricao, dest, responsavel, status, cdRef, dtLanc, dtBaixa;
+			conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa[j]);
+			
+			descricao = MyString.tString(conectTarefa.select(" NMDESCRICAO "));
+			descricao = URLEncoder.encode(descricao, "UTF-8");
+			dest = MyString.tString(conectTarefa.select(" CDDESTINATARIO "));
+			dest = URLEncoder.encode(dest, "UTF-8");
+			responsavel = MyString.tString(conectTarefa.select(" CDRESPONSAVEL "));
+			responsavel = URLEncoder.encode(responsavel, "UTF-8");
+			status = MyString.tString(conectTarefa.select(" CDSTATUS "));	
+			cdRef = MyString.tString(conectTarefa.select(" CDREFERENCIA "));	
+			dtLanc = (MyString.tString4(conectTarefa.select(" DTLANCAMENTO "))).replace('/' , '.');
+			dtBaixa = (MyString.tString4(conectTarefa.select(" DTBAIXA "))).replace('/' , '.');
+			if(dtBaixa.equals("null"))
+				dtBaixa = "";	
+			
 
-					String campos = "descricao="+descricao+"&destinatario="+dest+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef+"&dtLanc="+dtLanc+"&dtBaixa="+dtBaixa;
-					Log.i(LOG, "");
-					Log.i(LOG, "campos a ser inseridos="+campos);
-					insereServidor(url, campos);							
-					Log.i(LOG, cdTarefa+" inserido no servidor");														
-				}
-			}
+			String campos = "descricao="+descricao+"&destinatario="+dest+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef+"&dtLanc="+dtLanc+"&dtBaixa="+dtBaixa;
+			Log.i(LOG, "");
+			Log.i(LOG, "campos a ser inseridos="+campos);
+			insereServidor(url, campos);							
+			Log.i(LOG, cdTarefa+" inserido no servidor");
 		}
-		//Seleciona apenas tarefas que ainda não foram adicionadas no servidor
-		else if(!respServer.equals("")){	
+		
 			
-			int ultRefServ = 0;
-			try {
-				ultRefServ = Integer.parseInt(respServer);
-			} catch(NumberFormatException e) {
-			   Log.i(LOG, "Could not parse " + e);
-			} 
-			int ultRefCel = Integer.parseInt(pegaUltimo(" CDREFERENCIA ", cdU));
-			if(ultRefCel != -1)
-			if(ultRefCel>ultRefServ){
-				String  cdTarefa, descricao, dest, responsavel, status, cdRef, dtLanc, dtBaixa;;
-				conectTarefa.setOrder("");
-				conectTarefa.setClausula(" WHERE CDREFERENCIA>"+ultRefServ+" AND CDRESPONSAVEL='"+userAtivo()+"'");
-				String[] cdE = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
-				for(int i=0; i<cdE.length; i++){
-					conectTarefa.setClausula(" WHERE CDTAREFA="+cdE[i]);
-										
-					cdTarefa = cdE[i];
-					descricao = MyString.tString(conectTarefa.select("NMDESCRICAO"));
-					descricao = URLEncoder.encode(descricao, "UTF-8");
-					dest = MyString.tString(conectTarefa.select("CDDESTINATARIO"));
-					dest = URLEncoder.encode(dest, "UTF-8");
-					responsavel = MyString.tString(conectTarefa.select("CDRESPONSAVEL"));
-					responsavel = URLEncoder.encode(responsavel, "UTF-8");
-					status = MyString.tString(conectTarefa.select("CDSTATUS"));	
-					cdRef = MyString.tString(conectTarefa.select("CDREFERENCIA"));	
-					dtLanc = (MyString.tString4(conectTarefa.select("DTLANCAMENTO"))).replace('/' , '.');
-					dtBaixa = (MyString.tString4(conectTarefa.select("DTBAIXA"))).replace('/' , '.');
-					if(dtBaixa.equals("null"))
-						dtBaixa = "";
-
-					String campos = "descricao="+descricao+"&destinatario="+dest+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef+"&dtLanc="+dtLanc+"&dtBaixa="+dtBaixa;
-					Log.i(LOG, "");
-					Log.i(LOG, "campos a ser inseridos="+campos);
-					insereServidor(url, campos);	
-					Log.i(LOG, cdTarefa+" inserido no servidor");
-				}
-			}			
-		}		
 	}
 
 	/**

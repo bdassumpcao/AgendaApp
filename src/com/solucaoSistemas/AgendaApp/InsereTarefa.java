@@ -91,19 +91,15 @@ public class InsereTarefa extends Activity{
 				@SuppressLint("InflateParams")
 				@Override
 	            public View getView(final int position, View convertView, ViewGroup parent) {
-	                // Recuperando o Estado selecionado de acordo com a sua posição no ListView
 		            final String usuario = USUARIOS[position];
 		 
-		            // Se o ConvertView for diferente de null o layout já foi "inflado"
 		            View v = convertView;	 
 		               
 		            if(v==null) {
-		            	// "Inflando" o layout do item caso o isso ainda não tenha sido feito
 			            LayoutInflater inflater = getLayoutInflater();
 			            v = (View) inflater.inflate(R.layout.listview_usuarios, null);
 		            }	      
-		                		                
-		            // Recuperando o checkbox
+		                		             
 		            final CheckBox check = (CheckBox) v.findViewById(R.id.check_usuario);
 		            check.setText(usuario.trim());
 	 	 
@@ -116,7 +112,6 @@ public class InsereTarefa extends Activity{
 				            selecionados(view, usuario);	
 		            	}
 		            });
-
 		            
 		            if(selecionados.contains(usuario)) {
 		                check.setChecked(true);
@@ -187,12 +182,11 @@ public class InsereTarefa extends Activity{
 		    		String cdDestinatario = "";
 		    		int referencia = (pegaUltimaRef()+1);
 		    		if(selecionados.size() == 0)
-		    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"','A','',"+usuarioAtivo+","+referencia+",'"+actualData+"',null");		    		
+		    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"','A','',"+usuarioAtivo+","+referencia+",'"+actualData+"',null,null");		    		
 		    		else{
 			    		for(int i=0; i<selecionados.size() ; i++){
 			    			cdDestinatario = getCodUsuario(selecionados.get(i));
-			    		//	Log.i("teste","conectTarefa="+edt_desc.getText().toString());
-			    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"','A',"+cdDestinatario+","+usuarioAtivo+","+referencia+",'"+actualData+"',null");
+			    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"','A',"+cdDestinatario+","+usuarioAtivo+","+referencia+",'"+actualData+"',null,null");
 			    		}
 		    		}
 

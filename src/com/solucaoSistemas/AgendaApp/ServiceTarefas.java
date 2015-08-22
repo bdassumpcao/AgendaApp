@@ -59,6 +59,9 @@ public class ServiceTarefas extends Service{
 					Log.i(LOG, "erro no monitor TAREFA\n"+e);
 				}
 		}		
+		
+		onDestroy();
+		
 		return(START_STICKY);
 	}
 	
@@ -199,7 +202,6 @@ public class ServiceTarefas extends Service{
 		else{
 			Log.i(LOG, "Não Conectado");
 		}
-		onDestroy();
 		Log.i(LOG, "saiu monitor() TAREFA");
 	}
 	

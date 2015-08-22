@@ -23,7 +23,6 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	private static  String LOG = "teste";
 	private Context mContext;
 	private int mInflater;
-//	public String[] TAREFAS;
 	private List<String> TAREFAS = new ArrayList<String>();
 	boolean[] checkBoxState;
 	private ConectaLocal conectUser;
@@ -31,7 +30,6 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	private ConectaLocal conectLogTarefa;
 	private AlertDialog alerta;
 	private int tamanho;
-	
 	
     public TarefasAdapter(Context context, int layoutResourceId ,List<String> lista) {
     	super(context, layoutResourceId, lista);
@@ -81,6 +79,7 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	        conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa);
 	        final String resp = MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDRESPONSAVEL ")));
 	        final String referencia = MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDREFERENCIA ")));
+	        final String cdReferenciaExt = MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDREFERENCIAEXT ")));
 	        
 	        conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" "
 	        		+ "AND CDREFERENCIA="+referencia);
@@ -158,8 +157,7 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 	    	        	}
 	    	        });
 	    	        alerta = builder2.create();
-	    	        alerta.show();
-	
+	    	        alerta.show();	
 	            }
 	        });
 	        
@@ -184,9 +182,11 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 		            	conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" "
 		    	        		+ "AND CDREFERENCIA="+referencia);
 		                conectTarefa.update(" CDSTATUS='B' ");
-		                conectTarefa.update(" DTBAIXA='"+actualData+"'");		                
-		                if(count==0)
-		                	conectLogTarefa.insert(cdTarefa+","+referencia+",'',"+resp+","+"'U'");	
+		                conectTarefa.update(" DTBAIXA='"+actualData+"'");	
+		                if(!cdReferenciaExt.equals("null")){
+		                	if(count==0)
+		                		conectLogTarefa.insert(cdTarefa+","+referencia+",'',"+resp+","+"'U',"+cdReferenciaExt);	
+		                }
 		            } else{
 		            	checkBoxState[position] = false;
 		            	conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" "
@@ -194,7 +194,7 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 		                conectTarefa.update(" CDSTATUS='A' ");
 		                conectTarefa.update("  DTBAIXA="+"null");	
 		                if(count==0)
-		                	conectLogTarefa.insert(cdTarefa+","+referencia+",'',"+resp+","+"'U'");	
+		                	conectLogTarefa.insert(cdTarefa+","+referencia+",'',"+resp+","+"'U',"+cdReferenciaExt);	
 		            }	   
 		           notifyDataSetChanged();
 	            }
@@ -208,15 +208,19 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 				+ "CDREFERENCIA=(SELECT CDREFERENCIA FROM TAREFA WHERE CDTAREFA="+cd+")");
 		Log.i(LOG, "codigo que vai excluir:"+cd);
 		String[] cdT = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
+		String cdReferenciaExt = MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDREFERENCIAEXT ")));
 		
-		for(int i=0; i<cdT.length; i++){
-			conectTarefa.setClausula(" WHERE CDTAREFA='"+cdT[0]+"'");
-			String ref = MyString.tString(conectTarefa.select(" CDREFERENCIA "));
-			String dest = MyString.tString(conectTarefa.select(" CDDESTINATARIO "));
-			if(dest.equals(""))
-				dest = "null";
-			conectLogTarefa.insert(cdT[0]+","+ref+","+dest+","+resp+","+"'D'");		
-		}		
+		if(!cdReferenciaExt.equals("null")){		
+			for(int i=0; i<cdT.length; i++){
+				conectTarefa.setClausula(" WHERE CDTAREFA='"+cdT[0]+"'");
+				String ref = MyString.tString(conectTarefa.select(" CDREFERENCIA "));
+				String refExt = MyString.tString(conectTarefa.select(" CDREFERENCIAEXT "));
+				String dest = MyString.tString(conectTarefa.select(" CDDESTINATARIO "));
+				if(dest.equals(""))
+					dest = "null";
+				conectLogTarefa.insert(cdT[0]+","+ref+","+dest+","+resp+","+"'D',"+refExt);		
+			}	
+		}
 		
 		TAREFAS.remove(cd);
 		conectTarefa.setClausula(" WHERE CDRESPONSAVEL="+resp+" AND "
