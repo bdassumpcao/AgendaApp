@@ -233,7 +233,6 @@ public class Splash2 extends Activity {
 		cdRef = MyString.tStringArray(conectLogTarefa.select(" CDREFERENCIA "));
 				
 		for(int j=0; j<cdT.length; j++){
-			Log.i(LOG, "cdT[j]"+cdT[j]);
 			cdResp[j] = MyString.tiraEspaço(cdResp[j]);
 			cdRef[j] = MyString.tiraEspaço(cdRef[j]);
 			
@@ -277,7 +276,6 @@ public class Splash2 extends Activity {
 		cdDest = MyString.tStringArray(conectLogTarefa.select(" CDDESTINATARIO "));
 				
 		for(int j=0; j<cdT.length; j++){
-			Log.i(LOG, "cdT[j]"+cdT[j]);
 			cdResp[j] = MyString.tiraEspaço(cdResp[j]);
 			cdRef[j] = MyString.tiraEspaço(cdRef[j]);
 			cdDest[j] = MyString.tiraEspaço(cdDest[j]);
@@ -287,7 +285,6 @@ public class Splash2 extends Activity {
 			}
 			
 			if(!userAtivo().equals(cdResp[j])){
-				Log.i(LOG, "!userAtivo().equals(cdResp[j])");
 				dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=dd&cdResp="
 				+cdResp[j]+"&cdRef="+cdRef[j]+"&cdDest="+cdDest[j];
 			}
@@ -303,7 +300,6 @@ public class Splash2 extends Activity {
 		}		
 	}
 	
-
 	/**
 	 * 
 	 * @param url
@@ -346,7 +342,6 @@ public class Splash2 extends Activity {
 		}
 	}
 	
-	
 	/**
 	 * Seleciona as tarefas do celular que serão inseridas no servidor
 	 * @param url
@@ -366,8 +361,7 @@ public class Splash2 extends Activity {
 		
 		//Se webservice retornar "" então selecionamos todas as tarefas do celular para inserir
 		if(respServer.equals("")){			
-			String ultRef = pegaUltimo(" CDREFERENCIA ", cdU);
-			Log.i(LOG, "ultimoCdCelular"+ultRef);			
+			String ultRef = pegaUltimo(" CDREFERENCIA ", cdU);		
 			
 			//Se ultimoCdCelular for igual a -1 não executa o restante pois não tem tarefas para inserir
 			if(!ultRef.equals("-1")){
@@ -377,7 +371,6 @@ public class Splash2 extends Activity {
 				conectTarefa.setClausula(" WHERE CDRESPONSAVEL='"+userAtivo()+"'");
 				String[] cdE = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
 				for(int i=0; i<cdE.length; i++){
-					Log.i(LOG, cdE[i]);
 					conectTarefa.setClausula(" WHERE CDTAREFA="+cdE[i]);
 					
 					cdTarefa = cdE[i];
@@ -395,8 +388,8 @@ public class Splash2 extends Activity {
 						dtBaixa = "";					
 
 					String campos = "descricao="+descricao+"&destinatario="+dest+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef+"&dtLanc="+dtLanc+"&dtBaixa="+dtBaixa;
-					Log.i(LOG, "campos enviados="+campos);
-					Log.i(LOG, "campos enviados="+campos);
+					Log.i(LOG, "");
+					Log.i(LOG, "campos a ser inseridos="+campos);
 					insereServidor(url, campos);							
 					Log.i(LOG, cdTarefa+" inserido no servidor");														
 				}
@@ -411,9 +404,7 @@ public class Splash2 extends Activity {
 			} catch(NumberFormatException e) {
 			   Log.i(LOG, "Could not parse " + e);
 			} 
-			Log.i(LOG, "ultrefServ:"+ultRefServ+"");
 			int ultRefCel = Integer.parseInt(pegaUltimo(" CDREFERENCIA ", cdU));
-			Log.i(LOG, "ultrefCel:"+ultRefCel+"");
 			if(ultRefCel != -1)
 			if(ultRefCel>ultRefServ){
 				String  cdTarefa, descricao, dest, responsavel, status, cdRef, dtLanc, dtBaixa;;
@@ -421,7 +412,6 @@ public class Splash2 extends Activity {
 				conectTarefa.setClausula(" WHERE CDREFERENCIA>"+ultRefServ+" AND CDRESPONSAVEL='"+userAtivo()+"'");
 				String[] cdE = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
 				for(int i=0; i<cdE.length; i++){
-					Log.i(LOG, cdE[i]);
 					conectTarefa.setClausula(" WHERE CDTAREFA="+cdE[i]);
 										
 					cdTarefa = cdE[i];
@@ -447,7 +437,6 @@ public class Splash2 extends Activity {
 			}			
 		}		
 	}
-	
 
 	/**
 	 * Insere tarefa no servidor e retorna o codigo gerado
@@ -469,7 +458,6 @@ public class Splash2 extends Activity {
 		exec.start();
 		
 		do{
-//			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
@@ -626,4 +614,12 @@ public class Splash2 extends Activity {
 	        }
 	        return super.onKeyDown(keyCode, event);
 	    }
+	  
+		@Override
+		public void onDestroy(){
+			super.onDestroy();
+			conectLogTarefa.close();
+			conectTarefa.close();
+			conectUser.close();
+		}
 }

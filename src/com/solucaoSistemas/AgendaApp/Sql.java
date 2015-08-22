@@ -52,4 +52,10 @@ public class Sql extends Activity {
 	 public void showToast(String texto){		
 		 Toast.makeText(this, texto, Toast.LENGTH_LONG).show();
 	 }
+	 
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		conectBanco.close();
+	}
 }

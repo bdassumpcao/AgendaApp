@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
 		if(login(true).equals("")){
 			conectUser.setClausula(" ORDER BY CDUSUARIO ");
 			if(MyString.tString(conectUser.select(" * ")).equals("")){					
-				installShortCut();				
+//				installShortCut();				
 				
 				Conexao conexao = new Conexao(this);
 				String url = "";
@@ -185,8 +185,11 @@ public class MainActivity extends Activity {
 
 	}
 	
-	
-	
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		conectUser.close();
+	}	
 }
 
 

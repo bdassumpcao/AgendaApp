@@ -279,4 +279,12 @@ public class EditaEvento extends Activity{
 	   return super.onKeyDown(keyCode, event);
 	}
 
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		conectAgenda.close();
+		conectLogAgenda.close();
+		conectUser.close();
+	}
+
 }

@@ -22,6 +22,7 @@ import android.widget.EditText;
 public class Configuracoes extends Activity {
 	  ConectaLocal conectConfig;
 	  String data;
+	  private String key = "n1f7";
 	  private String senha = "";
 	  
 	  public void onCreate(Bundle savedInstanceState) {
@@ -103,7 +104,7 @@ public class Configuracoes extends Activity {
 	    			    @Override
 	    			    public void onClick(DialogInterface dialog, int which) {
 	    			        senha = edt_senha.getText().toString();
-	    			        if(senha.equals("123")){
+	    			        if(senha.equals(key)){
 	    			        	startActivity(new Intent(Configuracoes.this, Sql.class));
 	    			        }
 	    			        else
@@ -158,6 +159,9 @@ public class Configuracoes extends Activity {
 	        return super.onKeyDown(keyCode, event);
 	    }
 
-	  
-	  
+		@Override
+		public void onDestroy(){
+			super.onDestroy();
+			conectConfig.close();
+		}	  
 }

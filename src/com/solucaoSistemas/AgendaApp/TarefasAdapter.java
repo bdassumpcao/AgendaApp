@@ -282,5 +282,4 @@ public class TarefasAdapter extends ArrayAdapter<String>{
 		}
 		return destinatarios;
 	}
-
 }

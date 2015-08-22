@@ -299,4 +299,11 @@ public class InsereTarefa extends Activity{
 	    }
 	    return super.onKeyDown(keyCode, event);
 	}
+	
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		conectTarefa.close();
+		conectUser.close();
+	}
 }

@@ -431,5 +431,13 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
         mWeekView.goToToday(); 
         mWeekView.goToHour(horaExpediente);    	
     }
-      
+    
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		conectAgenda.close();
+		conectConfig.close();
+		conectLogAgenda.close();
+		conectUser.close();
+	}      
 }

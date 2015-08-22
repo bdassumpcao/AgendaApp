@@ -290,5 +290,12 @@ public class InsereEvento extends Activity{
 	        }
 	        return super.onKeyDown(keyCode, event);
 	 }
+	
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		conectEvento.close();
+		conectUser.close();
+	}
 
 }

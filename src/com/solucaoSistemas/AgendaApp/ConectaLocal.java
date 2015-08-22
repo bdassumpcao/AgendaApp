@@ -121,6 +121,10 @@ public class ConectaLocal {
 		
 	}
 	
+	public void close(){
+		db.close();
+	}
+	
 	public String getTabela() {
 		return tabela;
 	}

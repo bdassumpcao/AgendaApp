@@ -233,49 +233,47 @@ public class Splash extends Activity {
 		conectLogAgenda.setOrder("");
 		conectLogAgenda.setClausula(" WHERE OPERACAO='U' ");
 		cdE = MyString.tStringArray(conectLogAgenda.select(" CDEVENTO "));
-//		String  cdEvento;
 		String cdEventoExt, desc, lc, obs, dt, hI, hF, st;
 		
 		if(cdE.length!=0){
 			for(int j=0; j<cdE.length; j++){
-				if(!cdE[j].equals("null")){
-				Log.i(LOG, "cdE[j]"+cdE[j]);		
-				conectAgenda.setOrder("");
-				conectAgenda.setClausula(" WHERE CDEVENTO="+cdE[j]);	
-				
-				cdEventoExt = MyString.tiraEspaço(MyString.tString(conectAgenda.select("CDEVENTOEXT")));
-				desc = MyString.tiraEspaço(MyString.tString(conectAgenda.select("DESCRICAO")));
-				desc = URLEncoder.encode(desc, "UTF-8");
-				lc = MyString.tiraEspaço(MyString.tString(conectAgenda.select("LOCAL")));
-				lc = URLEncoder.encode(lc, "UTF-8");
-				obs = MyString.tiraEspaço(MyString.tString(conectAgenda.select("OBSERVACAO")));
-				obs = URLEncoder.encode(obs, "UTF-8");
-				dt = MyString.tiraEspaço(MyString.tString(conectAgenda.select("DATA")));
-				dt = dt.replace( "\\" , ""); 
-				hI = MyString.tiraEspaço(MyString.tString(conectAgenda.select("HORAINICIO")));
-				String aux = hI.substring(0, 2) +":";
-				aux += hI.substring(2, 4);
-				hI = aux;
-				hF = MyString.tiraEspaço(MyString.tString(conectAgenda.select("HORAFIM")));
-				aux = hF.substring(0, 2) +":";
-				aux += hF.substring(2, 4);
-				hF = aux;
-				st = MyString.tiraEspaço(MyString.tString(conectAgenda.select("STATUS")));					
-				
-				String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=u&cdU="+cdU+"&cdExt="+cdEventoExt+"&desc="+desc+"&obs="+obs+"&st="+st+"&dt="+dt+"&hI="+hI+"&hF="+hF+"&lc="+lc;
-				String respServer = webservice(url, dados);
-				respServer = respServer.substring(0, respServer.indexOf("$"));
-				
-				
-				if(respServer.equals("")){
-					Log.i(LOG, "respServer == "+respServer);
-				}
-				else{
-					conectLogAgenda.setOrder("");
-					conectLogAgenda.setClausula(" WHERE CDEVENTO="+cdE[j]);
-					conectLogAgenda.delete();
-					Log.i(LOG, cdE[j]+" alterado no servidor");
-				}
+				if(!cdE[j].equals("null")){		
+					conectAgenda.setOrder("");
+					conectAgenda.setClausula(" WHERE CDEVENTO="+cdE[j]);	
+					
+					cdEventoExt = MyString.tiraEspaço(MyString.tString(conectAgenda.select("CDEVENTOEXT")));
+					desc = MyString.tiraEspaço(MyString.tString(conectAgenda.select("DESCRICAO")));
+					desc = URLEncoder.encode(desc, "UTF-8");
+					lc = MyString.tiraEspaço(MyString.tString(conectAgenda.select("LOCAL")));
+					lc = URLEncoder.encode(lc, "UTF-8");
+					obs = MyString.tiraEspaço(MyString.tString(conectAgenda.select("OBSERVACAO")));
+					obs = URLEncoder.encode(obs, "UTF-8");
+					dt = MyString.tiraEspaço(MyString.tString(conectAgenda.select("DATA")));
+					dt = dt.replace( "\\" , ""); 
+					hI = MyString.tiraEspaço(MyString.tString(conectAgenda.select("HORAINICIO")));
+					String aux = hI.substring(0, 2) +":";
+					aux += hI.substring(2, 4);
+					hI = aux;
+					hF = MyString.tiraEspaço(MyString.tString(conectAgenda.select("HORAFIM")));
+					aux = hF.substring(0, 2) +":";
+					aux += hF.substring(2, 4);
+					hF = aux;
+					st = MyString.tiraEspaço(MyString.tString(conectAgenda.select("STATUS")));					
+					
+					String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=u&cdU="+cdU+"&cdExt="+cdEventoExt+"&desc="+desc+"&obs="+obs+"&st="+st+"&dt="+dt+"&hI="+hI+"&hF="+hF+"&lc="+lc;
+					String respServer = webservice(url, dados);
+					respServer = respServer.substring(0, respServer.indexOf("$"));
+					
+					
+					if(respServer.equals("")){
+						Log.i(LOG, "respServer == "+respServer);
+					}
+					else{
+						conectLogAgenda.setOrder("");
+						conectLogAgenda.setClausula(" WHERE CDEVENTO="+cdE[j]);
+						conectLogAgenda.delete();
+						Log.i(LOG, cdE[j]+" alterado no servidor");
+					}
 				}
 			}
 		}
@@ -292,15 +290,15 @@ public class Splash extends Activity {
 		String cdExt="";
 		
 		if(cdE.length!=0){
-		for(int j=0; j<cdE.length; j++){
-			Log.i(LOG, "cdE[j]"+cdE[j]);
-			if(!cdE[j].equals("null")){
-				if(j == cdE.length-1)
-					cdExt += MyString.tiraEspaço(cdE[j]);
-				else
-					cdExt += MyString.tiraEspaço(cdE[j])+","; 
+			for(int j=0; j<cdE.length; j++){
+				Log.i(LOG, "cdE[j]"+cdE[j]);
+				if(!cdE[j].equals("null")){
+					if(j == cdE.length-1)
+						cdExt += MyString.tiraEspaço(cdE[j]);
+					else
+						cdExt += MyString.tiraEspaço(cdE[j])+","; 
+				}
 			}
-		}
 
 			String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=d&cdU="+cdU+"&cdExt="+cdExt;
 			String respServer = webservice(url, dados);
@@ -356,7 +354,6 @@ public class Splash extends Activity {
 		
 		exec.start();
 		do{
-//			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
 		while(MyString.normalize(exec.respServer).equals(""));
@@ -373,8 +370,7 @@ public class Splash extends Activity {
 		if(respServer.equals("")){
 			Log.i(LOG, "respServer == "+respServer);
 			
-			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTO ", cdU));
-			Log.i(LOG, "ultimoCdCelular"+ultimoCdCelular);			
+			int ultimoCdCelular = Integer.parseInt(pegaUltimo(" CDEVENTO ", cdU));		
 			
 			//se for igual a menos um não executa o restante pois não tem eventos para inserir
 			if(ultimoCdCelular!=-1){
@@ -383,7 +379,6 @@ public class Splash extends Activity {
 				conectAgenda.setClausula("");
 				String[] cdE = MyString.tStringArray(conectAgenda.select(" CDEVENTO "));
 				for(int i=0; i<cdE.length; i++){
-					Log.i(LOG, cdE[i]);
 					conectAgenda.setClausula(" WHERE CDEVENTO="+cdE[i]);
 					
 					cdEventoExt = MyString.tString(conectAgenda.select("CDEVENTOEXT"));
@@ -408,10 +403,10 @@ public class Splash extends Activity {
 					String campos = "cdU="+cdU+"&cdExt="+cdEventoExt+"&descricao="+desc+"&obs="+obs+"&status="+st+
 							"&data="+dt+"&horaI="+hI+"&horaF="+hF+"&local="+lc;
 					Log.i(LOG, campos);
+					Log.i(LOG, "");
 					
 					insereServidor(url, campos);
-					Log.i(LOG, cdEventoExt+" inserido no servidor");
-//					conectAgenda.update(" CDEVENTOEXT="+cdExt);					
+					Log.i(LOG, " inserido no servidor");					
 				}
 			}
 		}
@@ -425,7 +420,6 @@ public class Splash extends Activity {
 				conectAgenda.setClausula(" WHERE CDEVENTOEXT>"+codigoServidor);
 				String[] cdE = MyString.tStringArray(conectAgenda.select(" CDEVENTO "));
 				for(int i=0; i<cdE.length; i++){
-					Log.i(LOG, cdE[i]);
 					conectAgenda.setClausula(" WHERE CDEVENTO="+cdE[i]);
 					
 					cdEventoExt = MyString.tString(conectAgenda.select("CDEVENTOEXT"));
@@ -450,10 +444,10 @@ public class Splash extends Activity {
 					String campos = "cdU="+cdU+"&cdExt="+cdEventoExt+"&descricao="+desc+"&obs="+obs+"&status="+st+
 							"&data="+dt+"&horaI="+hI+"&horaF="+hF+"&local="+lc;
 					Log.i(LOG, campos);
+					Log.i(LOG, "");
 					
 					insereServidor(url, campos);
-					Log.i(LOG, cdEventoExt+" inserido no servidor");
-//					conectAgenda.update(" CDEVENTOEXT="+cdExt);					
+					Log.i(LOG, " inserido no servidor");				
 				}
 			}			
 		}		
@@ -490,10 +484,8 @@ public class Splash extends Activity {
 			Log.i(LOG, "respServer == "+MyString.normalize(respServer));
 		}
 		else{
-			try {
-				
+			try {				
 				montaInsertAgenda(respServer, cdU);				
-
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.i(LOG, e+"");
@@ -509,10 +501,8 @@ public class Splash extends Activity {
 			Log.i(LOG, "respServer == "+MyString.normalize(respServer));
 		}
 		else{
-			try {
-				
-				montaInsertAgenda(respServer, cdU);				
-
+			try {				
+				montaInsertAgenda(respServer, cdU);			
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.i(LOG, e+"");
@@ -527,7 +517,6 @@ public class Splash extends Activity {
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=sa&cdU="+cdU;
 		String respServer = webservice(url, dados);		
 		respServer = respServer.substring(0, respServer.indexOf("#"));
-//		respServer = MyString.normalize(respServer);
 		
 		if(MyString.normalize(respServer).equals("")){
 			Log.i(LOG, "respServer == "+respServer);
@@ -572,7 +561,6 @@ public class Splash extends Activity {
 		exec.start();
 		
 		do{
-//			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
@@ -602,7 +590,6 @@ public class Splash extends Activity {
 	}
 
 	public String userAtivo(){
-		Log.i(LOG, "userAtivo()");
 		conectUser.setClausula(" WHERE STATUS=1 ");
 		conectUser.setOrder(" ORDER BY CDUSUARIO ");
 		return MyString.tString(conectUser.select(" CDUSUARIO "));
@@ -614,7 +601,6 @@ public class Splash extends Activity {
 		
 		String url = conexao.pegaLink();
 		cdExt = MyString.normalize(cdExt);
-		Log.i(LOG, "cdExt:"+cdExt);
 		String dados = "/webservice/processo.php?flag=3&chave=l33cou&operacao=uc&data="+data+"&horaInicio="+horaInicio+"&cdU="+cdU+"&cdExt="+cdExt;
 		
 		ResponseHandler<String> handler = new BasicResponseHandler();
@@ -626,7 +612,6 @@ public class Splash extends Activity {
 		exec.start();
 		
 		do{
-//			Log.i(LOG,"sleep");
 			Thread.sleep(1000);
 		}
 		while(exec.respServer.equals(""));
@@ -702,16 +687,11 @@ public class Splash extends Activity {
 	
 	private static String ordena(String[] array, int j, String cdU){
 		String campos = "";
-//		cod[j] = "0";
 		int cdEventoExt = 0;
-		Log.i(LOG, "ARRAY[8]='"+array[8]+"'");
 		if(array[8].equals("''")){
 			cdEventoExt = (pegaUltimoCdExt()+1);
-			Log.i(LOG, "!!!!!cdeventoExt:"+cdEventoExt);
 			array[8] = "'"+cdEventoExt+"'";
-//			cod[j] = cdEventoExt+"";
 		}
-		Log.i(LOG, "cdEventoExt=:"+cdEventoExt);
 		campos += "null,"+array[8]+","+array[1]+","+array[2]+","+array[9]+","+array[3]+","+array[4]+","+array[5]+","+array[6]+","+array[7];
 			
 		conectAgenda.insert(campos);
@@ -727,11 +707,9 @@ public class Splash extends Activity {
 			try {
 				updateCodServidor(dt, hI, cdU, array[8]);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}	
-			
+		}				
 		return campos;
 	}
 	
@@ -743,4 +721,12 @@ public class Splash extends Activity {
 	        }
 	        return super.onKeyDown(keyCode, event);
 	    }
+	  
+		@Override
+		public void onDestroy(){
+			super.onDestroy();
+			conectAgenda.close();
+			conectLogAgenda.close();
+			conectUser.close();
+		}
 }
