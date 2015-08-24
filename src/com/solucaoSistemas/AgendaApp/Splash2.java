@@ -327,6 +327,7 @@ public class Splash2 extends Activity {
 		Log.i(LOG, "respServer == "+respServer);
 		if(!respServer.equals(""))
 			insereCelular(respServer);
+				
 	}
 	
 	public void insereCelular(String respServer){
@@ -339,7 +340,7 @@ public class Splash2 extends Activity {
 					conectTarefa.insert(i);
 					Log.i(LOG, i+" |inserido na TAREFA");
 				}
-//				geraNotificacaoNovaTarefa();
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -352,15 +353,12 @@ public class Splash2 extends Activity {
 	 * @throws Throwable 
 	 */
 	public void selectCelular(String url) throws Throwable{	
-		String cdU = userAtivo();
 		String[] cdTarefa;
-		String respServer;
-			
-		
+					
 		conectTarefa.setClausula(" WHERE CDREFERENCIAEXT IS NULL ");
 		cdTarefa = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
 		for(int j=0; j<cdTarefa.length; j++){
-			String descricao, dest, responsavel, status, cdRef, dtLanc, dtBaixa;
+			String descricao, dest, responsavel, status, cdRef, dtLanc, dtBaixa, cdRefExt;
 			conectTarefa.setClausula(" WHERE CDTAREFA="+cdTarefa[j]);
 			
 			descricao = MyString.tString(conectTarefa.select(" NMDESCRICAO "));
@@ -374,17 +372,35 @@ public class Splash2 extends Activity {
 			dtLanc = (MyString.tString4(conectTarefa.select(" DTLANCAMENTO "))).replace('/' , '.');
 			dtBaixa = (MyString.tString4(conectTarefa.select(" DTBAIXA "))).replace('/' , '.');
 			if(dtBaixa.equals("null"))
-				dtBaixa = "";	
+				dtBaixa = "";
+			cdRefExt = MyString.tiraEspaço(MyString.tString(conectTarefa.select(" CDREFERENCIAEXT ")));	
 			
-
-			String campos = "descricao="+descricao+"&destinatario="+dest+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRef+"&dtLanc="+dtLanc+"&dtBaixa="+dtBaixa;
+			if(cdRefExt.equals("null")){
+				String respServer;
+				
+				String dados = "/webservice/processo.php?flag=2&chave=l33cou&operacao=sc&cdU="+responsavel;
+				respServer = webservice(url, dados);
+				
+				respServer = respServer.substring(0, respServer.indexOf("$"));
+				respServer = MyString.normalize(respServer);
+				Log.i(LOG, "respServer:"+respServer+"");
+				cdRefExt = respServer;
+				if(cdRefExt.equals("0")){
+					cdRefExt = "1";
+				}
+				
+				conectTarefa.setClausula(" WHERE CDREFERENCIA="+cdRef+" AND CDRESPONSAVEL="+responsavel);
+				conectTarefa.update(" CDREFERENCIAEXT="+cdRefExt);					
+			}						
+			
+			
+			String campos = "descricao="+descricao+"&destinatario="+dest+"&responsavel="+responsavel+"&status="+status+"&cdRef="+cdRefExt+"&dtLanc="+dtLanc+"&dtBaixa="+dtBaixa;
 			Log.i(LOG, "");
 			Log.i(LOG, "campos a ser inseridos="+campos);
 			insereServidor(url, campos);							
-			Log.i(LOG, cdTarefa+" inserido no servidor");
-		}
-		
+			Log.i(LOG, cdTarefa[j]+" inserido no servidor");
 			
+		}	
 	}
 
 	/**
@@ -527,7 +543,6 @@ public class Splash2 extends Activity {
 	}
 	
 	public String userAtivo(){
-		Log.i(LOG, "userAtivo()");
 		conectUser.setClausula(" WHERE STATUS=1 ");
 		conectUser.setOrder(" ORDER BY CDUSUARIO ");
 		return MyString.tString(conectUser.select(" CDUSUARIO "));

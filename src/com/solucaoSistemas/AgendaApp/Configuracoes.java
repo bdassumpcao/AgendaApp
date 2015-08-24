@@ -95,9 +95,11 @@ public class Configuracoes extends Activity {
 	    			builder.setTitle("Senha");
 
 	    			final EditText edt_senha = new EditText(this);
+	    			
 	    			// Specify the type of edt_senha expected; this, for example, sets the edt_senha as a password, and will mask the text
 	    			edt_senha.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 	    			builder.setView(edt_senha);
+	    			edt_senha.requestFocus();
 
 	    			// Set up the buttons
 	    			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() { 
@@ -119,6 +121,7 @@ public class Configuracoes extends Activity {
 	    			});
 
 	    			builder.show();
+	    			
 	    			return true;
 	        }
 	    	return super.onOptionsItemSelected(item);

@@ -36,7 +36,7 @@ public class Tarefas extends Activity{
 	        
 	        conectTarefa = new ConectaLocal(getApplicationContext(), "TAREFA");	        
 			conectTarefa.setOrder(" ORDER BY CDTAREFA");			
-			conectTarefa.setClausula("");			
+			conectTarefa.setClausula(" WHERE CDSTATUS='A'");			
 			String[] aux = MyString.tStringArray(conectTarefa.select(" CDTAREFA "));
 	         for(String array : aux){
 	        	 TAREFAS.add(MyString.tiraEspaço(array));

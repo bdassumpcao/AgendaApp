@@ -3,7 +3,6 @@ package com.solucaoSistemas.AgendaApp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 import Utilitarios.MyString;
 import Web.Conexao;
 import android.app.Activity;
@@ -22,7 +21,6 @@ import android.view.MenuItem;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 /**
  * Bruno Lopes.
@@ -49,7 +47,6 @@ public class Principal extends Activity implements WeekView.MonthChangeListener,
         
 		getActionBar().setDisplayShowHomeEnabled(false);
 //		getActionBar().hide();
-        
         
 		//conexões com as tabelas do banco
         conectAgenda = new ConectaLocal(getApplicationContext(), "AGENDA");
