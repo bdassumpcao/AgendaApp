@@ -14,7 +14,7 @@
 	<color name="blue2">#ff1c5fab</color>
 	<color name="royalBlue">#4169E1</color>
 	<color name="skyBlue">#87CEEB</color>
-	<color name="LightSkyBlue">#87CEFA</color>
+	<color name="LightSkyBlue">#87CEFA</color>	
 	<color name="LightBlue">#ADD8E6</color>
 	<color name="deepSkyBlue">#00BFFF</color>
 	<color name="LightSteelBlue">#B0C4DE</color>
@@ -27,4 +27,11 @@
 	<color name="FireBrick">#B22222</color>
 	<color name="LightSalmon">#FFA07A</color>
 	<color name="LightGrey">#D3D3D3</color>
+	<color name="LightGreen">#90EE90</color>
+	<color name="LimeGreen">#32CD32</color>
+	<color name="PaleGreen">#98FB98</color>
+	<color name="ForestGreen">#228B22</color>
+	
+	
+	
 </resources>

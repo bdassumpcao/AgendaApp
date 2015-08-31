@@ -165,32 +165,36 @@ public class InsereTarefa extends Activity{
 	        int id = item.getItemId();
 
 	        switch (id){
-	    		case R.id.action_Salvar:
-		    		Intent intent = new Intent(InsereTarefa.this, Tarefas.class);
-		    		InsereTarefa.this.startActivity(intent);
-		    		InsereTarefa.this.finish();
-		    		
-		    		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		    		Date data = new Date();
-		    		Calendar c = Calendar.getInstance();
-		    		c.setTime(data);
-		    		Date dataAtual = c.getTime();
-		    		data.getTime();
-		    		
-		    		final String actualData = dateFormat.format(dataAtual);
-		    		
-		    		String cdDestinatario = "";
-		    		int referencia = (pegaUltimaRef()+1);
-		    		if(selecionados.size() == 0)
-		    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"','A','',"+usuarioAtivo+","+referencia+",'"+actualData+"',null,null");		    		
-		    		else{
-			    		for(int i=0; i<selecionados.size() ; i++){
-			    			cdDestinatario = getCodUsuario(selecionados.get(i));
-			    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"','A',"+cdDestinatario+","+usuarioAtivo+","+referencia+",'"+actualData+"',null,null");
+	    		case R.id.action_Salvar:	
+	    			if(edt_desc.getText().toString().equals("")){
+	    				edt_desc.setError("Preencha o campo descrição");
+	    				return false;
+	    			}
+	    			else{
+			    		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			    		Date data = new Date();
+			    		Calendar c = Calendar.getInstance();
+			    		c.setTime(data);
+			    		Date dataAtual = c.getTime();
+			    		data.getTime();
+			    		
+			    		final String actualData = dateFormat.format(dataAtual);
+			    		
+			    		String cdDestinatario = "";
+			    		int referencia = (pegaUltimaRef()+1);
+			    		if(selecionados.size() == 0)
+			    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"','A','',"+usuarioAtivo+","+referencia+",'"+actualData+"',null,null");		    		
+			    		else{
+				    		for(int i=0; i<selecionados.size() ; i++){
+				    			cdDestinatario = getCodUsuario(selecionados.get(i));
+				    			conectTarefa.insert("null,'"+edt_desc.getText().toString()+"','A',"+cdDestinatario+","+usuarioAtivo+","+referencia+",'"+actualData+"',null,null");
+				    		}
 			    		}
-		    		}
-
+			    		InsereTarefa.this.startActivity(new Intent(InsereTarefa.this, Tarefas.class));
+			    		InsereTarefa.this.finish();
+	    			}
 		    		return true;
+		    		
 	    		case R.id.action_AtualizarContatos:
 	    			
 					Conexao conexao = new Conexao(this);
@@ -259,7 +263,7 @@ public class InsereTarefa extends Activity{
 	        }
 		            return super.onOptionsItemSelected(item);
 	 }
-	 
+	 	 
 	 public String getCodUsuario(String nome){
 		 String cod="";
 		 conectUser.setClausula(" WHERE NMUSUARIO='"+nome.trim()+"'");
@@ -287,7 +291,7 @@ public class InsereTarefa extends Activity{
 	
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-    		InsereTarefa.this.startActivity(new Intent(InsereTarefa.this, Tarefas.class));
+	    	InsereTarefa.this.startActivity(new Intent(InsereTarefa.this, Tarefas.class));
     		InsereTarefa.this.finish();
 	        return true;
 	    }

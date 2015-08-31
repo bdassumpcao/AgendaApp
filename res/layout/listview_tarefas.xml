@@ -27,7 +27,7 @@
 				        android:layout_height="wrap_content"
 				        android:layout_gravity="center_vertical"
 				        android:gravity="start"
-				        android:textColor="@color/vermelho"
+				        android:textColor="@color/event_color_05"
 				        android:textSize="17sp" />
    
 				 </TableRow>  

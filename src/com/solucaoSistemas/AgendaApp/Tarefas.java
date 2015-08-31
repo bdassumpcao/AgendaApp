@@ -125,6 +125,7 @@ public class Tarefas extends Activity{
 	     	case R.id.action_novaTarefa:
 	     		Intent intent = new Intent(Tarefas.this, InsereTarefa.class);
 		    	Tarefas.this.startActivity(intent);
+		    	Tarefas.this.finish();
 		    	return true;		    		
 	    	case R.id.action_eventos:
 		    	Intent intent2 = new Intent(Tarefas.this, Principal.class);
